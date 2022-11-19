@@ -1,0 +1,22 @@
+@media screen {
+
+	html::before {
+		background: #ff0 !important;
+		border-radius: 5px !important;
+		bottom: 15px !important;
+		color: #000 !important;
+		content: 'This is an archive page.' !important;
+		direction: ltr !important;
+		display: block !important;
+		font: 16px/1.5 serif !important;
+		margin: 0 !important;
+		opacity: .8 !important;
+		padding: 5px 0 !important;
+		position: fixed !important;
+		right: 15px !important;
+		text-align: center !important;
+		width: 200px !important;
+		z-index: 1 !important;
+	}
+
+}

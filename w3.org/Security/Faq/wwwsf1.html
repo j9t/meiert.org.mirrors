@@ -1,0 +1,512 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html> <head>
+<title>WWW Security FAQ: General Questions</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+<H1>
+<a href="https://www.w3.org/"><img src="i/w3c_home.gif" alt="[W3C]"
+   align="middle" HEIGHT=48 WIDTH=72 border=0></a>
+The World Wide Web Security FAQ</H1>
+
+<HR>
+
+<H2>DISCLAIMER</H2>
+
+This information is provided by Lincoln Stein (<A
+href="mailto:lstein@cshl.org">lstein@cshl.org</a>)
+and John Stewart (<a href="mailto:jns@digitalisland.net">jns@digitalisland.net</a>). The World Wide Web
+Consortium (W3C) hosts this document as a service to the Web Community;
+however, it does not endorse its contents. For further information,
+please contact Lincoln Stein or John Stewart directly.  <p>
+
+<table width="100%">
+<tr>
+  <td>
+  <td align=center><A HREF="index.html#contents">
+      <img src="i/up.gif" align="middle" width=20 height=22 border=0 alt="^ "
+      >Up to <cite>Table of Contents</cite></A><br>
+  <td>
+<tr>
+  <td align=left>
+  <A HREF="wwwsf0.html">
+      <img src="i/left.gif" align="middle" width=20 height=22 border=0 alt="&lt;&lt; ">
+           Backward to <cite>What's New</cite></a><br>
+  <td>
+  <td align=right>  <a HREF="wwwsf2.html">Forward to <cite>Client-Side Security</cite><img
+      src="i/right.gif" align="middle" width=20 height=22 border=0 alt=" &gt;&gt;"></a><br>
+</table>
+
+<HR>
+
+<h1>3. General Questions</h1>
+
+<H2><A NAME="GEN-Q1">Q1: What's to worry about?</A></H2>
+
+Unfortunately, there's a lot to worry about.  There are security risks
+that affect Web servers, the local area networks that host Web sites,
+and even innocent users of Web browsers.
+
+<p>
+
+The risks are most severe from the Webmaster's perspective.  The
+moment you install a Web server at your site, you've opened a window
+into your local network that the entire Internet can peer through.
+Most visitors are content to window shop, but a few will try to to
+peek at things you don't intend for public consumption.  Others, not
+content with looking without touching, will attempt to force the
+window open and crawl in.  The results can range from the merely
+embarassing, for instance the discovery one morning that your site's
+home page has been replaced by an obscene parody, to the damaging, for
+example the theft of your entire database of customer information.
+
+<p>
+
+It's a maxim in system security circles that buggy software opens up
+security holes.  It's a maxim in software development circles that
+large, complex programs contain bugs.  Unfortunately, Web servers are
+large, complex programs that can (and in some cases have been proven
+to) contain security holes.  Furthermore, the open architecture of Web
+servers allows arbitrary CGI scripts to be executed on the server's
+side of the connection in response to remote requests.  Any CGI script
+installed at your site may contain bugs, and every such bug is a
+potential security hole.
+
+<p>
+
+From the point of view of the network administrator, a Web server
+represents yet another potential hole in your local network's
+security.  The general goal of network security is to keep strangers
+out.  Yet the point of a Web site is to provide the world with
+controlled access to your network.  Drawing the line can be difficult.
+A poorly configured Web server can punch a hole in the most carefully
+designed firewall system.  A poorly configured firewall can make a Web
+site impossible to use.  Things get particularly complicated in an
+intranet environment, where the Web server must typically be
+configured to recognize and authenticate various groups of users, each
+with distinct access privileges.
+
+<p>
+
+To the end-user, Web surfing feels both safe and anonymous.  It's not.
+Active content, such as ActiveX controls and Java applets, introduces
+the possibility that Web browsing will introduce viruses or other
+malicious software into the user's system.  Active content also has
+implications for the network administrator, insofar as Web browsers
+provide a pathway for malicious software to bypass the firewall system
+and enter the local area network.  Even without active content, the
+very act of browsing leaves an electronic record of the user's surfing
+history, from which unscrupulous individuals can reconstruct a very
+accurate profile of the user's tastes and habits.
+
+<p>
+
+Finally, both end-users and Web administrators need to worry about the
+confidentiality of the data transmitted across the Web.  The TCP/IP
+protocol was not designed with security in mind; hence it is
+vulnerable to network eavesdropping.  When confidential documents are
+transmitted from the Web server to the browser, or when the end-user
+sends private information back to the server inside a fill-out form,
+someone may be listening in.
+
+<hr>
+
+<p>
+<H2><A NAME="GEN-Q2">Q2: Exactly what security risks are we talking about?</A></H2>
+
+There are basically three overlapping types of risk:
+
+<OL>
+
+  <li>Bugs or misconfiguration problems in the Web server that allow
+      unauthorized remote users to:
+      <ul>
+	<li>Steal confidential documents not intended for their eyes.
+	<li>Execute commands on the server host machine, allowing them
+	    to modify the system.
+	<li>Gain information about the Web server's host machine that
+	    will allow them to break into the system.
+	<li>Launch denial-of-service attacks, rendering the machine
+	    temporarily unusable.
+      </ul>
+
+  <li>Browser-side risks, including:
+      <ul>
+	<li>Active content that crashes the browser, damages the
+	    user's system, breaches the user's privacy, or merely
+	    creates an annoyance.
+	<li>The misuse of personal information knowingly or unkowingly
+	    provided by the end-user.
+      </ul>
+
+  <li>Interception of network data sent from browser to server or vice
+      versa via network eavesdropping.  Eavesdroppers can operate from
+      any point on the pathway between browser and server including:
+      <ul>
+	<li>The network on the browser's side of the connection.
+	<li>The network on the server's side of the connection
+	    (including intranets).
+	<li>The end-user's Internet service provider (ISP).
+	<li>The server's ISP.
+	<li>Either ISPs' regional access provider.
+      </ul>
+</OL>
+
+<p>
+
+It's important to realize that "secure" browsers and servers are only
+designed to protect confidential information against network
+eavesdropping.  Without system security on both browser and server
+sides, confidential documents are vulnerable to interception.
+
+<p>
+
+Protecting against network eavesdropping and system security are the
+subject of sections 1 to 5 of this document.  Client-side security is
+covered in sections 6 and 7.  Section 8 deals with security alerts for
+specific Web servers.
+
+<HR>
+
+<p>
+
+<H2><A NAME="GEN-Q3">Q3: Are some operating systems more secure to use as platforms for Web
+servers than others?</A></H2>
+
+<p>
+
+The answer is yes, although the Unix and NT communities may not like
+to hear it.  In general, the more powerful and flexible the operating
+system, the more open it is for attack through its Web (and other)
+servers.
+
+<p>
+
+Unix systems, with their large number of built-in servers, services,
+scripting languages, and interpreters, are particularly vulnerable to
+attack because there are simply so many portals of entry for hackers
+to exploit.  Less capable systems, such as Macintoshes and
+special-purpose Web server boxes, are less easy to exploit.  The
+safest Web site is a bare-bones Macintosh running a bare-bones Web
+server.  See <a href="wwwsf3.html#Q20">Servers, Q20</a> for details.
+
+<p>
+
+In the real world, of course, many sites will want to run a Windows NT
+or Unix server in order to gain the performance advantage of a
+multitasking operating system and the benefits of database and
+middleware connectivity .  Security holes have been found in both Unix
+and Windows NT server systems, and new security holes are being found
+on a regular basis.  On the whole Windows NT systems seem to be more
+vulnerable at the current time, partly the OS is relatively new and
+the big bugs haven't been shaken out, and partly because the NT file
+system and user account system are highly complex and difficult to
+configure correctly.
+
+<p>
+
+If you have configured your system correctly and are compulsive about
+applying your vendor's security patches promptly, a typical Unix
+system will be more secure than a typical NT system.  However, you
+also have to factor in the experience of the people running the server
+host and software.  A Unix system administered by a novice system
+administrator will be far less secure than an NT system set up by a
+seasoned Windows NT system administrator.
+
+<HR>
+
+<H2><A NAME="GEN-Q4">Q4: Are some Web server software programs more secure than others?</A></H2>
+
+Again, the answer is yes, although it would be foolhardy to give
+specific recommendations on this point.  As a rule of thumb, the more
+features a server offers, the more likely it is to contain security
+holes.  Simple servers that do little more than make static files
+available for requests are probably safer than complex servers that
+offer such features as on-the-fly directory listings, CGI script
+execution, server-side include processing, and scripted error
+handling.
+
+<p>
+Version 1.3 of NCSA's Unix server contains a serious known security
+hole.  Discovered in March of 1995, this hole allows outsiders to
+execute arbitrary commands on the server host.  If you have a version
+1.3 httpd binary whose creation date is earlier than March 1995 don't
+use it!  Replace it with the patched 1.3 server (available at
+<A HREF="http://hoohoo.ncsa.uiuc.edu/">http://hoohoo.ncsa.uiuc.edu/</A>) or with
+version 1.4 or higher (available at the same site).  The
+Apache plug-in replacement for NCSA (<A HREF="http://www.hyperreal.com/apache/info.html">http://www.hyperreal.com/apache/info.html</A>) is also free of this bug.
+
+<p>
+Servers also vary in their ability to restrict browser access to
+individual documents or portions of the document tree.  Some servers
+provide no restriction at all, while others allow you to restrict
+access to directories based on the IP address of the browser or to
+users who can provide the correct password.  A few servers, primarily
+commercial ones (e.g. Netsite Commerce Server, Open Market), provide
+data encryption as well.
+
+<p>
+The WN server, by John Franks, deserves special mention in this regard
+because its design is distinctively different from other Web servers.
+While most servers take a permissive attitude to file distribution,
+allowing any document in the document root to be transferred unless it
+is specifically forbidden, WN takes a restrictive stance.  The server
+will not transfer a file unless it has been explicitly placed on a
+list of allowed documents.  On-the-fly directory listings and other
+"promiscuous" features are also disallowed.  Information on WN's
+security features can be found in its online documentation at:
+
+<p>
+<A HREF="http://hopf.math.nwu.edu/docs/security.html">http://hopf.math.nwu.edu/docs/security.html</A>
+
+<p>
+A table comparing the features of a large number of commercial,
+freeware and public domain servers has been put together by the
+WebCompare site:
+
+<p>
+  <A HREF="http://www.webcompare.com/">http://www.webcompare.com/</A>
+
+<HR>
+
+<H2><A NAME="GEN-Q5">Q5: Are CGI scripts insecure?</A></H2>
+
+CGI scripts are a major source of security holes.  Although the CGI
+(Common Gateway Interface) protocol is not inherently insecure, CGI
+scripts must be written with just as much care as the server
+itself. Unfortunately some scripts fall short of this standard and
+trusting Web administrators install them at their sites without
+realizing the problems.
+
+<HR>
+
+<H2><A NAME="GEN-Q6">Q6: Are server-side includes insecure?</A></H2>
+
+<p>
+Server side includes, snippets of server directives embedded in HTML
+documents, are another potential hole.  A subset of the directives
+available in server-side includes instruct the server to execute
+arbitrary system commands and CGI scripts.  Unless the author is aware
+of the potential problems it's easy to introduce unintentional side
+effects.  Unfortunately, HTML files containing dangerous server-side
+includes are seductively easy to write.
+
+<p>
+
+Some servers, including Apache and NCSA, allow the Web master to
+selectively disable the types of includes that can execute arbitrary
+commands.  See <a href="wwwsf3.html#SVR-Q15">Q10</a> for more details.
+
+<HR>
+
+<H2><A NAME="GEN-Q7">Q7: What general security precautions should I take?</A></H2>
+
+If you are a Webmaster, system administrator, or are otherwise
+involved with the administration of a network, the single most
+important step you can take to increase your site's security is to
+create a written security policy.  This security policy should
+succinctly lay out your organization's policies with regard to:
+
+<ul>
+  <li>who is allowed to use the system
+  <li>when they are allowed to use it
+  <li>what they are allowed to do (different groups may be granted
+      different levels of access)
+  <li>procedures for granting access to the system
+  <li>procedures for revoking access (e.g. when an employee leaves)
+  <li>what constitutes acceptable use of the system
+  <li>remote and local login methods
+  <li>system monitoring procedures
+  <li>protocols for responding to suspected security breaches
+</ul>
+
+This policy need not be anything fancy.  It need only be a succinct
+summary of how the information system work, reflecting your
+organization's technological and political realities.  There are
+several benefits to having a written security policy:
+
+<ol>
+  <li>You yourself will understand what is and is not permitted on the
+      system.  If you don't have a clear picture of what is permitted,
+      you can never be sure when a violation has occurred.
+  <li>Others in your organization will understand what the security
+      policy is.  The written policy raises the level of security
+      consciousness, and provides a focal point for discussion.
+  <li>The security policy serves as a requirements document against
+      which technical solutions can be judged.  This helps guard
+      against the "buy first, ask questions later" syndrome.
+  <li>The policy may help bolster your legal case should you ever need
+      to prosecute for a security violation.
+</ol>
+
+More suggestions for formulating a security policy can be found in <a
+href="wwwsf7.html#general_security">the general Internet security
+reference works</a> listed at the end of this document.
+
+<p>
+
+For Web servers running on Unix and NT systems, here are some general
+security precautions to take:
+
+<OL>
+  <LI> Limit the number of login accounts available on the machine.
+Delete inactive users.
+
+      <p>
+
+  <LI> Make sure that people with login privileges choose good passwords.
+The Crack program will help you detect poorly-chosen passwords:
+<p>
+        <A HREF="http://www.users.dircon.co.uk/~crypto/download/c50-faq.html">
+           http://www.users.dircon.co.uk/~crypto/download/c50-faq.html
+        </A>
+
+<p>
+  <li>Turn off unused services.  For example, if you don't need to run
+      FTP on the Web server host, get rid of the ftp software.
+      Likewise for tftp, sendmail, gopher, NIS (network information
+      services) clients, NFS (networked file system), finger, systat, and
+      anything else that might be hanging around.  Check the file
+      /etc/inetd.conf (Unix) or <cite>Service Manager</cite> for a
+      list of servers that may be lurking.  Deactivate any that you
+      don't use.
+
+<p>
+
+  <li>Remove shells and interpreters that you don't absolutely need.  For
+      example, if you don't run any Perl-based CGI scripts, remove the Perl
+      interpreter.
+
+<p>
+
+  <li>Check both the system and Web logs regularly for suspicious
+      activity.  The program Tripwire (Unix), and Internet Security Scanner
+      (Unix &amp; NT) are helpful for detecting this type of activity:
+
+    <dl>
+      <dt>
+      <dt>Tripwire
+      <dd>      <A HREF="ftp://ftp.cerias.purdue.edu/pub/tools/unix/ids/tripwire/">
+      ftp://ftp.cerias.purdue.edu/pub/tools/unix/ids/tripwire/</A>
+      <dt>Internet Security Scanner
+      <dd><a href="http://www.iss.net">http://www.iss.net</a>
+    </dl>
+      More on scanning Web logs for suspicious activity below.
+
+      <p>
+
+  <li> Make sure that permissions are set correctly on system files, to
+    discourage tampering.  On Unix systems, the program COPS is useful
+      for this:
+
+    <blockquote>
+   <A HREF="http://www.fish.com/cops/">
+       http://www.fish.com/cops/
+   </A>
+    </blockquote>
+
+      On Windows NT, give Midwestern Commerce's Administrator Assistant
+      Toolkit a try:
+
+      <blockquote>
+      <a href="http://www.ntsecurity.com">http://www.ntsecurity.com</a>
+      </blockquote>
+
+
+</OL>
+
+Be alert to the possibility that a _local_ user can accidentally make
+a change to the Web server configuration file or the document tree
+that opens up a security hole.  You should set file permissions in the
+document and server root directories such that only trusted local
+users can make changes.  Many sites create a "www" group to which
+trusted Web authors are added.  The document root is made writable
+only by members of this group.  To increase security further, the
+server root where vital configuration files are kept, is made writable
+only by the official Web administrator.  Many sites create a "www"
+user for this purpose.
+
+<HR>
+
+<H2><A NAME="GEN-Q8">Q8: Where can I learn more about general network security measures?</A></H2>
+
+Good books to get include:
+
+<UL>
+  <LI><A HREF="wwwsf7.html#curry">Unix System Security: A Guide for Users and System
+     Administrators</A>, by David Curry
+
+  <LI><A HREF="wwwsf7.html#garfinkel">Practical Unix Security</A>, by Simson Garfinkel and Gene
+     Spafford
+
+  <li><a href="wwwsf7.html#sutton">Windows NT Security Guide</a>, by Stephan Sutton.
+</UL>
+
+<p>
+A source of timely information, including the discovery of new
+security holes, are the CERT Coordination Center advisories, posted to
+the newsgroup comp.security.announce, and archived at:
+
+<p>
+        <A HREF="ftp://ftp.cert.org/pub/cert_advisories/">
+           ftp://ftp.cert.org/pub/cert_advisories/
+        </A>
+
+<p>
+A mailing list devoted specifically to issues of WWW security is
+maintained by the IETF Web Transaction Security Working Group.  To
+subscribe, send e-mail to www-security-request@nsmx.rutgers.edu.  In
+the body text of the message write:
+
+<p>
+   SUBSCRIBE www-security your_email_address
+
+<p>
+A series of security FAQs is mainted by Internet Security Systems,
+Inc.  The FAQs can be found at:
+
+<p>
+   <A HREF="http://www.iss.net/sec_info/addsec.html">
+      http://www.iss.net/sec_info/addsec.html
+   </A>
+
+<p>
+The main WWW FAQ also contains questions and answers relevant to Web
+security, such as log file management and sources of server software.
+The most recent version of this FAQ can be found at:
+
+<p>
+   <a href="http://www.boutell.com/faq/">
+   http://www.boutell.com/faq/</a>
+<HR>
+
+<table width="100%">
+<tr>
+  <td>
+  <td align=center><A HREF="index.html#contents">
+      <img src="i/up.gif" align="middle" width=20 height=22 border=0 alt="^ "
+      >Up to <cite>Table of Contents</cite></A><br>
+  <td>
+<tr>
+  <td align=left>
+  <A HREF="wwwsf0.html">
+      <img src="i/left.gif" align="middle" width=20 height=22 border=0 alt="&lt;&lt; "
+      >Backward to <cite>What's New</cite></a><br>
+  <td>
+  <td align=right>  <a HREF="wwwsf3.html">Forward to <cite>Client-Side Security</cite><img
+      src="i/right.gif" align="middle" width=20 height=22 border=0 alt=" &gt;&gt;"></a><br>
+</table>
+
+<HR>
+<p>
+
+<address><A HREF="http://www.genome.wi.mit.edu/~lstein/">Lincoln D. Stein</A>
+(<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>) and <a href="mailto:jns@digitalisland.net">John
+  N. Stewart (jns@digitalisland.net)</a><br>
+</address>
+
+<p>
+
+<tt>$Id: wwwsf1.html,v 1.6 2001/07/28 17:54:26 lstein Exp $</tt>
+
+</body> </html>

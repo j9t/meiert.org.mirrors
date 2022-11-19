@@ -1,0 +1,122 @@
+@import url(/setup/notification.css); /* mirrors.meiert.org notification */
+
+@import url(https://fonts.googleapis.com/css?family=Droid+Sans|Lora&display=swap);
+
+html {
+	background: #fff;
+	color: #222;
+	font: 100%/1.88 palatino, lora, georgia, cambria, serif;
+}
+
+body {
+	margin: auto;
+	max-width: 600px;
+	min-width: 288px;
+	padding: 1.25em 1em;
+}
+
+header {
+	margin: 1em 0 1.5em;
+	text-align: center;
+}
+
+header img {
+	height: 85px;
+	margin: 0 0 .33em;
+	width: 85px;
+}
+
+footer,
+p {
+	margin: 1em 0;
+}
+
+footer,
+a:focus,
+a:hover,
+a:active {
+	position: relative;
+}
+
+footer {
+	color: #444;
+	padding: 1em 0 0 104px;
+}
+
+footer a[rel] {
+	left: 0;
+	position: absolute;
+	top: .95em;
+}
+
+h1,
+h2 {
+	color: #000;
+	font-family: futurastd-book, futura, 'droid sans', 'helvetica neue', helvetica, sans-serif;
+	font-weight: 400;
+	line-height: 1.13;
+}
+
+h1 {
+	font-size: 1.86em;
+	margin: 0 0 .53em;
+}
+
+h2 {
+	counter-increment: counter;
+	font-size: 1.5em;
+	margin: 1em 0 0;
+}
+
+h2::before {
+	content: counter(counter) '. ';
+}
+
+h2 + a img {
+	border: 3px solid #777;
+	border-radius: 50%;
+	filter: grayscale(100%);
+	float: right;
+	height: 80px;
+	margin: 1.2em 0 .5em .5em;
+	width: 80px;
+}
+
+blockquote {
+	margin: 1em 0 1em 2em;
+}
+
+img {
+	max-width: 100%;
+}
+
+a:focus,
+a:hover,
+a:active {
+	bottom: -1px;
+}
+
+/* VG WORT */
+
+footer + img {
+	height: 1px;
+	position: absolute;
+	width: 1px;
+}
+
+/* Previously */
+
+#announcement {
+	background: #ff0;
+	margin: 1em auto 1.5em;
+	padding: .5em;
+	text-align: center;
+}
+
+#announcement + h1 {
+	margin-top: .53em;
+}
+
+#announcement + h1 + h2::before {
+	content: normal;
+}

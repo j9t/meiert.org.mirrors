@@ -1,0 +1,58 @@
+@import url(/setup/notification.css); /* mirrors.meiert.org notification */
+
+@media screen {
+
+	* {
+		margin: 0;
+		padding: 0;
+	}
+
+	html {
+		background: #fefefe;
+		color: #000;
+		font-size: 125%;
+		line-height: 1.2;
+	}
+
+	body {
+		left: 50%;
+		margin-right: -50%;
+		position: absolute;
+		top: 40%;
+		transform: translate(-50%, -50%);
+		width: 450px;
+	}
+
+	p {
+		background: #fff;
+		border: 3px solid;
+		margin: 1em auto;
+		padding: .4em .6em;
+		width: 250px;
+	}
+
+	img {
+		margin: 0 0 -.15em;
+	}
+
+	small {
+		display: block;
+		line-height: 1.3;
+		text-align: center;
+	}
+
+}
+
+@media screen and (max-width: 500px) {
+
+	body,
+	p {
+		width: auto;
+	}
+
+	p,
+	small {
+		margin: 1em;
+	}
+
+}

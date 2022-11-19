@@ -1,0 +1,68 @@
+# Startup Routine
+AddCharset utf-8 .css .html .js .php .txt .xml
+AddDefaultCharset utf-8
+AddOutputFilterByType DEFLATE application/javascript application/pdf application/rss+xml application/xml font/eot font/otf font/ttf image/svg+xml image/vnd.microsoft.icon image/x-icon text/css text/html text/javascript text/plain text/xml
+AddType application/rss+xml .xml
+AddType font/eot .eot
+AddType font/otf .otf
+AddType font/ttf .ttf
+AddType font/woff .woff
+AddType font/woff2 .woff2
+ContentDigest On
+DefaultLanguage en
+ExpiresActive On
+ExpiresByType application/javascript A604800
+ExpiresByType application/rss+xml A60
+ExpiresByType application/xml A60
+ExpiresByType font/eot A2419200
+ExpiresByType font/otf A2419200
+ExpiresByType font/ttf A2419200
+ExpiresByType font/woff A2419200
+ExpiresByType font/woff2 A2419200
+ExpiresByType image/gif A2419200
+ExpiresByType image/jpeg A2419200
+ExpiresByType image/png A2419200
+ExpiresByType image/svg+xml A2419200
+ExpiresByType image/vnd.microsoft.icon A2419200
+ExpiresByType image/x-icon A2419200
+ExpiresByType text/css A604800
+ExpiresByType text/html A60
+ExpiresByType text/javascript A604800
+ExpiresByType text/plain A60
+ExpiresByType text/xml A60
+FileETag All
+Header always edit Set-Cookie (.*) "$1; SameSite=Lax; Secure"
+Header always set Strict-Transport-Security "max-age=15768000; includeSubDomains; preload" env=HTTPS
+Header always set X-Content-Type-Options nosniff
+IndexIgnore info-aux.txt
+
+<FilesMatch "\.(html|php|xml)$">
+	# Header always set Content-Security-Policy "upgrade-insecure-requests; default-src 'self'; frame-ancestors 'self'"
+	# Header always set Feature-Policy "camera 'none'; geolocation 'none'; microphone 'none'; payment 'none'"
+	Header always set Referrer-Policy "strict-origin-when-cross-origin"
+	Header always set X-XSS-Protection "1; mode=block"
+</FilesMatch>
+
+# Course Calibration
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteCond %{HTTPS} !=on [OR]
+	RewriteCond %{HTTP_HOST} !^mirrors\.meiert\.org$ [NC]
+	RewriteRule ^ https://mirrors.meiert.org%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+# Course Alterations: P1
+RedirectMatch 301 /www-security-faq/(.*) https://mirrors.meiert.org/w3.org/Security/Faq/$1
+Redirect 301 /mindviewinc/ https://mirrors.meiert.org/mindviewinc.com/Books/downloads.html
+Redirect 301 /mindviewinc/index.html https://mirrors.meiert.org/mindviewinc.com/Books/downloads.html
+RedirectMatch 301 /mindviewinc/downloads/(.*) https://mirrors.meiert.org/mindviewinc.com/downloads/$1
+
+# Course Alterations: P2
+Redirect 302 /meiert.com/en/contact.1 https://mirrors.meiert.org/meiert.com/en/contact/index.html
+
+# Emergency
+SetEnvIf Host ^ suppress-error-charset
+ErrorDocument 401 '<!DOCTYPE html><title>Error</title><link rel=stylesheet href=https://d3rdtowr0c5lpf.cloudfront.net/setup/auxiliary.min.css><meta charset=utf-8><meta name=viewport content="initial-scale=1,minimum-scale=1,width=device-width"><p>Unauthorized.<p><a href=https://meiert.com/en/>🅜</a>'
+ErrorDocument 403 '<!DOCTYPE html><title>Error</title><link rel=stylesheet href=https://d3rdtowr0c5lpf.cloudfront.net/setup/auxiliary.min.css><meta charset=utf-8><meta name=viewport content="initial-scale=1,minimum-scale=1,width=device-width"><p>Forbidden.<p><a href=https://meiert.com/en/>🅜</a>'
+ErrorDocument 404 '<!DOCTYPE html><title>Error</title><link rel=stylesheet href=https://d3rdtowr0c5lpf.cloudfront.net/setup/auxiliary.min.css><meta charset=utf-8><meta name=viewport content="initial-scale=1,minimum-scale=1,width=device-width"><p>Not found.<p><a href=https://meiert.com/en/>🅜</a>'
+ErrorDocument 500 '<!DOCTYPE html><title>Error</title><link rel=stylesheet href=https://d3rdtowr0c5lpf.cloudfront.net/setup/auxiliary.min.css><meta charset=utf-8><meta name=viewport content="initial-scale=1,minimum-scale=1,width=device-width"><p>Internal server error.<p><a href=https://meiert.com/en/>🅜</a>'

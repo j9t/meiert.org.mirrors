@@ -1,0 +1,1041 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html> <head>
+<title>WWW Security FAQ: Running a Secure Server</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<H1>
+<a href="https://www.w3.org/"><img src="i/w3c_home.gif" alt="[W3C]"
+   align=middle height=48 width=72 border=0></a>
+The World Wide Web Security FAQ</H1>
+
+<HR>
+
+<H2>DISCLAIMER</H2>
+
+This information is provided by Lincoln Stein (<A
+href="mailto:lstein@cshl.org">lstein@cshl.org</a>) and John Stewart (<a href="mailto:jns@digitalisland.net">jns@digitalisland.net</a>). The World Wide Web
+Consortium (W3C) hosts this document as a service to the Web Community;
+however, it does not endorse its contents. For further information,
+please contact Lincoln Stein or John Stewart directly.  <p>
+
+<table width="100%">
+<tr>
+  <td>
+  <td align=center><A HREF="index.html#contents">
+      <img src="i/up.gif" align=middle width=20 height=22 border=0 alt="^ "
+      >Up to <cite>Table of Contents</cite></A><br>
+  <td>
+<tr>
+  <td align=left>
+  <a HREF="wwwsf2.html">
+      <img src="i/left.gif" align=middle width=20 height=22 border=0 alt="&lt;&lt; "
+      >Back to <cite>Client Side Security</cite></a><br>
+  <td>
+  <td align=right>  <A HREF="wwwsf4.html">Forward to <cite>CGI Scripts</cite><img
+      src="i/right.gif" align=middle width=20 height=22 border=0 alt=" &gt;&gt;"></a><br>
+</table>
+
+<HR>
+
+<H1><A NAME="servers">5. Server Side Security</A></H1>
+
+<H2><A NAME="SVR-Q1">Q1: How do I set the file permissions of my server
+and document roots?  </A></H2>
+
+To maximize security, you should adopt a strict "need to know" policy
+for both the document root (where HTML documents are stored) and the
+server root (where log and configuration files are kept).  It's most
+important to get permissions right in the server root because it is
+here that CGI scripts and the sensitive contents of the log and
+configuration files are kept.
+
+<p>
+You need to protect the server from the prying eyes of both local and
+remote users.  The simplest strategy is to create a "www" user for the
+Web administration/webmaster and a "www" group for all the users on
+your system who need to author HTML documents.  On Unix systems edit
+the /etc/passwd file to make the server root the home directory for
+the www user.  Edit /etc/group to add all authors to the www group.
+
+<p>
+The server root should be set up so that only the www user can write
+to the configuration and log directories and to their contents.  It's
+up to you whether you want these directories to also be readable by
+the www group.  They should _not_ be world readable.  The cgi-bin
+directory and its contents should be world executable and readable,
+but not writable (if you trust them, you could give local web authors write
+permission for this directory).  Following are the permissions for a
+sample server root:
+
+<PRE>
+drwxr-xr-x   5 www      www          1024 Aug  8 00:01 cgi-bin/
+drwxr-x---   2 www      www          1024 Jun 11 17:21 conf/
+-rwx------   1 www      www        109674 May  8 23:58 httpd
+drwxrwxr-x   2 www      www          1024 Aug  8 00:01 htdocs/
+drwxrwxr-x   2 www      www          1024 Jun  3 21:15 icons/
+drwxr-x---   2 www      www          1024 May  4 22:23 logs/
+</PRE>
+
+<p>
+
+The document root has different requirements.  All files that you want
+to serve on the Internet must be readable by the server while it is
+running under the permissions of user "nobody".  You'll also usually
+want local Web authors to be able to add files to the document root
+freely.  Therefore you should make the document root directory and its
+subdirectories owned by user and group "www", world readable, and
+group writable:
+
+<PRE>
+drwxrwxr-x   3 www      www          1024 Jul  1 03:54 contents
+drwxrwxr-x  10 www      www          1024 Aug 23 19:32 examples
+-rw-rw-r--   1 www      www          1488 Jun 13 23:30 index.html
+-rw-rw-r--   1 lstein   www         39294 Jun 11 23:00 resource_guide.html
+</PRE>
+
+<p>
+Many servers allow you to restrict access to parts of the document
+tree to Internet browsers with certain IP addresses or to remote users
+who can provide a correct password (see below).  However, some Web
+administrators may be worried about unauthorized _local_ users gaining
+access to restricted documents present in the document root.  This is
+a problem when the document root is world readable.
+
+<p>
+One solution to this problem is to run the server as something other
+than "nobody", for example as another unprivileged user ID that
+belongs to the "www" group.  You can now make the restricted documents
+group- but not world-readable (don't make them group-writable unless
+you want the server to be able to overwrite its documents!).  The
+documents can now be protected for prying eyes both locally and
+globally.  Remember set the read and execute permissions for any
+restricted server scripts as well.
+
+<p>
+The CERN server generalizes this solution by allowing the server to
+execute under different user and group privileges for each part of a
+restricted document tree.  See the CERN documentation for details on
+how to set this up.
+
+<p>
+
+If your server starts up as root but runs as <a href="#SVR-Q3"> another user</a>, then it's especially important that the logs
+directory not be writable by the user that the server runs as.  For
+example, both the Netscape FastTrack and SuiteSpot servers come with
+the logs directory writable by the user that the server runs as
+(i.e. as "nobody" if you choose the default configuration values).
+This can make the effect of some CGI bugs much worse than they would
+normally be.  For example if a CGI bug enables a remote user to run
+arbitrary commands on the server, then the remote user can also gain
+root access to the server by exploiting the bug to replace a log file
+with a symlink to /etc/passwd.  When the server restarts, the symlink
+will result in /etc/passwd being chown'd to the server user.  The
+remote user can now exploit the CGI bug again to add an entry to
+/etc/passwd.  The suggested workaround is to change the ownership of
+the logs directory so that it's not writable by the server user, and
+then create empty log and pid files that are owned by the server user
+(the server won't start up if it can't open these files.)  Although
+this solution is less than optimal, because it allows crackers to
+tamper with the log files, it is much better than the default
+configuration.  This bug may also be present in other commercial
+servers. (Thanks to <a href="mailto:laura@usc.edu">Laura Pearlman</a>
+for this information.)
+
+<HR>
+
+<H2><A NAME="SVR-Q2">Q2: I'm running a server that provides a whole
+bunch of optional features.  Are any of them security risks?</A></H2>
+
+Yes.  Many features that increase the convenience of using and running
+the server also increase the chances of a security breach.  Here is
+a list of potentially dangerous features.  If you don't absolutely
+need them turn them off.
+
+<DL>
+  <DT> <STRONG>Automatic directory listings</STRONG>
+  <DD>
+   Knowledge is power and the more the remote hacker can figure out
+   about your system the more chance for him to find loopholes.
+   The automatic directory listings that the CERN, NCSA, Netscape,
+   Apache, and other servers offer are convenient, but have the
+   potential to give the hacker access to sensitive information.
+   This information can include: Emacs backup files containing the
+   source code to CGI scripts, source-code control logs, symbolic
+   links that you once created for your convenience and forgot to
+   remove, directories containing temporary files, etc.
+
+<p>
+   Of course, turning off automatic directory listings doesn't
+   prevent people from fetching files whose names they guess at.
+   It also doesn't avoid the pitfall of an automatic text keyword
+   search program that inadvertently adds the "hidden" file to its
+   index.  To be safe, you should remove unwanted files from your
+   document root entirely.
+
+<p>
+
+  <DT> <STRONG>Symbolic link following</STRONG>
+  <DD>
+   Some servers allow you to extend the document tree with symbolic
+   links.  This is convenient, but can lead to security breaches
+   when someone accidentally creates a link to a sensitive area of
+   the system, for example /etc.  A safer way to extend the directory
+   tree is to include an explicit entry in the server's configuration
+   file (this involves a PathAlias directive in NCSA-style servers,
+   and a Pass rule in the CERN server).
+
+<p>
+   The NCSA and Apache servers allows you to turn symbolic link
+   following off completely.  Another option allows you to enable
+   symbolic link following only if the owner of the link matches
+   the owner of the link's target (i.e. you can compromise the
+   security of a part of the document tree that you own, but not
+   someone else's part).
+
+<p>
+  <DT> <STRONG>Server side includes</STRONG>
+  <DD>
+   The "exec" form of server side includes are a major security hole.
+   Their use should be restricted to trusted users or turned off
+   completely.  In NCSA httpd and Apache, you can turn off the exec
+   form of includes in a directory by placing this statement in the
+   appropriate directory control section of access.conf:
+
+<PRE>
+      Options IncludesNoExec
+</PRE>
+
+  <DT><STRONG>User-maintained directories</STRONG>
+  <DD>
+   Allowing any user on the host system to add documents to your Web
+   site is a wonderfully democratic system.  However, you do have to
+   trust your users not to open up security holes.  This can include
+   their publishing files that contain sensitive system information,
+   as well as creating CGI scripts, server side includes, or symbolic
+   links that open up security holes.  Unless you really need this
+   feature, it's best to turn it off.  When a user needs to create a
+   home page, it's probably best to give him his own piece of the
+   document root to work in, and to make sure that he understands
+   what he's doing.  Whether home pages are located in user's
+   home directories or in a piece of the document root, it's best to
+   disallow server-side includes and CGI scripts in this area.
+</DL>
+
+<HR>
+
+<H2><A NAME="SVR-Q3">Q3: I hear that running the server as "root" is a bad idea.  Is
+    this true?</A></H2>
+
+This has been the source of some misunderstanding and disagreement on
+the Net.  Most servers are launched as root so that they can open up
+the low numbered port 80 (the standard HTTP port) and write to the log
+files.  They then wait for an incoming connection on port 80.  As soon
+as they receive this connection, they fork a child process to handle
+the request and go back to listening.  The child process, meanwhile,
+changes its effective user ID to the user "nobody" and then proceeds
+to process the remote request.  All actions taken in response to the
+request, such as executing CGI scripts or parsing server-side
+includes, are done as the unprivileged "nobody" user.
+
+<p>
+This is not the scenario that people warn about when they talk about
+"running the server as root".  This warning is about servers that have
+been configured to run their _child processes_ as root, (e.g. by
+specifying "User root" in the server configuration file).  This is a
+whopping security hole because every CGI script that gets launched
+with root permissions will have access to every nook and cranny in
+your system.
+
+<p>
+Some people will say that it's better not to start the server as root
+at all, warning that we don't know what bugs may lurk in the portion
+of the server code that controls its behavior between the time it
+starts up and the time it forks a child.  This is quite true, although
+the source code to all the public domain servers is freely available
+and there don't _seem_ to be any bugs in these portions of the code.
+Running the server as an ordinary unprivileged user may be safer.
+Many sites launch the server as user "nobody", "daemon" or "www".
+However you should be aware of two potential problems with this
+approach:
+
+<OL>
+  <LI> You won't be able to open port 80 (at least not on Unix systems).
+You'll have to tell the server to listen to another port, such as 8000
+or 8080.
+
+  <LI> You'll have to make the configuration files readable by the same
+user ID you run the server under.  This opens up the possibility of an
+errant CGI script reading the server configuration files.  Similarly,
+you'll have to make the log files both readable and writable by this
+user ID, making it possible for a subverted server or CGI script to
+alter the log.  See the discussion of file permissions above.
+
+</OL>
+<HR>
+
+<H2><A NAME="SVR-Q4">Q4: I want to share the same document tree between my ftp and Web
+    servers.  Is there any problem with this idea?</A></H2>
+
+Many sites like to share directories between the FTP daemon and the
+Web daemon.  This is OK so long as there's no way that a remote user
+can upload files that can later be read or executed by the Web daemon.
+
+<p>
+Consider this scenario: the WWW server that has been configured to
+execute any file ending with the extension ".cgi".  Using your ftp
+daemon, a remote hacker uploads a perl script to your ftp site and
+gives it the .cgi extension.  He then uses his browser to request the
+newly-uploaded file from your Web server.  Bingo! he's fooled your
+system into executing the commands of his choice.
+
+<p>
+You can overlap the ftp and Web server hierarchies, but be sure to
+limit ftp uploads to an "incoming" directory that can't be read by the
+"nobody" user.
+
+<HR>
+
+<H2><A NAME="SVR-Q5">Q5: Can I make my site completely safe by running the server in a
+    "chroot" environment?</A></H2>
+
+You can't make your server completely safe, but you can increase its
+security significantly in a Unix environment by running it in a chroot
+environment.  The chroot system command places the server in a "silver
+bubble" in such a way that it can't see any part of the file system
+beyond a directory tree that you have set aside for it.  The directory
+you designate becomes the server's new root "/" directory.  Anything
+above this directory is inaccessible.
+
+<p>
+In order to run a server in a chroot environment, you have to create a
+whole miniature root file system that contains everything the server
+needs access to.  This includes special device files and shared
+libraries.  You also need to adjust all the path names in the server's
+configuration files so that they are relative to the new root
+directory.  To start the server in this environment, place a shell
+script around it that invokes the chroot command in this way:
+
+<pre>
+   chroot /path/to/new/root /server_root/httpd
+
+</pre>
+Setting up the new root directory can be tricky and is beyond the
+scope of this document.  See the author's book (above), for details.
+You should be aware that a chroot environment is most effective when
+the new root directory is as barren as possible.  There shouldn't be
+any interpreters, shells, or configuration files (including
+<CODE>/etc/passwd</CODE>!) in the new root directory.  Unfortunately this means
+that CGI scripts that rely on Perl or shells won't run in the chroot
+environment.  You can add these interpreters back in, but you lose
+some of the benefits of chroot.
+
+<p>
+Also be aware that chroot only protects files; it's not a panacea.  It
+doesn't prevent hackers from breaking into your system in other ways,
+such as grabbing system maps from the NIS network information service,
+or playing games with NFS.
+
+<HR>
+
+<H2><A NAME="SVR-Q6">Q6: My local network runs behind a firewall.  Can I use it to
+     increase my Web site's security?</A></H2>
+
+You can use a firewall to enhance your site's security in a number of
+ways.  The most straightforward use of a firewall is to create
+"internal site", one that is accessible only to computers within your
+own local area network.  If this is what you want to do,then all you
+need to do is to place the server INSIDE the firewall:
+
+<PRE>
+          other hosts
+                     \
+       server &lt;-----&gt; FIREWALL &lt;------&gt; OUTSIDE
+                     /
+          other hosts
+</PRE>
+
+<p>
+However, if you want to make the server available to the rest of the
+world, you'll need to place it somewhere outside the firewall.  From
+the standpoint of security of your organization as a whole, the safest
+place to put it is completely outside the local area network:
+
+<PRE>
+          other hosts
+                     \
+   other hosts &lt;----&gt; FIREWALL &lt;---&gt; server &lt;----&gt; OUTSIDE
+                     /
+          other hosts
+</PRE>
+
+<p>
+This is called a "sacrificial lamb" configuration.  The server is at
+risk of being broken into, but at least when it's broken into it
+doesn't breach the security of the inner network.
+
+<p>
+It's _not_ a good idea to run the WWW server on the firewall machine.
+Now any bug in the server will compromise the security of the entire
+organization.
+
+<p>
+There are a number of variations on this basic setup, including
+architectures that use paired "inner" and "outer" servers to give the
+world access to public information while giving the internal network
+access to private documents.  See the author's book for the gory
+details.
+
+<HR>
+
+<H2><A NAME="SVR-Q7">Q7: My local network runs behind a firewall.  Can I break
+     through the firewall to give the rest of the world access to the
+     Web server?</A></H2>
+
+You can, but if you do this you are opening up a security hole in the
+firewall.  It's far better to make the server a "sacrificial lamb" as
+described above.  Some firewall architectures, however, don't give you
+the option of placing the host outside the firewall.  In this case,
+you have no choice but to open up a hole in the firewall.  There are
+two options:
+
+<OL>
+  <LI> If you are using a "screened host" type of firewall, you can
+selectively allow the firewall to pass requests for port 80 that are
+bound to or returning from the WWW server machine.  This has the
+effect of poking a small hole in the dike through which the rest of
+the world can send and receive requests to the WWW server machine.
+
+  <LI> If you are using a "dual homed gateway" type of firewall, you'll
+need to install a proxy on the firewall machine.  A proxy is a small
+program that can see both sides of the firewall.  Requests for
+information from the Web server are intercepted by the proxy,
+forwarded to the server machine, and the response forwarded back to
+the requester.  A small and reliable HTTP proxy is available from TIS
+systems at:
+
+</OL>
+<p>
+   <A HREF="ftp://ftp.tis.com/pub/firewalls/toolkit/">
+   ftp://ftp.tis.com/pub/firewalls/toolkit/</A>
+
+<p>
+The CERN server can also be configured to act as a proxy.  I feel much
+less comfortable recommending it, however, because it is a large and
+complex piece of software that may contain unknown security holes.
+
+<p>
+More information about firewalls is available in the books <A HREF="#bellovin">
+Firewalls and Internet Security</A> by William Cheswick and Steven Bellovin, and
+<A HREF="#chapmap">Building Internet Firewalls</A> by D. Brent Chapman and Elizabeth D.
+Zwicky.
+
+<HR>
+
+<H2><A NAME="SVR-Q8">Q8: How can I detect if my site's been broken into?</A></H2>
+
+For Unix systems, the tripwire program periodically scans your system
+and detects if any system files or programs have been modified.  It is
+available at
+
+<p>
+   <A HREF="ftp://ftp.cerias.purdue.edu/pub/tools/unix/ids/tripwire/">
+    ftp://ftp.cerias.purdue.edu/pub/tools/unix/ids/tripwire/
+  </A>
+
+<p>
+You should also check your access and error log files periodically for
+suspicious activity.  Look for accesses involving system commands such
+as "rm", "login", "/bin/sh" and "perl", or extremely long lines in URL
+requests (the former indicate an attempt to trick a CGI script into
+invoking a system command; the latter an attempt to overrun a
+program's input buffer).  Also look for repeated unsuccessful attempts
+to access a password protected document.  These could be symptomatic
+of someone trying to guess a password.
+
+<H2>
+Windows NT Servers</H2>
+
+<H3>
+<a NAME="SVR-Q9"></a>Q9: Are there any known security problems with the Netscape
+Communications Server for NT?</H3>
+
+<H4>
+Server-Side Include Source Code Vulnerable, June 25, 1998</H4>
+Programmers at <A HREF="http://www.sddt.com">San Diego Source,</A> the
+online news service of the <I>San Diego Daily Transcript</I> have discovered
+that by appending certain characters to the end of the URL that refers
+to a server-side include file, a remote user can recover the source code
+for the file, disclosing proprietary information, copyrighted source code,
+and even user names and passwords used to log into databases. In addition
+to affecting server-side includes, this bug affects such popular products
+as Allaire Cold Fusion, Microsoft Active Server Pages, and PHP.
+<P>Details of the exploit have not been published, but you can find a longer
+description in the original article at <A HREF="http://www.sddt.com/files/library/98/06/25/tbc.html">http://www.sddt.com/files/library/98/06/25/tbc.html</A>.
+<P>Netscape is reportedly working on a fix. Please visit the <A HREF="http://www.netscape.com">Netscape
+site</A> for possible patches. If you use server-side includes, you are
+urged to upgrade as soon as a patch becomes available.
+<P><A HREF="#Q74">O'Reilly's WebSite and WebSite Professional servers</A>
+are also vulnerable to this bug. Microsoft IIS servers do not appear to
+be.
+<H4>
+Back Door Access to Protected Files, January 8, 1998</H4>
+Netscape Enterprise Server 3.0 and FastTrack 3.01 both contain a bug that
+allows unauthorized remote users to fetch documents that are protected
+by IP address and password. This bug affects any file that does <I>not</I>
+use the standard DOS 8.3 naming convention. For example, if the document
+is named <I>somelongfile.htm</I>, then the unscrupulous user can ask for
+the file SOMEF~1.HTM, which is the mangled DOS equivalent of the file name.
+Even though the document may be password protected, this fetch will succeed.
+<P>This bug is fixed in Enterprise Server 3.5.1 or higher (see <A HREF="http://help.netscape.com/kb/server/980522-69.html">this
+technical note</A>). It is unclear whether there is a patch available for
+the FastTrack server, however, which was still at version 3.01 as of June
+30, 1998.
+<P>The same bug is present in the <a HREF="#SVR-Q12">Microsoft IIS server</a>.
+O'Reilly's WebSite Professional are reportedly free of the problem
+<H4>
+Perl CGI Scripts are Often Misconfigured, 1997</H4>
+The Netscape server does not use the NT File Manager's associations between
+file extensions and applications. Thus, even though you may have associated
+the extension .pl with the perl interpreter, perl scripts aren't recognized
+as such when placed in the cgi-bin directory. Until very recently, a Netscape
+technical note recommended placing perl.exe into cgi-bin and referring
+to your scripts as <TT>/cgi-bin/perl.exe?&amp;my_script.pl</TT>.
+<P>Unfortunately this technique allows anyone on the Internet to execute
+an arbitrary set of Perl commands on your server by invoking such scripts
+as
+<TT>/cgi-bin/perl.exe?&amp;-e+unlink+%3C*%3E</TT> (when run, this URL
+removes every file in the server's current directory). This is
+<I>not a
+good idea</I>. A current Netscape technical note suggests encapsulating
+your Perl scripts in a .bat file. However, because of a related problem
+with batch scripts, this is no safer.
+<P>Because the EMWACS, Purveyor and WebSite NT servers all use the File
+Manager extension associations, you can execute perl scripts on these servers
+without placing perl.exe into cgi-bin. They are safe from this bug.
+<H4>
+<A NAME="bat_files"></A>DOS .bat files are Insecure, February, 1996</H4>
+Older versions the Netscape servers (both the <A HREF="http://www.netscape.com/comprod/netscape_commun.html">Netscape
+Communications Server version 1.12</A> and the <A HREF="http://www.netscape.com/comprod/netscape_commerce.html">Netscape
+Commerce Server version 1.0</A>) have two problems involving the handling
+of CGI scripts. One of these problems is also shared by the <a HREF="#SVR-Q10">WebSite
+Server</a>.
+<P>Ian Redfern (<A HREF="mailto:redferni@logica.com">redferni@logica.com</A>)
+has discovered that a similar hole exists in the processing of CGI scripts
+implemented as .bat files. The following is excerpted from his e-mail describing
+the problem:
+<PRE>  Consider test.bat:
+
+    @echo off
+    echo Content-type: text/plain
+    echo
+    echo Hello World!
+
+  If this is called as &quot;/cgi-bin/test.bat?&amp;dir&quot; you get the output
+  of the CGI program, followed by a directory listing.
+
+  It appears that the server is doing system(&quot;test.bat &amp;dir&quot;) which
+  the command interpreter is handling (not unreasonably) in the
+  same way /bin/sh would - execute it, and if things go OK,
+  execute the dir command.</PRE>
+
+<H3>
+<A NAME="SVR-Q10"></A>Q10: Are there any known security problems with the O'Reilly
+WebSite server for Windows NT/95?</H3>
+
+<H4>
+Server-Side Include Source Code Vulnerable, June 25, 1998</H4>
+Programmers at <A HREF="http://www.sddt.com">San Diego Source,</A> the
+online news service of the <I>San Diego Daily Transcript</I> have discovered
+that by appending certain characters to the end of the URL that refers
+to a server-side include file, a remote user can recover the source code
+for the file, disclosing proprietary information, copyrighted source code,
+and even user names and passwords used to log into databases. In addition
+to affecting server-side includes, this bug affects such popular products
+as Allaire Cold Fusion, Microsoft Active Server Pages (using a 3d party
+ASP interpreter), and PHP.
+<P>Details of the exploit have not been published, but you can find a longer
+description in the original article at <A HREF="http://www.sddt.com/files/library/98/06/25/tbc.html">http://www.sddt.com/files/library/98/06/25/tbc.html</A>.
+<P>O'Reilly has announced that a fix will be available in WebSite and WebSite
+Professional version 2.3. If you use server-side includes, you should strongly
+consider upgrading.
+<P><A HREF="#SVR-Q9">Windows-based Netscape servers </A>are also vulnerable
+to this bug. Microsoft IIS servers do not appear to be.
+<H4>
+.BAT Scripts Vulnerable (1996)</H4>
+<A HREF="http://website.ora.com/">WebSite</A> versions 1.1b and earlier
+have the same problem with <A HREF="#bat_files">DOS .bat files</A> that
+Netscape does. However because WebSite supports three different types of
+CGI scripting interfaces (native Windows, Standard CGI for Perl scripts,
+and the rarely used DOS .bat file interface), the recommended action is
+to turn off the server's support for DOS CGI scripts. This will not affect
+the server's ability to run Visual Basic, Perl, or C scripts.
+<P><B>This hole has been fixed in version 1.1c.</B> You should upgrade
+to this version with the patch provided at the WebSite home page.
+<P>Detailed information on the actions necessary to close the WebSite .bat
+file security hole can be found at <A HREF="http://website.ora.com/devcorner/secalert1.html">this
+page provided by WebSite's developer.</A>
+<H3>
+<A NAME="SVR-Q11"></A>Q11: Are there any known security problems with the Purveyor
+Server for Windows NT?</H3>
+The Purveyor Web server, all versions, is vulnerable to the same bug that
+allows the source code for server-side include files to be revealed. See
+the description of this bug in the section on <a href="#SVR-Q9">Netscape Enterprise
+Server</a> for more details. Support for Purveyor was discontinued in 1997,
+so no fix or upgrade is available. Your choices are to avoid using server-side
+includes, or to change server software completely.
+<H3>
+<a NAME="SVR-Q12"></a>Q12: Are there any known security problems with the Microsoft's
+IIS Web Server?</H3>
+
+<H4>
+Back Door Access to Protected Files, January 8, 1998</H4>
+Microsoft Internet Information Server and Personal Web Server versions
+4.0 and earlier contain a bug that allows unauthorized remote users to
+fetch documents that are restricted by IP address or SSL use. This bug
+affects any file that does <I>not</I> use the standard DOS 8.3 naming convention.
+For example, if the document is named
+<I>somelongfile.htm</I>, then the
+unscrupulous user can ask for the file SOMEF~1.HTM, which is the mangled
+DOS equivalent of the file name. Even though the document may be restricted,
+this fetch will succeed. Password protection, which is accomplished through
+file system access control lists, is not affected by this bug, although
+other file-specific settings, such as PICS rating, are.
+<P>A patch is available on <A HREF="http://www.microsoft.com/security/">Microsoft's
+security pages</A>. Newer versions of IIS are free of the problem.
+<P>The same bug is present in the <a HREF="#SVR-Q9">Netscape Enterprise and
+Commerce servers</a>. Recent versions of WebSite Professional are reportedly
+free of the problem
+<H4>
+.BAT CGI Script Hole, March 1996</H4>
+Versions of the Microsoft IIS server downloaded prior to 3/5/96 contain
+the same .BAT file bug that appears in other NT-based servers. In fact
+the problem is worse than on other servers because .BAT CGI scripts doesn't
+even have to be installed on the server for a malicious remote user to
+invoke any arbitrary set of DOS commands on your server!
+<P>Microsoft has released a patch for this bug, available at
+<A HREF="http://www.microsoft.com/infoserv">http://www.microsoft.com/infoserv</A>/.
+In addition, all copies of the IIS server downloaded after 3/5/96 should
+be free of this bug. If you use this server, you should check the creation
+date of your server binary and upgrade it if necessary.
+<P>Versions of Microsoft IIS through 3.0 are vulnerable to a bug that allows
+remote users to download and read the <B>contents</B> of executable scripts,
+potentially learning sensitive information about the local network configuration,
+the name of databases, or the algorithm used to calculate vendor discounts.
+This bug appears whenever a script-mapped file is placed in a directory
+that has both execute and read permissions. Remote users can download the
+script itself simply by placing additional periods at the end of its URL.
+To avoid this bug, turn off read permissions in any directory that contains
+scripts. Alternatively, download the patch provided by Microsoft at:
+<BLOCKQUOTE>
+<PRE><A HREF="ftp://ftp.microsoft.com/bussys/winnt/winnt-public/fixes/usa/nt40/hotfixes-postsp2/iis-fix">ftp://ftp.microsoft.com/bussys/winnt/winnt-public/fixes/usa/nt40/hotfixes-postsp2/iis-fix</A></PRE>
+</BLOCKQUOTE>
+
+<H4>
+June 25, 1997 -- denial of service attack</H4>
+IIS version 3.0 is vulnerable to a simple denial of service attack. By
+sending a long URL of a particular length to an IIS server, anyone on the
+Internet can cause the Web server to crash. The server will need to be
+restarted manually in order to resume Web services. A variety of Perl and
+Java programs that exploit this bug are floating around the Internet, and
+actual attacks have been reported.
+<P>The exact length of the URL that is required to cause the crash varies
+from server to server, and depends on such issues as memory usage. The
+magic length is generally around 8192 characters in length, suggesting
+that the problem is a memory buffer overflow. In the past such problems
+have often been exploited by knowledgeable hackers to execute remote commands
+on the server, so this bug is potentially more than annoyance.
+<P>A patch is available from Microsoft at <A HREF="ftp://ftp.microsoft.com/bussys/winnt/winnt-public/fixes/usa/nt40/hotfixes-postSP3/iis-fix">ftp://ftp.microsoft.com/bussys/winnt/winnt-public/fixes/usa/nt40/hotfixes-postSP3/iis-fix</A>
+<H3>
+<a NAME="SVR-Q13"></a>Q13: Are there any known security problems with Sun Microsystem's
+JavaWebServer for Windows NT?</H3>
+
+<H4>
+Servlet Source Code Vulnerable to Disclosure, June 29, 1998</H4>
+The JavaWebServer is able to compile and execute Java class files in a
+manner similar to CGI scripts (but much more efficiently). These small
+Java programs are called &quot;servlets.&quot;
+<P>The Windows NT version of <A HREF="http://jserv.java.sun.com/products/webserver/index.html">JavaWebServer</A>
+is vulnerable to a bug that allows the source code for Java servlets to
+be downloaded by remote users. This bug is similar to ones identified for
+Windows NT versions of <A HREF="#Q74">O'Reilly WebSite Professional</A>
+and <A HREF="#SVR-Q9">Netscape Enterprise Server</A>. By appending certain
+characters to the end of a servlet's URL, a remote user can fool the server
+into sending him the compiled servlet, which can then be decompiled by
+a product such as Mocha. Since servlets may contain proprietary code, trade
+secrets or even database access passwords, this is a significant problem.
+<P>Sun has not yet announced a fix for this problem. Check their Web site
+for details. More information can be found at <A HREF="http://www.sddt.com/files/library/98/06/29/tbd.html">http://www.sddt.com/files/library/98/06/29/tbd.html</A>
+<H3>
+<A NAME="SVR-Q14"></A>Q14: Are there any known security problems with the MetaInfo
+MetaWeb Server?</H3>
+
+<H4>
+Physical Path not Protected, June 30, 1998</H4>
+MetaInfo (<A HREF="http://www.metainfo.com">www.metainfo.com</A>) produces
+a number of NT products, including a port of the Unix Sendmail program
+and a DHCP/DNS server. It provides a Web server, called MetaWeb, as a user-friendly
+front end to its administration tools for these products. At the time this
+was written, MetaWeb was at version 3.1.
+<P>According to Jeff Forristal, who discovered the bug, MetaWeb is vulnerable
+to the "double-dot" problem that plagued early versions of the Microsoft
+IIS server. By including ".." pairs in the URL path, the server can be
+tricked into giving access to directories outside the Web document root,
+including documents in the Windows system directory. This allows password
+files and other confidential information to be retrieved. Worse, a variant
+of this attack also gives remote users the ability to run any executable
+binary that happens to be installed on the server machine.
+<P>MetaWeb has not yet made an upgrade or patch available. You are urged
+to upgrade when a fix does become available. A good short-term solution
+is to disable remote administration via the Web interface.
+<P>More information about the MetaInfo bug may be posted <A HREF="http://www.forristech.com">Jeff
+Forristal's site</A>.
+<H2>
+Unix Servers</H2>
+
+<H3>
+<A NAME="SVR-Q15"></A>Q15: Are there any known security problems with NCSA httpd?</H3>
+Versions of <A HREF="http://hoohoo.ncsa.uiuc.edu/docs/">NCSA httpd</A>
+prior to 1.4 contain a serious security hole relating to a fixed-size string
+buffer. Remote users could break into systems running this server by requesting
+an extremely long URL. Although this bug has been well publicized for more
+than a year, many sites are still running unsafe versions of the server.
+The current version of the software, version 1.5, does not suffer from
+this bug and is available at the link given at the beginning of this paragraph.
+<P><A NAME="util.c"></A>Recently it has come to light that example C code
+(<TT>cgi_src/util.c</TT>) long distributed with the NCSA httpd as an example
+of how to write safe CGI scripts ommitted the newline character from the
+list of characters that are shouldn't be passed to shells. This ommission
+introduces a serious bug into any CGI scripts that were built on top of
+this example code: a remote user can exploit this bug to force the CGI
+script to execute any arbitrary Unix command. This is another example of
+the <A HREF="#bad_shell">dangers of executing shell commands</A> from CGI
+scripts.
+<P>In addition, the NCSA server source code tree itself contains the same
+bug (versions 1.5a and earlier). The faulty subroutine is identical, but
+in this case is found in the file
+<TT>src/util.c</TT> as opposed to <TT>cgi_src/util.c</TT>.
+After looking through the server source code, I haven't found a place where
+a user-provided string is passed to a shell after being processed by this
+subroutine, so I don't <I>think</I> this represents an actual security hole.
+However, it's best to apply the patch shown below to be safe.
+<P>The Apache server, versions 1.02 and earlier, also contains this hole
+in both its <TT>cgi_src</TT> and <TT>src/</TT> subdirectories. It's not
+unlikely that the same problem is present in other derivatives of the NCSA
+source code.
+<P>The patch to fix the holes in the two <TT>util.c</TT> files is simple.
+"phf" and any CGI scripts that use this library should be recompiled after
+applying this patch (the GNU patch program can be found at <A HREF="ftp://prep.ai.mit.edu/pub/gnu/patch-2.1.tar.gz">ftp://prep.ai.mit.edu/pub/gnu/patch-2.1.tar.gz</A>).
+You should apply this patch twice, once while inside the cgi_src/ subdirectory,
+and once within the src/ directory itself:
+<PRE>   tulip% cd ~www/ncsa/cgi_src
+   tulip% patch -f &lt; ../util.patch
+   tulip% cd ../src
+   tulip% patch -f &lt; ../util.patch
+
+---------------------------------- cut here ----------------------------------
+*** ./util.c.old        Tue Nov 14 11:38:40 1995
+--- ./util.c            Thu Feb 22 20:37:07 1996
+***************
+*** 139,145 ****
+
+      l=strlen(cmd);
+      for(x=0;cmd[x];x++) {
+!         if(ind(&quot;&amp;;`'\&quot;|*?~&lt;&gt;^()[]{}$\\&quot;,cmd[x]) != -1){
+              for(y=l+1;y&gt;x;y--)
+                  cmd[y] = cmd[y-1];
+              l++; /* length has been increased */
+--- 139,145 ----
+
+      l=strlen(cmd);
+      for(x=0;cmd[x];x++) {
+!         if(ind(&quot;&amp;;`'\&quot;|*?~&lt;&gt;^()[]{}$\\\n&quot;,cmd[x]) != -1){
+              for(y=l+1;y&gt;x;y--)
+                  cmd[y] = cmd[y-1];
+              l++; /* length has been increased */
+---------------------------------- cut here ----------------------------------</PRE>
+
+<H3>
+<A NAME="SVR-Q16"></A>Q16: Are there any known security problems with Apache httpd?</H3>
+<b>Authentication Headers, Directory Listing Bugs - 28 February 2001</b>
+<p>Versions prior to v1.3.20 contain server programming errors that present
+moderate to serious security risks. Under the right circumstances,
+authentication headers would not be provided to the client. The default
+configuration would lead two modules to present directory listings instead of
+presenting the default index.html file, if the URL retrieved was artificially
+long and contained many slashes.&nbsp;</p>
+<p><b>NetWare Paths - 31 January 2001</b></p>
+<p>The NetWare functions created a bug whereby directives for path settings were
+not interpreted correctly.&nbsp;</p>
+<p><b>mod_rewrite Globbing - 14 Oct 2000</b></p>
+<p>The mod_rewrite module, if the result of filename rewrites caused a file to
+include $0 or other such references, could result in server configuration
+information being presented to a browser.</p>
+<p><b>Other</b></p>
+<p>
+Versions of Apache httpd prior to 1.2.5 contain several programming errors
+that present moderate security risks. Users who have local access to the
+server machine (e.g. Web authors), can carefully craft HTML files which,
+when fetched, will give the user the ability to execute Unix commands with
+Web server user permissions. Since local users usually already have as
+much, if not more, access to the system as the Web server, this does not
+present a major risk, but it may be of concern to ISP's who provide Web
+hosting services to untrusted authors. Apache version 1.2.5 is free of
+these bugs; upgrade at your earliest convenience. If you are using a 1.3
+beta version of Apache, you may apply a patch located atthe Apache site,
+or await the release of 1.3b4.</p>
+<P>Apache servers prior to 1.1.3 contain two security holes which are of
+far more concern. The first hole affects servers compiled with the "mod_cookies"
+module. Servers compiled with this module contain a vulnerability that
+allows remote users to send the server extremely long cookies and overrun
+the program stack, potentially allowing arbitrary commands to be executed.
+Because this gives remote users access to the server host, it is a far
+greater vulnerability than the holes discussed above, which only can be
+exploited by local users.
+<P>The second problem with 1.1.1 affects automatic directory listings.
+Ordinarily, a remote user cannot obtain a directory listing if the directory
+contains a "welcome page", such as "index.html". A bug causes this check
+to fail under certain circumstances, allowing the remote user to see the
+contents of the directory even if the welcome page is present. This hole
+is less serious than the first one, but is still a potential information
+leak.
+<P>More information and current Apache binaries can be found at:
+<BLOCKQUOTE><A HREF="http://www.apache.org/">http://www.apache.org/</A></BLOCKQUOTE>
+
+<H3>
+<A NAME="SVR-Q17"></A>Q17: Are there any known security problems with the Netscape
+Servers?</H3>
+
+Netscape Enterprise server versions 3.6sp2 and earlier, as well as
+FastTrack server versions 3.01 and earlier contain a buffer overflow
+bug that can allow a remote user to gain shell access to the server
+machine.  More information on this problem, as well as pointers to
+patches, can be found at <a
+href="http://www.ciac.org/ciac/bulletins/j-062.shtml">http://www.ciac.org/ciac/bulletins/j-062.shtml</a>.
+
+<P>There have also been two well-publicized recent episodes in which
+the system used by the <A HREF="http://www.netscape.com/">Netscape
+Secure Commerce Server</A> to encrypt sensitive communications was
+cracked. In the first episode, a single message encrypted with
+Netscape's less secure 40-bit encryption key was cracked by brute
+force using a network of workstations.  The 128-bit key used for
+communications within the U.S. and Canada is considered immune from
+this type of attack.  <P>In the second episode, it was found that the
+random number generator used within the server to generate encryption
+keys was relatively predictable, allowing a cracking program to
+quickly guess at the correct key. This hole has been closed in the
+recent releases of the software, and you should upgrade to the current
+version if you rely on encryption for secure communications.  Both the
+server <I>and</I> the browser need to be upgraded in order to
+completely close this hole. See <A
+HREF="http://home.netscape.com/newsref/std/random_seed_security.html">http://home.netscape.com/newsref/std/random_seed_security.html</A>
+for details.  <H3>
+
+<A NAME="SVR-Q18"></A>Q18: Are there any known security problems with the Lotus
+Domino Go Server?</H3>
+Bill Jones <A HREF="mailto:sneex@mac.com">&lt;sneex@mac.com></A>
+reports that older versions of Lotus Domino Go, formerly known as IBM Internet
+Connection Server (ICS), contained a security hole in directory browsing.
+When directory browsing is set to "fancy", a potential hacker can browse
+backward through the directory tree all the way up to root ("/"). Thus,
+private system files and other documents are exposed to interception. This
+bug was present in versions 1.0 through 2.0 of ICS, and affected both the
+AIX and OS/2 Warp versions.
+<P>According to Richard L. Gray (<A HREF="mailto:rlgray@us.ibm.com>">rlgray@us.ibm.com></A>)
+of IBM, all known problems have been fixed in versions 4.2.1.3 and higher.
+Lotus Domino Go also now runs on Windows 95, Windows NT, OS/390, HPUX and
+Solaris systems.
+<H3>
+<A NAME="SVR-Q19"></A>Q19: Are there any known security problems with the WN
+Server?</H3>
+The <A HREF="http://hopf.math.nwu.edu">WN server</A> is free of any known
+security holes. As explained in <A HREF="wwwsf1.html#GEN-Q6">Q6</A> it contains
+several features that lessen the chance that security will be breached
+by improper server configuration.
+<H2>
+Macintosh Servers</H2>
+
+<H3>
+<A NAME="SVR-Q20"></A>Q20: Are there any known security problems with WebStar?</H3>
+There is a gaping hole in WebSTAR's handling of log files. If you install
+WebSTAR using the default configuration, the server's log file will be
+located within the document tree. Anyone on the Internet can download the
+entire server log and review all remote accesses to the server simply by
+requesting the URL &quot;http://your.site/WebSTAR%20LOG ". As discussed in <A HREF="wwwsf6.html">Server
+Logs and Privacy</A>, this is a violation of users' expectation to privacy.
+Use WebSTAR's administrative tool to change the location of the log file
+to some place outside the document tree.
+<P>As far as the security of the WebSTAR server itself goes, there is reason
+to think that WebSTAR is more secure than its Unix and Windows counterparts.
+Because the Macintosh does not have a command shell, and because it does
+not allow remote logins, it is reasonable to expect that the Mac is inherently
+more secure than the other platforms. In fact this expectation has been
+borne out so far: no specific security problems are known in either WebStar
+or its shareware ancestor MacHTTP.
+<P>In early 1996 a consortium of Macintosh Internet software development
+companies, including StarNine, the developer of WebStar, posted a $10,000
+reward to anyone who could read a password-protected Web page on a Macintosh
+running WebStar software. As described in an article about the challenge
+in <A HREF="http://www.dartmouth.edu/pages/TidBITS/TidBITS.html">Tidbits#317/04-Mar-96</A>,
+after 45 days no one had stepped forward to claim the prize.
+<P>Although one cannot easily "break in" to a Macintosh host in the conventional
+way, potential security holes do exist:
+<OL>
+<LI>
+Exploiting holes in the server to read files outside the official document
+tree.</LI>
+
+<LI>
+Finding a way to crash the server.</LI>
+
+<LI>
+Exploiting holes in CGI scripts to execute AppleScript commands. This particularly
+of concern for Perl scripts. All the caveats and warnings about <A HREF="wwwsf4.html">safe
+scripting</A> apply.</LI>
+</OL>
+In fact, a repeat "Crack-a-Mac" challenge in 1997, sponsored by a Swedish
+consulting company, was not so fortunate. In this case, a cracker was able
+to break into the server and steal the protected page by exploiting bugs
+in two server remote administration and editing add-ons. This emphasizes
+the risk that you runs whenever you add CGI scripts, server modules, and
+other extensions to Web servers. Details on the successful break-in, along
+with links to patched server extensions, can be found at <A HREF="http://hacke.infinit.se/">http://hacke.infinit.se/</A>
+<H3>
+<A NAME="SVR-Q21"></A>Q21: Are there any known security problems with MacHTTP?</H3>
+MacHTTP shares WebSTAR's problem with log files. See the discussion <A HREF="#Q20">above</A>.
+<H3>
+<A NAME="SVR-Q22"></A>Q22: Are there any known security problems with Quid
+Pro Quo?</H3>
+The Quid Pro Quo server saves its default log file inside the document
+root, at URL <TT>http://site.name/server%20logfile</TT>. A knowledgeable
+remote user can find out every access that anyone's made to your server!
+<P>(This information provided by Paul DuBois &lt;<A HREF="mailto:dubois@primate.wisc.edu">dubois@primate.wisc.edu</A>>).
+<H2>
+Other Servers</H2>
+
+<H3>
+<A NAME="SVR-Q23"></A>Q23: Are there any known security problems with Novell
+WebServer?</H3>
+If you are running Novell Webserver version 3.x and have the Web Server
+Examples Toolkit v.2 installed, you have a major security hole. Users can
+view any file on your system and download directory listings, possibly
+gaining information needed to break into your system. The hole is in the
+example CGI Perl script files.pl. Remove it from your /perl directory (typically
+located in SYS:INW_WEB\SHARED\DOCS\LCGI\PERL5. Better yet, remove
+<B>all</B>
+CGI scripts that are not essential for the operation of your site.
+<p>&nbsp;</p>
+
+<hr>
+
+<h2><a NAME="privacy">Server Logs and Privacy</a></h2>
+(Thanks to <a HREF="mailto:bagwill@nist.gov">Bob Bagwill</a> who contributed
+many of the Q&amp;A's in this section)
+<h3><a NAME="SVR-Q24">Q24: What information do readers reveal that they might
+want to keep private?</a></h3>
+<p>Most servers log every access. The log usually includes the IP address and/or
+host name, the time of the download, the user's name (if known by user
+authentication or obtained by the identd protocol), the URL requested (including
+the values of any variables from a form submitted using the GET method), the
+status of the request, and the size of the data transmitted. Some browsers also
+provide the client the reader is using, the URL that the client came from, and
+the user's e-mail address. Servers can log this information as well, or make it
+available to CGI scripts. Most WWW clients are probably run from single-user
+machines, thus a download can be attributed to an individual. Revealing any of
+those datums could be potentially damaging to a reader.
+<p>For example, XYZ.com downloading financial reports on ABC.com could signal a
+corporate takeover. The accesses to a internal job posting reveals who might be
+interested in changing jobs. The time a cartoon was downloaded reveals that the
+reader is misusing company resources. A referral log entry might contain
+something like:
+<pre>
+ file://prez.xyz.com/hotlists/stocks2sellshort.html -&gt; http://www.xyz.com/
+</pre>
+<p>The pattern of accesses made by an individual can reveal how they intend to
+use the information. And the input to searches can be particularly revealing.
+<p>Another way Web usage can be revealed locally is via browser history,
+hotlists, and cache. If someone has access to the reader's machine, they can
+check the contents of those databases. An obvious example is shared machines in
+an open lab or public library.
+<p>Proxy servers used for access to Web services outside an organization's
+firewall are in a particularly sensitive position. A proxy server will log every
+access to the outside Web made by every member of the organization and track
+both the IP number of the host making the request and the requested URL. A
+carelessly managed proxy server can therefore represent a significant invasion
+of privacy.
+<hr>
+<h3><a NAME="SVR-Q25">Q25: Do I need to respect my readers' privacy?</a></h3>
+Yes. One of the requirements of responsible net citizenship is respecting the
+privacy of others. Just as you don't forward or post private email without the
+author's consent, in general you shouldn't use or post Web usage statistics that
+can be attributed to an individual.
+<p>If you are a government site, you may be required by law to protect the
+privacy of your readers. For example, U.S. Federal agencies are not allowed to
+collect or publish many types of data about their clients.
+<p>In most U.S. states, it is illegal for libraries and video stores to sell or
+otherwise distribute records of the materials that patrons have checked out.
+While the courts have yet to apply the same legal standard to be applied to
+electronic information services, it is not unreasonable for users to have the
+same expectation of privacy on the Web. In other countries, for example Germany,
+the law explicitly forbids the disclosure of online access lists. If your site
+chooses to use the Web logs to populate your mailing lists or to resell to other
+businesses, make sure you clearly advertise that fact.
+<hr>
+<h3><a NAME="SVR-Q26">Q26: How do I avoid collecting too much information?</a></h3>
+One of the requirements of your Web site may be to collect statistics on usage
+to provide data to the organization and to justify Web site resources. In
+general, collecting information about accesses by individuals is probably not
+warranted or even useful.
+<p>The easiest way to avoid collecting too much information is to use a server
+that allows you to tailor the output logs, so that you can throw away everything
+but the essentials. Another way is to regularly summarize and discard the raw
+logs. Since the logs of popular sites tend to grow quickly, you probably will
+need to do that anyway.
+<hr>
+<h3><a NAME="SVR-Q27">Q27: How do I protect my readers' privacy?</a></h3>
+There are two classes of readers: outsiders reading your documents, and insiders
+reading your documents and outside documents.
+<p>You can protect outsiders by summarizing your logs. You can help protect
+insiders by:
+<ol>
+  <li>having a clear site policy on Web usage.
+  <li>educating them about the site policy and risks of Web usage.
+  <li>using a site-wide proxy cache to hide the identity of individual hosts
+    from outside servers.
+</ol>
+<p>If your site does not want to reveal certain Web accesses from your site's
+domain, you may need to get Web client accounts from another Internet provider
+that can provide anonymous access.
+
+<HR>
+
+<table width="100%">
+<tr>
+  <td>
+  <td align=center><A HREF="index.html#contents">
+      <img src="i/up.gif" align=middle width=20 height=22 border=0 alt="^ "
+      >Up to <cite>Table of Contents</cite></A><br>
+  <td>
+<tr>
+  <td align=left>
+  <a HREF="wwwsf2.html"><img src="i/left.gif" align=middle width=20 height=22 border=0 alt="&lt;&lt; "
+      >Back to <cite>Client Side Security</cite></a><br>
+  <td>
+  <td align=right>  <A HREF="wwwsf4.html">Forward to <cite>CGI Scripts</cite><img
+      src="i/right.gif" align=middle width=20 height=22 border=0 alt=" &gt;&gt;"></a><br>
+</table>
+
+<HR>
+
+<p>
+
+<address><A HREF="http://www.genome.wi.mit.edu/~lstein/">Lincoln D. Stein</A>
+(<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>) and <a href="mailto:jns@digitalisland.net">John
+  N. Stewart (jns@digitalisland.net)</a><br>
+</address>
+
+<p>
+
+<tt>$Id: wwwsf3.html,v 1.11 2001/11/18 19:55:53 lstein Exp $</tt>
+</body> </html>

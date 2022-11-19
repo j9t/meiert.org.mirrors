@@ -1,0 +1,204 @@
+@import url(/setup/notification.css); /* mirrors.meiert.org notification */
+@import url(https://fonts.googleapis.com/css?family=Alegreya:400italic,400&display=swap);
+
+html {
+	background: #fff url(/onethousandthankyous.org/media/fewerthanonethousandthankyous.png) center top repeat-y;
+	color: #000;
+	font: 187.5%/1.5 alegreya, cambria, palatino, georgia, serif;
+}
+
+body,
+h1,
+a {
+	position: relative;
+}
+
+body,
+.video {
+	border: 1em solid;
+}
+
+body {
+	border-width: 1em 0;
+	margin: auto;
+	padding: 1em 0;
+	width: 23.33em;
+}
+
+footer,
+h1 {
+	font-style: italic;
+}
+
+footer {
+	font-size: .5em;
+	position: absolute;
+	right: 0;
+	top: .1em;
+}
+
+h1,
+p,
+img,
+.video {
+	margin: 1em 0 0;
+}
+
+h1 {
+	float: left;
+	font-size: 2em;
+	font-weight: 400;
+	line-height: 1;
+	padding-right: .67em;
+	top: -.47em;
+}
+
+img {
+	background: url(/onethousandthankyous.org/media/onethousandthankyous.png) left top no-repeat;
+	display: block;
+	height: 3338px;
+	width: 700px;
+}
+
+img#teaser {
+	display: none;
+}
+
+a,
+ins {
+	text-decoration: none;
+}
+
+a {
+	background: #f00;
+	border-radius: .2em;
+	color: #fff;
+	padding: .05em .15em;
+}
+
+a:visited {
+	background: #090;
+}
+
+a:hover {
+	background: #4b0082;
+	left: 1px;
+	top: 1px;
+}
+
+a:active {
+	background: #8f00ff;
+}
+
+a:focus {
+	background: #069;
+}
+
+ins {
+	color: #aaa;
+}
+
+.video {
+	line-height: 0;
+	text-align: center;
+}
+
+.video iframe {
+	border: 0;
+	width: 21.33em;
+}
+
+.video iframe#film-action {
+	height: 16em;
+}
+
+.video iframe#film-presentation {
+	height: 12em;
+}
+
+@media screen and (max-width: 760px), print {
+
+	html {
+		background-image: none;
+	}
+
+	body {
+		padding-top: 0;
+		width: auto;
+	}
+
+	p:nth-last-of-type(2) {
+		display: none;
+	}
+
+}
+
+@media screen and (max-width: 760px) {
+
+	body {
+		margin: 0 .33em;
+	}
+
+	footer,
+	h1 {
+		font-size: 1em;
+		position: static;
+	}
+
+	footer {
+		margin: 1em 0 0;
+	}
+
+	h1 {
+		line-height: 1.5;
+	}
+
+	img {
+		background-position: center top;
+		width: 100%;
+	}
+
+	span {
+		display: none;
+	}
+
+	.video {
+		background: #000;
+		border: 0;
+	}
+
+	.video iframe {
+		width: 10em;
+	}
+
+	.video iframe#film-action {
+		height: 7.5em;
+	}
+
+	.video iframe#film-presentation {
+		height: 5.63em;
+	}
+
+}
+
+@media print {
+
+	html {
+		font-size: 100%;
+	}
+
+	body {
+		margin: 0;
+	}
+
+	footer,
+	img,
+	.video {
+		display: none;
+	}
+
+	a {
+		color: #000 !important;
+	}
+
+}

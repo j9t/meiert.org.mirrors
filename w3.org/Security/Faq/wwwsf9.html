@@ -1,0 +1,1046 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <title>WWW Security FAQ: Securing Against Denial of Service Attacks</title>
+</head>
+<body bgcolor="#FFFFFF">
+
+<h1>
+<a href="https://www.w3.org/"><img SRC="i/w3c_home.gif" ALT="[W3C]" BORDER=0 height=48 width=72 align=MIDDLE></a>
+The World Wide Web Security FAQ</h1>
+
+<hr>
+<h2>
+DISCLAIMER</h2>
+This information is provided by Lincoln Stein (<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>).
+The World Wide Web Consortium (W3C) hosts this document as a service to
+the Web Community; however, it does not endorse its contents. For further
+information, please contact Lincoln Stein directly.
+<table WIDTH="100%" >
+<tr>
+<td></td>
+
+<td ALIGN=CENTER><a href="www-security-faq.html#contents"><img SRC="i/up.gif" ALT="^" BORDER=0 height=22 width=20 align=MIDDLE></a><a href="www-security-faq.html#contents">Up
+to <i>Table of Contents</i></a></td>
+
+<td></td>
+</tr>
+
+<tr>
+<td ALIGN=LEFT><a href="wwwsf7.html"><img SRC="i/left.gif" ALT="<<" BORDER=0 height=22 width=20 align=MIDDLE></a><a href="wwwsf7.html">Back
+to </a><i><a href="wwwsf8.html">Specific Servers</a></i></td>
+
+<td></td>
+
+<td ALIGN=RIGHT><a href="wwwsf10.html">Forward to <i>Bibliography</i></a><a href="wwwsf10.html"><img SRC="i/right.gif" ALT=">>" BORDER=0 height=22 width=20 align=MIDDLE></a></td>
+</tr>
+</table>
+
+<hr>
+<h1>
+<a NAME="specific"></a>11. Securing against Denial of Service attacks</h1>
+
+<h2>
+Overview</h2>
+
+<h3>
+<a NAME="Q88"></a>Q88: What is a Denial of Service attack?</h3>
+Denial of Service (DoS) is an attack designed to render a computer or network
+incapable of providing normal services.  The most common DoS attacks
+will target the computer's network bandwidth or connectivity.  Bandwidth
+attacks flood the network with such a high volume of traffic, that all
+available network resources are consumed and legitimate user requests can
+not get through.  Connectivity attacks flood a computer with such
+a high volume of connection requests, that all available operating system
+resources are consumed, and the computer can no longer process legitimate
+user requests.  The high-profile attacks of the week of February 6th,
+2000 were primarily bandwidth attacks, and all of the targets were high-profile
+internet web sites.  A complete description of Denial of Service attacks
+is available from CERT on <a href="http://www.cert.org/tech_tips/denial_of_service.html">http://www.cert.org/tech_tips/denial_of_service.html</a>.
+<h3>
+<a NAME="Q89"></a>Q89: What is a Distributed Denial of Service attack?</h3>
+A Distributed Denial of Service (DDoS) attack uses many computers to launch
+a coordinated DoS attack against one or more targets.  Using client/server
+technology, the perpetrator is able to multiply the effectiveness of the
+Denial of Service significantly by harnessing the resources of multiple
+unwitting accomplice computers which serve as attack platforms.  Typically
+a DDoS master program is installed on one computer using a stolen account.
+The master program, at a designated time, then communicates to any number
+of "agent" programs, installed on computers anywhere on the internet.
+The agents, when they receive the command, initiate the attack.  Using
+client/server technology, the master program can initiate hundreds or even
+thousands of agent programs within seconds.
+<h3>
+<a NAME="Q90"></a>Q90: How is a DDoS executed against a website?</h3>
+A website DDoS is executed by flooding one or more of the site's web servers
+with so many requests that it becomes unavailable for normal use.
+If an innocent user makes normal page requests during a DDoS attack, the
+requests may fail completely, or the pages may download so slowly as to
+make the website unusable.  DDoS attacks typically take advantage
+of several computers which simultaneously launch hundreds of thousands
+of requests at the target website.  In order not to be traced, the
+perpetrators will break into unsecured computers on the internet, hide
+rogue DDoS programs on them, and then use them as unwitting accomplices
+to anonymously launch the attack.
+<h3>
+<a NAME="Q91"></a>Q91: Is there a quick and easy way to secure against
+a DDoS attack?</h3>
+No.  From a simplistic perspective, the best solution is to secure
+computers from being hijacked and used as attack platforms.  This
+cuts the problem off before it can ever manifest.  Thus many experts
+suggest that we "pull together as a community" to secure our internet computers
+from becoming unwitting accomplices to such malicious intruders.
+Unfortunately, for every business that has the knowledge, budget, and inclination
+to make such changes, there are many more which lack such resources.
+<p>Plus, the attackers are most likely going to use non-commercial computers
+as attack platforms, because they are usually easier to break into.
+University systems are a favorite, because they are often understaffed
+or the systems are set to minimum security levels to allow students to
+explore the systems as part of their education.  Further, this is
+not just a national problem.  Any internet server in the world could
+be used as an attack platform.
+<p>Still, the simplest and most effective solution for preventing DDoS
+is through a global cooperative effort to secure the internet.  The
+first step in the process, therefore, is concerned with scanning your internet
+computers to make sure they are not being used as unwitting DDoS attack
+platforms.  This is not just good internet citizenry, however, because
+this also serves to document and verify that your internet computers are
+not suspect when DDoS attacks occur.
+<h3>
+<a NAME="Q92"></a>Q92: Can the U.S. Government make a difference?</h3>
+Certainly.  The government could impose many types of restrictions
+on the internet that could greatly limit such types of attacks, at least
+from U.S.-based computers.  Getting on the web could require the equivalent
+of a "Driver's License", having a website could require the equivalent
+of a "Commercial Permit", and all ISP's could be tightly regulated, much
+as the public utilities (Water, Power, etc.) are today.  However the
+government is treading a fine line between limiting criminal activity and
+limiting economic growth, education, freedom of information, and general
+personal freedoms.  For the time being, the U.S. government appears
+to be looking for approaches that are consistent with a non-intrusive approach.
+<p>For example, President Clinton proposed that we develop an information
+security "cyber-corps" of recent college grads to fight DDoS and other
+cybercrimes.  While this is a sensible proposal, will there be a rush
+of computer science grads who will want to join such a group?  Computer
+science students are by and large interested in science, not in law enforcement,
+so if Clinton's proposal goes through, it will be interesting to see if
+the government can attract the best of the best to join the "cyberpolice".
+<p>It should be noted, however, that in all likelihood a more intrusive
+government role is inevitable if uncontrollable attacks continue.
+If the government tries to be both helpful and non-intrusive, they may
+be simply ignored by commercial ventures.  For example, during the
+week of February 6, 2000, a report from <a href="http://www.fcw.com/fcw/articles/2000/0214/web-asleep-02-15-00.asp">Federal
+Computer Week</a> revealed "that only 2,600 individuals had downloaded
+a free security tool from the FBI's Web page. That tool, which detects
+denial-of-service code, has been available since December."
+<h2>
+Step by Step</h2>
+
+<h3>
+<a NAME="Q93"></a>Q93: How do I check my servers to see if they are active
+DDoS hosts?</h3>
+
+<li>
+Acquire one or more filesystem scanning tools to determine if any of the
+known DDoS tools are present on your server file system.</li>
+
+<ul>
+<li>
+Compare the available tools from security tool vendors.  Like virus
+software, DDoS tools become obsolete as new DDoS exploits are invented
+or existing ones are modified to evade detection.  Select a tool that
+has been recently updated to handle the latest DDoS attack methods.</li>
+
+<li>
+The FBI offers a tool on their website called "find_ddos" that will search
+the file system for the <i>Trinoo, TFN, TFN2K</i> and <i>Stacheldraht</i>
+DDoS tools.  It is freely available on <a href="http://www.fbi.gov/nipc/trinoo.htm">http://www.fbi.gov/nipc/trinoo.htm</a>.
+One may be interested in the fact that the FBI does not make the source
+code for this program available.</li>
+
+<ul>
+<li>
+Note that the FBI tool is not guaranteed to catch every DDoS binary.
+If the perpetrator has installed a root package, the find_ddos program
+may or may not be able to overcome it.  The readme file says, "The
+tool was written in C so that it will have minimal reliance on system binaries,
+so it will not be impacted by most 'root kits'.  However, it is susceptible
+to a kernel loadable module-based root kit."</li>
+
+<li>
+For more information about how root kits work, see <a href="http://staff.washington.edu/dittrich/misc/faqs/rootkits.faq">http://staff.washington.edu/dittrich/misc/faqs/rootkits.faq</a>.</li>
+</ul>
+
+<li>
+An alternative scanning tool is freely available on <a href="http://www.nessus.org">http://www.nessus.org</a>.</li>
+
+<li>
+Many commercial tools are also available.</li>
+</ul>
+
+<li>
+Use manual methods to double-check for DDoS activity originating from your
+network (techniques from Kurt Seifried, seifried@securityportal.com).</li>
+
+<ul>
+<li>
+Set up a filter on the firewall that sits between the web server and the
+internet connection or upstream connection to your ISP.  Look for
+"spoofed" packets, i.e., packets that do not originate from your network.
+This is known as <i>egress filtering</i>.  If spoofed packets are
+being generated on your network, there is a good chance that a DDoS program
+is generating them.  Trace the packets back to their source, take
+the computer offline and clean the computer.</li>
+
+<li>
+Block ports (like 37337) that are typically used to remotely control compromised
+machines.</li>
+
+<li>
+Scan your network for open ports on a regular basis using tools such as
+<i>nmap</i>
+or <i>saint</i> - any changes should be investigated and appropriate action
+taken.</li>
+</ul>
+
+<h3>
+<a NAME="Q94"></a>Q94: What should I do if I find a DDoS host program on
+my server?</h3>
+
+<li>
+Recognize that the presence of a rogue (Trojan Horse) program on your system
+indicates that a vulnerability exists which has been exploited.  Other
+subtle and not so subtle changes could have been made to the system, so
+a complete analysis of your security vulnerabilities is required.
+While your system may not yet be displaying any overt problems, this is
+no reason to soften the incident response approach.</li>
+
+<li>
+Execute your organization's incident response policy.  If no policy
+has yet been put in place, then perform the following emergency steps,
+at minimum:</li>
+
+<blockquote>
+<li>
+Write everything down, starting from the first suspicion of an incident.
+Depending on the severity of the compromise, this will help you both technically
+and legally.</li>
+
+<li>
+Do not broadcast the information regarding the compromise to your organization.
+This can not be helpful, and could lead to media involvement.  Only
+inform those individuals who can directly assist in helping to fix the
+problem, your manager, and law enforcement officials.</li>
+
+<li>
+Contact the strongest security experts in your organization for assistance.
+If none are available, ask management to request immediate assistance from
+a consulting firm that is experienced in incident handling for the operating
+systems and system software that you are running.</li>
+
+<li>
+Physically remove the compromised computer from the network (unplug the
+network cable).  If the computer is mission-critical, then deploy
+a hot-backup server if available.  If no hot-backup is available,
+then downtime is unavoidable.</li>
+
+<li>
+Backup the compromised computer's file system.  Before beginning the
+backup, dump any dynamic data tables maintained by your operating system
+to standard files so that they can be analyzed later.  For example,
+the lists of currently executing processes, of currently logged-in users,
+and of current network connections should be dumped to flat files.
+Then make two backups of the system using two different backup programs.</li>
+
+<li>
+Shut down the compromised computer.</li>
+
+<li>
+Re-start the computer.</li>
+
+<li>
+Reformat the drives used by the system software.</li>
+
+<li>
+Reinstall the operating system.</li>
+
+<li>
+Apply all operating system patches.</li>
+
+<li>
+Perform system "hardening" - this involves establishing operating system-specific
+settings to negate commonly known vulnerabilities.</li>
+
+<li>
+Restore the file system - do not overwrite any system files, and examine
+any password files manually before the restore.</li>
+
+<li>
+Put the computer back on the network.</li>
+
+<li>
+Check all other computers on the network to see if the same vulnerability
+has been exploited elsewhere.</li>
+</blockquote>
+A comprehensive incident handling approach is currently available on <a href="http://www.cert.org/tech_tips/root_compromise.html">http://www.cert.org/tech_tips/root_compromise.html</a>.
+<h3>
+<a NAME="Q95"></a>Q95: How can I prevent my servers from being used as
+DDoS hosts in the future?</h3>
+
+<li>
+Recognize and understand the vulnerabilities of internet servers:</li>
+
+<ul>
+<li>
+Unless special measures have been taken, internet servers have host names
+and IP addresses that can be easily looked up by anyone on the internet.</li>
+
+<li>
+Many organizations do not put firewalls in front of their internet servers,
+leaving them largely unprotected from many of the probes and attacks that
+firewalls can easily stop.</li>
+
+<li>
+By default, servers listen for service requests on standard, well known
+ports, and they naturally attempt to process all requests.</li>
+
+<li>
+Servers are designed to run unattended, so there is rarely a "user" present
+who could look for unusual activity.</li>
+
+<li>
+Servers often need to be administered remotely, from off-site, so they
+are designed to accept remote connections from users with very powerful
+permissions.</li>
+
+<li>
+Many servers will reboot automatically after a shutdown, which is exactly
+what certain types of exploits are looking for.</li>
+</ul>
+
+<li>
+If your system has already been compromised, then backup the filesystem,
+re-install the operating system and restore the filesystem.</li>
+
+<li>
+Install operating system updates provided by OS vendor.</li>
+
+<ul>
+<li>
+If the update is security-related, then it is especially crucial to install
+it.</li>
+
+<li>
+Be sure to read the vendor's documentation carefully.  Some updates
+are less well-tested than others, and an update can actually harm your
+system if it contains defects.</li>
+</ul>
+
+<li>
+Secure the servers.</li>
+
+<ul>
+<li>
+Turn off all unnecessary server services.  Many of the services offered
+by your operating system are not required by your web server, for example
+RPC-based services.  Adopt the attitude of "deny first, then allow".
+Assume a service should be turned off, unless it is absolutely required.</li>
+
+<ul>
+<li>
+First determine which of the program-based services can be turned off,
+such as FTP, telnet, etc.  These services are easily found as executable
+programs in the file system.</li>
+
+<li>
+Many systems have been compromised by exploitation of buffer overrun bugs
+in the RPC services "statd", "cmsd" and "ttdbserverd".  These attacks
+are described in CERT Incident Note 99-04 available on <a href="http://www.cert.org/incident_notes/IN-99-04.html">http://www.cert.org/incident_notes/IN-99-04.html</a>.</li>
+
+<li>
+Next check your operating system's documentation to see if it is providing
+services at the kernel level which are not visible as separate programs.
+For example, the netmask service may be provided at the kernel level.
+In this case, determine what parameters can be set, if any, to turn off
+kernel level services that are not required.</li>
+
+<li>
+Contact your operating system vendor to find out if there are additional
+kernel level services that are not in the system documentation, and, if
+so, how to disable them.</li>
+
+<li>
+Once all unnecessary services have been disabled, make cryptographic checksums
+of the entire system, which can be used later if there has been a suspected
+breach.</li>
+
+<ul>
+<li>
+For UNIX-based systems, Tripwire will handle this, available from <a href="http://www.tripwiresecurity.com">TSS</a>.</li>
+
+<li>
+More information on cryptographic checksums is available on <a href="http://www.cert.org/security-improvement/practices/p043.html">http://www.cert.org/security-improvement/practices/p043.html</a></li>
+</ul>
+</ul>
+
+<li>
+Configure the web server software.</li>
+
+<ul>
+<li>
+Verify that you have the latest version of the web server software installed.
+If your version is old, get the new one and install it before continuing.</li>
+
+<li>
+Turn off all unnecessary services offered by your web server software.
+For example, Java support, CGI support, and Server-side Script support
+should be turned off if they are not required.</li>
+</ul>
+
+<li>
+Limit physical access to the server.</li>
+
+<ul>Take appropriate action to ensure that the server is only accessible
+to the designated system administrator(s).  All the security in the
+world can be defeated by a simple floppy disk if the perpetrator has physical
+access to the server.</ul>
+</ul>
+A comprehensive treatment on server-side security is currently available
+on <a href="http://www.cert.org/security-improvement/modules/m03.html">http://www.cert.org/security-improvement/modules/m07.html</a>.
+<h3>
+<a NAME="Q96"></a>Q96: How can I prevent my personal computer from being
+used as a DDoS host?</h3>
+
+<li>
+Recognize and understand the vulnerabilities of internet clients:</li>
+
+<ul>
+<li>
+Internet clients, i.e., personal computers connected to the internet, can
+also be compromised and used as agents for DDoS attacks.</li>
+
+<li>
+Personal computers with full-time connections to the internet are particularly
+useful to DDoS perpetrators.</li>
+
+<li>
+The easiest way and most common way to compromise a personal computer is
+through a voluntary file download initiated by the user - malicious programs
+posing as screen savers, games, and images are common culprits.</li>
+
+<li>
+The sophistication of the new personal computer operating systems (e.g.,
+Windows 98, Windows NT Workstation, Linux) which enable background processing
+and multi-processing, make them viable agents for distributed denial of
+service attacks.</li>
+</ul>
+
+<li>
+If your system has already been compromised, then backup the filesystem,
+re-install the operating system and restore the filesystem.</li>
+
+<li>
+Install operating system updates provided by OS vendor.</li>
+
+<ul>
+<li>
+If the update is security-related, then it is especially crucial to install
+it.</li>
+
+<li>
+Be sure to read the vendor's documentation carefully.  Some updates
+are less well-tested than others, and an update can actually harm your
+system if it contains defects.</li>
+</ul>
+
+<li>
+Secure the clients/personal computers.</li>
+
+<ul>
+<li>
+All internet users on your network, <i>particularly those with fulltime
+internet connections</i>, must be informed that their computers could be
+used as attack agents, and they must be equipped with the latest detection
+software.</li>
+
+<li>
+The new anti-virus updates are now able to detect many rogue DDoS programs.
+The latest versions of these programs must be downloaded and installed.</li>
+
+<ul>
+<li>
+Norton's program is available on <a href="http://www.symantec.com/avcenter/venc/data/w32.dos.trinoo.html">http://www.symantec.com/avcenter/venc/data/w32.dos.trinoo.html</a></li>
+
+<li>
+NAI offers similar support on  <a href="http://vil.nai.com/vil/DoS98506.asp">http://vil.nai.com/vil/DoS98506.asp</a>,
+as do many other vendors.</li>
+</ul>
+
+<li>
+Note that if a rogue program is already operating on the client system,
+these detection programs may not work.</li>
+
+<ul>
+<li>
+In the case of Norton, enable real-time protection, then reboot the computer
+to check for DDoS agent programs already in operation.</li>
+</ul>
+</ul>
+A detailed description of client-side DDoS is available on <a href="http://www.jmu.edu//info-security/engineering/issues/wintrino.htm">http://www.jmu.edu/info-security/engineering/issues/wintrino.htm.</a>
+<h3>
+<a NAME="Q97"></a>Q97: What is a "smurf attack" and how do I defend against
+it?</h3>
+
+<li>
+<i>smurf</i> is a simple yet effective DDoS attack technique that takes
+advantage of the ICMP (Internet Control Message Protocol).  ICMP is
+normally used on the internet for error handling and for passing control
+messages.  One of its capabilities is to contact a host to see if
+it is "up" by sending an "echo request" packet.  The common "ping"
+program uses this functionality.  <i>smurf</i> is installed on a computer
+using a stolen account, and then continuously "pings" one or more networks
+of computers using a forged source address.  This causes all the computers
+to respond to a different computer than actually sent the packet.
+The forged source address, which is the actual target of the attack, is
+then overwhelmed by response traffic. The computer networks that respond
+to the forged ("spoofed") packet serve as unwitting accomplices to the
+attack.  The basic characteristics and defense strategies against
+<i>smurf</i>
+follow.  Further information is available from <a href="http://www.cert.org/advisories/CA-98.01.smurf.html">CERT</a>.
+A complete description of <i>smurf</i> by Craig Huegen is available on
+<a href="http://users.quadrunner.com/chuegen/smurf.txt">http://users.quadrunner.com/chuegen/smurf.txt</a>.</li>
+
+<ul>
+<li>
+Attack Platforms: In order for <i>smurf</i> to work, it must find attack
+platforms that have IP broadcast functionality enabled on their routers.
+This functionality allows <i>smurf</i> to send a single forged ping packet
+and have it broadcast to an entire network of computers.  To prevent
+your system from being used as a
+<i>smurf</i> attack platform, disable
+IP-directed broadcast functionality on all routers.  Generally speaking,
+this functionality will not be missed.</li>
+
+<ul>
+<li>
+The attacker may still be able to launch a
+<i>smurf</i> attack from inside
+your LAN, in which case disabling IP broadcast functionality at the router
+will have no effect.  To protect against such an attack, many operating
+systems provide settings to prevent computers from responding to IP-directed
+broadcast requests.  Check with your O/S provider for more information
+and review Appendix A of the CERT Advisory number CA-98.01 available on
+<a href="http://www.cert.org/advisories/CA-98.01.smurf.html">http://www.cert.org/advisories/CA-98.01.smurf.html</a>.</li>
+
+<li>
+<a NAME="egress filtering"></a>In order for the attacker to successfully
+take advantage of you as an attack platform, your routers must allow packets
+to exit the network with source addresses that do not originate from your
+internal network.  It is possible to configure your routers to filter
+out packets which do not originate from your internal network.  This
+is known as network egress filtering.</li>
+
+<li>
+<a NAME="ingress filtering"></a>ISP's should employ network ingress filtering,
+which drops packets which do not originate from a known range of IP addresses.
+Ingress filtering is described in detail in <a href="ftp://ftp.isi.edu/in-notes/rfc2267.txt">RFC
+2267</a>.</li>
+</ul>
+
+<li>
+Targets: the easiest way to frustrate a <i>smurf</i> attack is to filter
+for echo reply packets at the border routers and drop them.  This
+will prevent the packets from hitting the web server and the internal network.
+Another option, for those using Cisco routers, is CAR (Committed Access
+Rate).</li>
+
+<ul>
+<li>
+Dropping all echo reply packets <i>will</i> prevent flooding of your network,
+but it will not prevent traffic jams in the pipe from your upstream provider.</li>
+
+<ul>
+<li>
+If you are the target of an attack, ask your ISP to also filter out and
+drop echo reply packets.</li>
+</ul>
+
+<li>
+If you do not want to completely disable echo reply, then you can selectively
+drop echo reply packets that are addressed to your high-profile, public
+web servers.</li>
+
+<li>
+CAR is a technology developed by Cisco that allows you to specify the maximum
+amount of bandwidth that can be used by any particular packet type.
+Using CAR you can precisely specify the maximum amount of bandwidth that
+can be used by echo reply packets.  For more information, see <a href="http://www.cisco.com/warp/public/707/newsflash.html">http://www.cisco.com/warp/public/707/newsflash.html.</a></li>
+</ul>
+</ul>
+
+<h3>
+<a NAME="Q98"></a>Q98: What is "trinoo" and how do I defend against it?</h3>
+
+<li>
+<i>trinoo </i>is a complex DDoS tool that uses "master" programs to automate
+the control of any number of "agent" programs which launch the actual attack.
+The attacker connects to the computer hosting the master program, starts
+the master, and the master takes care of starting all of the agent programs
+based on a list of IP addresses.  The agent programs then attack one
+or more targets by flooding the network with UDP packets.  Prior to
+the attack, the perpetrator will have compromised the computer hosting
+the master programs and all the computers hosting the agent program in
+order to install the software.  The basic characteristics of and suggested
+defense strategies against the <i>trinoo</i> DDoS attack follow.
+A complete description of the <i>trinoo</i> was developed by Dave Dittrich
+and is available on <a href="http://staff.washington.edu/dittrich/misc/trinoo.analysis">http://staff.washington.edu/dittrich/misc/trinoo.analysis</a>.</li>
+
+<ul>
+<li>
+<i>trinoo</i> uses UDP protocol for all communications between the master
+program and the agents.  Intrusion Detection Software can look for
+flows that use UDP protocol (type 17).</li>
+
+<li>
+<i>trinoo</i> master programs listen on port 27655.  The attacker
+will connect via TCP, typically via Telnet, to the computer hosting the
+master program to launch it.  Intrusion Detection Software can look
+for flows that use TCP (type 6) to connect to port 27655.</li>
+
+<li>
+All communications from master to agents must contain the string "l44"
+(that's the letter l, not the number 1) and will be directed to the agent's
+UDP port 27444.  Intrusion Detection Software can check for connections
+to UDP port 27444.  If packets containing the string l44 are being
+sent there, the computer receiving the packets is probably a DDoS agent.</li>
+
+<li>
+Communications between master and agent are password protected, however
+currently the password is not sent in encrypted format, so it can be "sniffed"
+and detected.  Using the password, and the script <i><a href="http://staff.washington.edu/dittrich/misc/trinoo.analysis">trinot</a></i>available
+from Dave Dittrich's website, it is possible to positively verify the presence
+of the <i>trinoo</i> agent.  Once an agent is positively identified,
+the <i>trinoo</i> network can be dismantled:</li>
+
+<ul>
+<li>
+Use the "strings" command on the agent daemon to extract the list of master
+IP addresses.</li>
+
+<li>
+Contact all installations serving as <i>trinoo</i> masters to notify them
+of the incident.</li>
+
+<li>
+On the master computer, identify the file (by default named "...") containing
+the list of agent IP addresses and extract the list.</li>
+
+<li>
+Disable the agents by sending them a forged <i>trinoo</i> command to shut
+down.  Note that the agents may restart regularly via an entry in
+the crontab file (on UNIX systems), so the agents may need to be shut down
+over and over again until the owner of the agent system can fix the crontab
+file.</li>
+
+<li>
+Check for an active TCP connection to the master program.  This indicates
+live communication between the attacker and the <i>trinoo</i> master program.
+While the attacker is in all likelihood using a stolen account to initiate
+the attack, it still may be possible to find the attacker (given high levels
+of cooperation between the ISP, the telephone company, and law enforcement).</li>
+</ul>
+
+<li>
+If you are under <i>trinoo</i> attack, your system will be flooded with
+UDP packets.  <i>trinoo</i> sends the packets from the same source
+address to random ports on the targeted host.  Detection involves
+finding multiple UDP packets with the same source IP address, the same
+destination IP address, the same source port, but different destination
+ports.</li>
+
+<li>
+An automated program to detect and eradicate <i>trinoo</i> can be found
+on <a href="http://www.fbi.gov/nipc/trinoo.htm">http://www.fbi.gov/nipc/trinoo.htm.</a></li>
+</ul>
+
+<h3>
+<a NAME="Q99"></a>Q99: What are "Tribal Flood Network" and "TFN2K" and
+how do I defend against them?</h3>
+
+<li>
+<i>Tribe Flood Network</i>, like <i>trinoo</i>, uses a master program to
+communicate with attack agents located across multiple networks. <i>TFN</i>
+launches coordinated Denial of Service Attacks that are especially difficult
+to counter as it can generate multiple types of attacks and it can generate
+packets with spoofed source IP addresses.  Some of the attacks that
+can be launched by <i>TFN</i> include UDP flood, TCP SYN flood, ICMP echo
+request flood, and ICMP directed broadcast.  The basic characteristics
+of and suggested defense strategies against the <i>TFN</i> DDoS attack
+follow. A complete description of the <i>TFN</i> was developed by Dave
+Dittrich and is available on <a href="http://staff.washington.edu/dittrich/misc/tfn.analysis">http://staff.washington.edu/dittrich/misc/tfn.analysis</a>.
+A <i>TFN</i> <a href="http://www.cert.org/incident_notes/IN-99-07.html">incident
+analysis</a> from CERT is also available.</li>
+
+<ul>
+<li>
+To initiate <i>TFN</i>, the attacker accesses the master program and sends
+it the IP address of one or more targets.  The master program proceeds
+to communicate with all of the agent programs, instructing them to initiate
+the attack.</li>
+
+<ul>
+<li>
+Communications between <i>TFN</i> master programs and agent programs use
+ICMP echo reply packets, where the actual instruction to be carried out
+is embedded in the 16-bit ID field in binary format.  The use of ICMP
+(Internet Control Message Protocol) makes packet protocol filtering possible.</li>
+
+<ul>
+<li>
+<i>TFN</i> agents can be defeated by configuring your router or intrusion
+detection system to disallow all ICMP echo and echo reply packets onto
+your network.  However this will break all internet programs (such
+as "ping") that utilize these functions.</li>
+</ul>
+
+<li>
+The <i>TFN</i> master program reads a list of IP addresses containing the
+locations of the agents programs.  This list of addresses may be encrypted,
+using "Blowfish" encryption.</li>
+
+<ul>
+<li>
+If it is not encrypted, then the agents can be identified from the list.</li>
+</ul>
+</ul>
+
+<li>
+The <i>TFN</i> agent programs have been found on systems with the filename
+<i>td
+</i>and
+the master programs with the name<i> tfn</i>.  They can be positively
+identified by running the UNIX strings command.  See <a href="http://staff.washington.edu/dittrich/misc/tfn.analysis">David
+Dittrich's research</a> for details on the output of strings.</li>
+
+<ul>
+<li>
+<i>TFN</i> agents do not check where the ICMP echo reply packets come from.
+Therefore it is possible to forge ICMP packets to flush out these processes.</li>
+</ul>
+</ul>
+
+<li>
+<i>TFN2K</i> is a more advanced version of <i>TFN</i>, that "fixes" some
+of the weaknesses of <i>TFN</i>.  A CERT <a href="http://www.cert.org/advisories/CA-99-17-denial-of-service-tools.html">incident
+analysis</a> is available.</li>
+
+<ul>
+<li>
+Under <i>TFN2K</i> communications between master and agent may use any
+one of several protocols - TCP, UDP or ICMP - making protocol filtering
+impossible.</li>
+
+<li>
+<i>TFN2K</i> is capable of sending corrupt packets to cause a system to
+crash or become unstable.</li>
+
+<li>
+<i>TFN2K</i> can defeat <a href="#egress filtering">egress filtering</a>
+and  <a href="#ingress filtering">ingress filtering</a> by spoofing
+IP source addresses to make packets appear to come from a neighboring machine
+on the LAN.</li>
+
+<li>
+Because this attack tool has just recently been identified, no research
+(that I could find) has found any significant weaknesses in the program.
+Until <i>TFN2K</i> can be analyzed more completely, the best defense is
+to:</li>
+
+<ul>
+<li>
+ <a href="#Tighten interenet infrastructure">Harden systems and networks</a>
+to prevent your systems from being used as DDoS hosts.</li>
+
+<li>
+Set up <a href="#egress filtering">egress filltering</a> on the border
+routers, as perhaps not all <i>TFN2K</i> source addresses will be spoofed
+using internal network addresses.</li>
+
+<li>
+Ask your upstream provider to deploy <a href="#ingress filtering">ingress
+filtering</a>.</li>
+</ul>
+</ul>
+
+<h3>
+<a NAME="Q100"></a>Q100: What is "stacheldraht" and how do I defend against
+it?</h3>
+
+<li>
+<i>Stacheldraht</i>, (German for "barbed wire"), developed by Mixter, is
+also based on the <i>TFN</i> and <i>trinoo</i> client/server model where
+a master program communicates with potentially many thousands of agent
+programs. The perpetrator connects to the master program to initiate the
+attack. <i>Stacheldraht</i> adds the following new features: encrypted
+communication between the attacker and the master program, as well as automated
+updates of the agent programs using rcp (remote copy).</li>
+
+<br>
+<li>
+<i>Stacheldraht</i> launches coordinated Denial of Service Attacks that
+are especially difficult to counter as it can generate multiple types of
+attacks and it can generate packets with spoofed source IP addresses. Some
+of the attacks that can be launched by Stacheldraht include UDP flood,
+TCP SYN flood, ICMP echo request flood, and ICMP directed broadcast. The
+basic characteristics of and suggested defense strategies against the Stacheldraht
+DDoS attack follow. A complete description of Stacheldraht was developed
+by Dave Dittrich and is available on <a href="http://staff.washington.edu/dittrich/misc/stacheldraht.analysis">http://staff.washington.edu/dittrich/misc/stacheldraht.analysis</a>.</li>
+
+<br>
+<li>
+To initiate <i>Stacheldraht</i>, the attacker accesses the master program
+and sends it the IP address of one or more targets.  The master program
+proceeds to communicate with all of the agent programs, instructing them
+to initiate the attack.</li>
+
+<ul>
+<li>
+Communications between <i>Stacheldraht</i> master programs and agent programs
+are primarily carried out using ICMP echo and echo reply packets.</li>
+
+<ul>
+<li>
+<i>Stacheldraht</i> agents can be defeated by configuring your router or
+intrusion detection system to disallow all ICMP echo and echo reply packets
+onto your network.  However this will also break all internet programs
+(such as "ping") that utilize these functions.</li>
+</ul>
+
+<li>
+The agent program reads a list containing the IP addresses of valid master
+programs.  This list of addresses is encrypted, using "Blowfish" encryption.
+The agent attempts to contact each of the master programs on the list.
+If it is successful, then the agent program performs a test to determine
+if the system it is installed on will allow it to alter ("spoof")
+packet source addresses.  These two activities can be detected by
+configuring intrusion detection systems or sniffers to look for their signatures:</li>
+
+<ul>
+<li>
+The agent will send each master an ICMP echo reply packet with an ID field
+containing the value 666 and data field containing the string "skillz".
+If the master receives the packet, it will reply with an ID field containing
+the value 667 and data field containing the string "ficken".  The
+agent and master periodically "touch base" by exchanging these packets.
+By monitoring for these packets, <i>Stacheldraht</i> can be detected.</li>
+
+<li>
+Once the agent has found a valid master program, it will execute a spoofing
+test by sending the master an ICMP packet with a spoofed source address.
+It uses the false address "3.3.3.3".  If the master receives the spoofed
+packet, it will reply to confirm that source address spoofing is working
+with the string "spoofworks" in the ICMP packet data field.  By
+monitoring for these values, <i>Stacheldraht</i> can also be detected.</li>
+</ul>
+
+<li>
+<i>Stacheldraht</i> agents do not check where ICMP echo reply packets come
+from.  Therefore it is possible to forge ICMP packets to flush out
+these processes.</li>
+
+<li>
+The <i>Stacheldraht</i> agent programs, as well as <i>TFN</i> and <i>trinoo</i>
+can be detected using a C program written by David Dittrich and available
+on <a href="http://staff.washington.edu/dittrich/misc/ddos_scan.tar">http://staff.washington.edu/dittrich/misc/ddos_scan.tar</a>.</li>
+</ul>
+
+<h3>
+<a NAME="Q101"></a>Q101: How should I configure my routers, firewalls,
+and intrusion detection systems against DDoS attacks?</h3>
+
+<li>
+Against <i>Smurf</i></li>
+
+<ul>
+<li>
+To determine if you are an attack platform:</li>
+
+<ul>
+<li>
+monitor for packets which do not originate from your network.</li>
+
+<li>
+monitor for high volumes of echo request and echo reply packets.</li>
+</ul>
+
+<li>
+To prevent being used as an attack platform:</li>
+
+<ul>
+<li>
+disable IP-directed broadcast functionality on all routers.</li>
+
+<li>
+filter out packets which do not originate from your internal network.</li>
+</ul>
+
+<li>
+To mitigate attacks:</li>
+
+<ul>
+<li>
+filter for echo reply packets at the border routers and drop them.</li>
+
+<li>
+for Cisco routers, use CAR to specify the maximum amount of bandwidth that
+can be used by echo reply packets.</li>
+</ul>
+</ul>
+
+<li>
+Against <i>trinoo</i></li>
+
+<ul>
+<li>
+To determine if you are an attack platform:</li>
+
+<ul>
+<li>
+UDP protocol is used for all communications between the master program
+and the agents.  Filter for flows that use UDP protocol (type 17).</li>
+
+<li>
+attackers connect to the master program over TCP at port 27655.  Filter
+for flows that use TCP (type 6) to connect to port 27655.</li>
+
+<li>
+master to agent communications must contain the string "l44" (that's the
+letter l, not the number 1) and will be directed to the agent's UDP port
+27444.  Filter for connections to UDP port 27444 containing the string
+l44.</li>
+</ul>
+
+<li>
+To prevent being used as an attack platform:</li>
+
+<ul>
+<li>
+filter out packets which do not originate from your internal network.</li>
+</ul>
+
+<li>
+To mitigate attacks:</li>
+
+<ul>
+<li>
+theoretically, you could filter for sequences of UDP packets with the same
+source IP address, the same destination IP address, the same source port,
+but different destination ports and drop them.  Whether current firewall
+technology is up to this task is not known to the author.</li>
+</ul>
+</ul>
+
+<li>
+Against <i>TFN</i> and <i>TFN2K</i></li>
+
+<ul>
+<li>
+To determine if you are an attack platform:</li>
+
+<ul>
+<li>
+monitor for packets which do not originate from your internal network.</li>
+</ul>
+
+<li>
+To prevent being used as an attack platform:</li>
+
+<ul>
+<li>
+disallow all ICMP echo and echo reply packets onto your network (note that
+this will break all internet programs that utilize these functions).</li>
+
+<li>
+filter out packets which do not originate from your internal network.</li>
+</ul>
+
+<li>
+To mitigate attacks:</li>
+
+<ul>
+<li>
+(under research)</li>
+</ul>
+</ul>
+
+<li>
+Against <i>Stacheldraht</i></li>
+
+<ul>
+<li>
+To determine if you are an attack platform:</li>
+
+<ul>
+<li>
+filter for ICMP echo reply packets with an ID field containing the value
+666 and data field containing the string "skillz" or ID field containing
+the value 667 and data field containing the string "ficken".</li>
+
+<li>
+filter for ICMP packet source address "3.3.3.3" and the string "spoofworks"
+in the ICMP packet data field.</li>
+</ul>
+
+<li>
+To prevent being used as an attack platform:</li>
+
+<ul>
+<li>
+disallow all ICMP echo and echo reply packets onto your network (note that
+this will break all internet programs that utilize these functions).</li>
+
+<li>
+filter out packets which do not originate from your internal network.</li>
+</ul>
+
+<li>
+To mitigate attacks:</li>
+
+<ul>
+<li>
+(under research)</li>
+</ul>
+</ul>
+
+<hr>
+<table WIDTH="100%" >
+<tr>
+<td></td>
+
+<td ALIGN=CENTER><a href="www-security-faq.html#contents"><img SRC="i/up.gif" ALT="^" BORDER=0 height=22 width=20 align=CENTER></a><a href="www-security-faq.html#contents">Up
+to <i>Table of Contents</i></a></td>
+
+<td></td>
+</tr>
+
+<tr>
+<td ALIGN=LEFT><a href="wwwsf7.html"><img SRC="i/left.gif" ALT="<<" BORDER=0 height=22 width=20 align=MIDDLE></a><a href="wwwsf7.html">Back
+to </a><i><a href="wwwsf8.html">Specific Servers</a></i></td>
+
+<td></td>
+
+<td ALIGN=RIGHT><a href="wwwsf10.html">Forward to <i>Bibliography</i></a><a href="wwwsf10.html"><img SRC="i/right.gif" ALT=">>" BORDER=0 height=22 width=20 align=MIDDLE></a></td>
+</tr>
+</table>
+
+<hr>
+<address>
+<a href="http://www.genome.wi.mit.edu/~lstein/">Lincoln D. Stein</a> (<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>)</address>
+
+<br>
+<p>
+<p><!-- hhmts start -->
+Last modified: Sun Mar 19 21:42:05 EST 2000
+<!-- hhmts end -->
+</body>
+</html>

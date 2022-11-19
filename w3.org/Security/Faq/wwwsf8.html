@@ -1,0 +1,532 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <TITLE>WWW Security FAQ: Problems with Specific Servers</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+
+<H1>
+<A href="https://www.w3.org/"><IMG SRC="i/w3c_home.gif" ALT="[W3C]" BORDER=0 HEIGHT=48 WIDTH=72 ALIGN=CENTER></A>
+The World Wide Web Security FAQ</H1>
+
+<HR>
+<H2>
+DISCLAIMER</H2>
+This information is provided by Lincoln Stein (<A HREF="mailto:lstein@cshl.org">lstein@cshl.org</A>).
+The World Wide Web Consortium (W3C) hosts this document as a service to
+the Web Community; however, it does not endorse its contents. For further
+information, please contact Lincoln Stein directly.
+<TABLE WIDTH="100%" >
+<TR>
+<TD></TD>
+
+<TD ALIGN=CENTER><A HREF="www-security-faq.html#contents"><IMG SRC="i/up.gif" ALT="^" BORDER=0 HEIGHT=22 WIDTH=20 ALIGN=CENTER></A><A HREF="www-security-faq.html#contents">Up
+to <I>Table of Contents</I></A></TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD ALIGN=LEFT><A HREF="wwwsf7.html"><IMG SRC="i/left.gif" ALT="<<" BORDER=0 HEIGHT=22 WIDTH=20 ALIGN=CENTER></A><A HREF="wwwsf7.html">Back
+to <I>Client Side Security</I></A></TD>
+
+<TD></TD>
+
+<TD ALIGN=RIGHT><A HREF="wwwsf9.html">Forward to <I>Denial of Service</I></A><A HREF="wwwsf9.html"><IMG SRC="i/right.gif" ALT=">>" BORDER=0 HEIGHT=22 WIDTH=20 ALIGN=CENTER></A></TD>
+</TR>
+</TABLE>
+
+<HR>
+<H1>
+<A NAME="specific"></A>10. Problems with Specific Servers</H1>
+
+<H2>
+Windows NT Servers</H2>
+
+<H3>
+<A NAME="Q73"></A>Q73: Are there any known security problems with the Netscape
+Communications Server for NT?</H3>
+
+<H4>
+Server-Side Include Source Code Vulnerable, June 25, 1998</H4>
+Programmers at <A HREF="http://www.sddt.com">San Diego Source,</A> the
+online news service of the <I>San Diego Daily Transcript</I> have discovered
+that by appending certain characters to the end of the URL that refers
+to a server-side include file, a remote user can recover the source code
+for the file, disclosing proprietary information, copyrighted source code,
+and even user names and passwords used to log into databases. In addition
+to affecting server-side includes, this bug affects such popular products
+as Allaire Cold Fusion, Microsoft Active Server Pages, and PHP.
+<P>Details of the exploit have not been published, but you can find a longer
+description in the original article at <A HREF="http://www.sddt.com/files/library/98/06/25/tbc.html">http://www.sddt.com/files/library/98/06/25/tbc.html</A>.
+<P>Netscape is reportedly working on a fix. Please visit the <A HREF="http://www.netscape.com">Netscape
+site</A> for possible patches. If you use server-side includes, you are
+urged to upgrade as soon as a patch becomes available.
+<P><A HREF="#Q74">O'Reilly's WebSite and WebSite Professional servers</A>
+are also vulnerable to this bug. Microsoft IIS servers do not appear to
+be.
+<H4>
+Back Door Access to Protected Files, January 8, 1998</H4>
+Netscape Enterprise Server 3.0 and FastTrack 3.01 both contain a bug that
+allows unauthorized remote users to fetch documents that are protected
+by IP address and password. This bug affects any file that does <I>not</I>
+use the standard DOS 8.3 naming convention. For example, if the document
+is named <I>somelongfile.htm</I>, then the unscrupulous user can ask for
+the file SOMEF~1.HTM, which is the mangled DOS equivalent of the file name.
+Even though the document may be password protected, this fetch will succeed.
+<P>This bug is fixed in Enterprise Server 3.5.1 or higher (see <A HREF="http://help.netscape.com/kb/server/980522-69.html">this
+technical note</A>). It is unclear whether there is a patch available for
+the FastTrack server, however, which was still at version 3.01 as of June
+30, 1998.
+<P>The same bug is present in the <A HREF="#Q76">Microsoft IIS server</A>.
+O'Reilly's WebSite Professional are reportedly free of the problem
+<H4>
+Perl CGI Scripts are Often Misconfigured, 1997</H4>
+The Netscape server does not use the NT File Manager's associations between
+file extensions and applications. Thus, even though you may have associated
+the extension .pl with the perl interpreter, perl scripts aren't recognized
+as such when placed in the cgi-bin directory. Until very recently, a Netscape
+technical note recommended placing perl.exe into cgi-bin and referring
+to your scripts as <TT>/cgi-bin/perl.exe?&amp;my_script.pl</TT>.
+<P>Unfortunately this technique allows anyone on the Internet to execute
+an arbitrary set of Perl commands on your server by invoking such scripts
+as
+<TT>/cgi-bin/perl.exe?&amp;-e+unlink+%3C*%3E</TT> (when run, this URL
+removes every file in the server's current directory). This is
+<I>not a
+good idea</I>. A current Netscape technical note suggests encapsulating
+your Perl scripts in a .bat file. However, because of a related problem
+with batch scripts, this is no safer.
+<P>Because the EMWACS, Purveyor and WebSite NT servers all use the File
+Manager extension associations, you can execute perl scripts on these servers
+without placing perl.exe into cgi-bin. They are safe from this bug.
+<H4>
+<A NAME="bat_files"></A>DOS .bat files are Insecure, February, 1996</H4>
+Older versions the Netscape servers (both the <A HREF="http://www.netscape.com/comprod/netscape_commun.html">Netscape
+Communications Server version 1.12</A> and the <A HREF="http://www.netscape.com/comprod/netscape_commerce.html">Netscape
+Commerce Server version 1.0</A>) have two problems involving the handling
+of CGI scripts. One of these problems is also shared by the
+<A HREF="#Q74">WebSite
+Server</A>.
+<P>Ian Redfern<A HREF="mailto:redferni@logica.com">redferni@logica.com</A>)
+has discovered that a similar hole exists in the processing of CGI scripts
+implemented as .bat files. The following is excerpted from his e-mail describing
+the problem:
+<PRE>  Consider test.bat:
+
+    @echo off
+    echo Content-type: text/plain
+    echo
+    echo Hello World!
+
+  If this is called as "/cgi-bin/test.bat?&amp;dir" you get the output
+  of the CGI program, followed by a directory listing.
+
+  It appears that the server is doing system("test.bat &amp;dir") which
+  the command interpreter is handling (not unreasonably) in the
+  same way /bin/sh would - execute it, and if things go OK,
+  execute the dir command.</PRE>
+
+<H3>
+<A NAME="Q74"></A>Q74: Are there any known security problems with the O'Reilly
+WebSite server for Windows NT/95?</H3>
+
+<H4>
+Server-Side Include Source Code Vulnerable, June 25, 1998</H4>
+Programmers at <A HREF="http://www.sddt.com">San Diego Source,</A> the
+online news service of the <I>San Diego Daily Transcript</I> have discovered
+that by appending certain characters to the end of the URL that refers
+to a server-side include file, a remote user can recover the source code
+for the file, disclosing proprietary information, copyrighted source code,
+and even user names and passwords used to log into databases. In addition
+to affecting server-side includes, this bug affects such popular products
+as Allaire Cold Fusion, Microsoft Active Server Pages (using a 3d party
+ASP interpreter), and PHP.
+<P>Details of the exploit have not been published, but you can find a longer
+description in the original article at <A HREF="http://www.sddt.com/files/library/98/06/25/tbc.html">http://www.sddt.com/files/library/98/06/25/tbc.html</A>.
+<P>O'Reilly has announced that a fix will be available in WebSite and WebSite
+Professional version 2.3. If you use server-side includes, you should strongly
+consider upgrading.
+<P><A HREF="#Q73">Windows-based Netscape servers </A>are also vulnerable
+to this bug. Microsoft IIS servers do not appear to be.
+<H4>
+.BAT Scripts Vulnerable (1996)</H4>
+<A HREF="http://website.ora.com/">WebSite</A> versions 1.1b and earlier
+have the same problem with <A HREF="#bat_files">DOS .bat files</A> that
+Netscape does. However because WebSite supports three different types of
+CGI scripting interfaces (native Windows, Standard CGI for Perl scripts,
+and the rarely used DOS .bat file interface), the recommended action is
+to turn off the server's support for DOS CGI scripts. This will not affect
+the server's ability to run Visual Basic, Perl, or C scripts.
+<P><B>This hole has been fixed in version 1.1c.</B> You should upgrade
+to this version with the patch provided at the WebSite home page.
+<P>Detailed information on the actions necessary to close the WebSite .bat
+file security hole can be found at <A HREF="http://website.ora.com/devcorner/secalert1.html">this
+page provided by WebSite's developer.</A>
+<H3>
+<A NAME="Q75"></A>Q75: Are there any known security problems with the Purveyor
+Server for Windows NT?</H3>
+The Purveyor Web server, all versions, is vulnerable to the same bug that
+allows the source code for server-side include files to be revealed. See
+the description of this bug in the section on <A HREF="#Q73">Netscape Enterprise
+Server</A> for more details. Support for Purveyor was discontinued in 1997,
+so no fix or upgrade is available. Your choices are to avoid using server-side
+includes, or to change server software completely.
+<H3>
+<A NAME="Q76"></A>Q76: Are there any known security problems with the Microsoft's
+IIS Web Server?</H3>
+
+<H4>
+Back Door Access to Protected Files, January 8, 1998</H4>
+Microsoft Internet Information Server and Personal Web Server versions
+4.0 and earlier contain a bug that allows unauthorized remote users to
+fetch documents that are restricted by IP address or SSL use. This bug
+affects any file that does <I>not</I> use the standard DOS 8.3 naming convention.
+For example, if the document is named
+<I>somelongfile.htm</I>, then the
+unscrupulous user can ask for the file SOMEF~1.HTM, which is the mangled
+DOS equivalent of the file name. Even though the document may be restricted,
+this fetch will succeed. Password protection, which is accomplished through
+file system access control lists, is not affected by this bug, although
+other file-specific settings, such as PICS rating, are.
+<P>A patch is available on <A HREF="http://www.microsoft.com/security/">Microsoft's
+security pages</A>. Newer versions of IIS are free of the problem.
+<P>The same bug is present in the <A HREF="#Q73">Netscape Enterprise and
+Commerce servers</A>. Recent versions of WebSite Professional are reportedly
+free of the problem
+<H4>
+.BAT CGI Script Hole, March 1996</H4>
+Versions of the Microsoft IIS server downloaded prior to 3/5/96 contain
+the same .BAT file bug that appears in other NT-based servers. In fact
+the problem is worse than on other servers because .BAT CGI scripts doesn't
+even have to be installed on the server for a malicious remote user to
+invoke any arbitrary set of DOS commands on your server!
+<P>Microsoft has released a patch for this bug, available at
+<A HREF="http://www.microsoft.com/infoserv">http://www.microsoft.com/infoserv</A>.
+In addition, all copies of the IIS server downloaded after 3/5/96 should
+be free of this bug. If you use this server, you should check the creation
+date of your server binary and upgrade it if necessary.
+<P>Versions of Microsoft IIS through 3.0 are vulnerable to a bug that allows
+remote users to download and read the <B>contents</B> of executable scripts,
+potentially learning sensitive information about the local network configuration,
+the name of databases, or the algorithm used to calculate vendor discounts.
+This bug appears whenever a script-mapped file is placed in a directory
+that has both execute and read permissions. Remote users can download the
+script itself simply by placing additional periods at the end of its URL.
+To avoid this bug, turn off read permissions in any directory that contains
+scripts. Alternatively, download the patch provided by Microsoft at:
+<BLOCKQUOTE>
+<PRE><A HREF="ftp://ftp.microsoft.com/bussys/winnt/winnt-public/fixes/usa/nt40/hotfixes-postsp2/iis-fix">ftp://ftp.microsoft.com/bussys/winnt/winnt-public/fixes/usa/nt40/hotfixes-postsp2/iis-fix</A></PRE>
+</BLOCKQUOTE>
+
+<H4>
+June 25, 1997 -- denial of service attack</H4>
+IIS version 3.0 is vulnerable to a simple denial of service attack. By
+sending a long URL of a particular length to an IIS server, anyone on the
+Internet can cause the Web server to crash. The server will need to be
+restarted manually in order to resume Web services. A variety of Perl and
+Java programs that exploit this bug are floating around the Internet, and
+actual attacks have been reported.
+<P>The exact length of the URL that is required to cause the crash varies
+from server to server, and depends on such issues as memory usage. The
+magic length is generally around 8192 characters in length, suggesting
+that the problem is a memory buffer overflow. In the past such problems
+have often been exploited by knowledgeable hackers to execute remote commands
+on the server, so this bug is potentially more than annoyance.
+<P>A patch is available from Microsoft at <A HREF="ftp://ftp.microsoft.com/bussys/winnt/winnt-public/fixes/usa/nt40/hotfixes-postSP3/iis-fix">ftp://ftp.microsoft.com/bussys/winnt/winnt-public/fixes/usa/nt40/hotfixes-postSP3/iis-fix</A>
+<H3>
+<A NAME="Q77"></A>Q77: Are there any known security problems with Sun Microsystem's
+JavaWebServer for Windows NT?</H3>
+
+<H4>
+Servlet Source Code Vulnerable to Disclosure, June 29, 1998</H4>
+The JavaWebServer is able to compile and execute Java class files in a
+manner similar to CGI scripts (but much more efficiently). These small
+Java programs are called "servlets."
+<P>The Windows NT version of <A HREF="http://jserv.java.sun.com/products/webserver/index.html">JavaWebServer</A>
+is vulnerable to a bug that allows the source code for Java servlets to
+be downloaded by remote users. This bug is similar to ones identified for
+Windows NT versions of <A HREF="#Q74">O'Reilly WebSite Professional</A>
+and <A HREF="#Q73">Netscape Enterprise Server</A>. By appending certain
+characters to the end of a servlet's URL, a remote user can fool the server
+into sending him the compiled servlet, which can then be decompiled by
+a product such as Mocha. Since servlets may contain proprietary code, trade
+secrets or even database access passwords, this is a significant problem.
+<P>Sun has not yet announced a fix for this problem. Check their Web site
+for details. More information can be found at <A HREF="http://www.sddt.com/files/library/98/06/29/tbd.html">http://www.sddt.com/files/library/98/06/29/tbd.html</A>
+<H3>
+<A NAME="Q78"></A>Q78: Are there any known security problems with the MetaInfo
+MetaWeb Server?</H3>
+
+<H4>
+Physical Path not Protected, June 30, 1998</H4>
+MetaInfo (<A HREF="http://www.metainfo.com">www.metainfo.com</A>) produces
+a number of NT products, including a port of the Unix Sendmail program
+and a DHCP/DNS server. It provides a Web server, called MetaWeb, as a user-friendly
+front end to its administration tools for these products. At the time this
+was written, MetaWeb was at version 3.1.
+<P>According to Jeff Forristal, who discovered the bug, MetaWeb is vulnerable
+to the "double-dot" problem that plagued early versions of the Microsoft
+IIS server. By including ".." pairs in the URL path, the server can be
+tricked into giving access to directories outside the Web document root,
+including documents in the Windows system directory. This allows password
+files and other confidential information to be retrieved. Worse, a variant
+of this attack also gives remote users the ability to run any executable
+binary that happens to be installed on the server machine.
+<P>MetaWeb has not yet made an upgrade or patch available. You are urged
+to upgrade when a fix does become available. A good short-term solution
+is to disable remote administration via the Web interface.
+<P>More information about the MetaInfo bug may be posted <A HREF="http://www.forristech.com">Jeff
+Forristal's site</A>.
+<H2>
+Unix Servers</H2>
+
+<H3>
+<A NAME="Q79"></A>Q79: Are there any known security problems with NCSA
+httpd?</H3>
+Versions of <A HREF="http://hoohoo.ncsa.uiuc.edu/docs/">NCSA httpd</A>
+prior to 1.4 contain a serious security hole relating to a fixed-size string
+buffer. Remote users could break into systems running this server by requesting
+an extremely long URL. Although this bug has been well publicized for more
+than a year, many sites are still running unsafe versions of the server.
+The current version of the software, version 1.5, does not suffer from
+this bug and is available at the link given at the beginning of this paragraph.
+<P><A NAME="util.c"></A>Recently it has come to light that example C code
+(<TT>cgi_src/util.c</TT>) long distributed with the NCSA httpd as an example
+of how to write safe CGI scripts ommitted the newline character from the
+list of characters that are shouldn't be passed to shells. This ommission
+introduces a serious bug into any CGI scripts that were built on top of
+this example code: a remote user can exploit this bug to force the CGI
+script to execute any arbitrary Unix command. This is another example of
+the <A HREF="#bad_shell">dangers of executing shell commands</A> from CGI
+scripts.
+<P>In addition, the NCSA server source code tree itself contains the same
+bug (versions 1.5a and earlier). The faulty subroutine is identical, but
+in this case is found in the file
+<TT>src/util.c</TT> as opposed to <TT>cgi_src/util.c</TT>.
+After looking through the server source code, I haven't found a place where
+a user-provided string is passed to a shell after being processed by this
+subroutine, so I don't <I>think</I> this represents an actual security hole.
+However, it's best to apply the patch shown below to be safe.
+<P>The Apache server, versions 1.02 and earlier, also contains this hole
+in both its <TT>cgi_src</TT> and <TT>src/</TT> subdirectories. It's not
+unlikely that the same problem is present in other derivatives of the NCSA
+source code.
+<P>The patch to fix the holes in the two <TT>util.c</TT> files is simple.
+"phf" and any CGI scripts that use this library should be recompiled after
+applying this patch (the GNU patch program can be found at <A HREF="ftp://prep.ai.mit.edu/pub/gnu/patch-2.1.tar.gz">ftp://prep.ai.mit.edu/pub/gnu/patch-2.1.tar.gz</A>).
+You should apply this patch twice, once while inside the cgi_src/ subdirectory,
+and once within the src/ directory itself:
+<PRE>   tulip% cd ~www/ncsa/cgi_src
+   tulip% patch -f &lt; ../util.patch
+   tulip% cd ../src
+   tulip% patch -f &lt; ../util.patch
+
+---------------------------------- cut here ----------------------------------
+*** ./util.c.old        Tue Nov 14 11:38:40 1995
+--- ./util.c            Thu Feb 22 20:37:07 1996
+***************
+*** 139,145 ****
+
+      l=strlen(cmd);
+      for(x=0;cmd[x];x++) {
+!         if(ind("&amp;;`'\"|*?~&lt;>^()[]{}$\\",cmd[x]) != -1){
+              for(y=l+1;y>x;y--)
+                  cmd[y] = cmd[y-1];
+              l++; /* length has been increased */
+--- 139,145 ----
+
+      l=strlen(cmd);
+      for(x=0;cmd[x];x++) {
+!         if(ind("&amp;;`'\"|*?~&lt;>^()[]{}$\\\n",cmd[x]) != -1){
+              for(y=l+1;y>x;y--)
+                  cmd[y] = cmd[y-1];
+              l++; /* length has been increased */
+---------------------------------- cut here ----------------------------------</PRE>
+
+<H3>
+<A NAME="Q80"></A>Q80: Are there any known security problems with Apache
+httpd?</H3>
+Versions of Apache httpd prior to 1.2.5 contain several programming errors
+that present moderate security risks. Users who have local access to the
+server machine (e.g. Web authors), can carefully craft HTML files which,
+when fetched, will give the user the ability to execute Unix commands with
+Web server user permissions. Since local users usually already have as
+much, if not more, access to the system as the Web server, this does not
+present a major risk, but it may be of concern to ISP's who provide Web
+hosting services to untrusted authors. Apache version 1.2.5 is free of
+these bugs; upgrade at your earliest convenience. If you are using a 1.3
+beta version of Apache, you may apply a patch located atthe Apache site,
+or await the release of 1.3b4.
+<P>Apache servers prior to 1.1.3 contain two security holes which are of
+far more concern. The first hole affects servers compiled with the "mod_cookies"
+module. Servers compiled with this module contain a vulnerability that
+allows remote users to send the server extremely long cookies and overrun
+the program stack, potentially allowing arbitrary commands to be executed.
+Because this gives remote users access to the server host, it is a far
+greater vulnerability than the holes discussed above, which only can be
+exploited by local users.
+<P>The second problem with 1.1.1 affects automatic directory listings.
+Ordinarily, a remote user cannot obtain a directory listing if the directory
+contains a "welcome page", such as "index.html". A bug causes this check
+to fail under certain circumstances, allowing the remote user to see the
+contents of the directory even if the welcome page is present. This hole
+is less serious than the first one, but is still a potential information
+leak.
+<P>More information and current Apache binaries can be found at:
+<BLOCKQUOTE><A HREF="http://www.apache.org/">http://www.apache.org/</A></BLOCKQUOTE>
+
+<H3>
+<A NAME="Q81"></A>Q81: Are there any known security problems with the Netscape
+Servers?</H3>
+
+Netscape Enterprise server versions 3.6sp2 and earlier, as well as
+FastTrack server versions 3.01 and earlier contain a buffer overflow
+bug that can allow a remote user to gain shell access to the server
+machine.  More information on this problem, as well as pointers to
+patches, can be found at <a
+href="http://www.ciac.org/ciac/bulletins/j-062.shtml">http://www.ciac.org/ciac/bulletins/j-062.shtml</a>.
+
+<P>There have also been two well-publicized recent episodes in which
+the system used by the <A HREF="http://www.netscape.com/">Netscape
+Secure Commerce Server</A> to encrypt sensitive communications was
+cracked. In the first episode, a single message encrypted with
+Netscape's less secure 40-bit encryption key was cracked by brute
+force using a network of workstations.  The 128-bit key used for
+communications within the U.S. and Canada is considered immune from
+this type of attack.  <P>In the second episode, it was found that the
+random number generator used within the server to generate encryption
+keys was relatively predictable, allowing a cracking program to
+quickly guess at the correct key. This hole has been closed in the
+recent releases of the software, and you should upgrade to the current
+version if you rely on encryption for secure communications.  Both the
+server <I>and</I> the browser need to be upgraded in order to
+completely close this hole. See <A
+HREF="http://home.netscape.com/newsref/std/random_seed_security.html">http://home.netscape.com/newsref/std/random_seed_security.html</A>
+for details.  <H3>
+
+<A NAME="Q82"></A>Q82: Are there any known security problems with the Lotus
+Domino Go Server?</H3>
+Bill Jones <A HREF="mailto:webmaster@fccj.cc.fl.us">&lt;webmaster@fccj.cc.fl.us></A>
+reports that older versions of Lotus Domino Go, formerly known as IBM Internet
+Connection Server (ICS), contained a security hole in directory browsing.
+When directory browsing is set to "fancy", a potential hacker can browse
+backward through the directory tree all the way up to root ("/"). Thus,
+private system files and other documents are exposed to interception. This
+bug was present in versions 1.0 through 2.0 of ICS, and affected both the
+AIX and OS/2 Warp versions.
+<P>According to Richard L. Gray (<A HREF="mailto:rlgray@us.ibm.com>">rlgray@us.ibm.com></A>)
+of IBM, all known problems have been fixed in versions 4.2.1.3 and higher.
+Lotus Domino Go also now runs on Windows 95, Windows NT, OS/390, HPUX and
+Solaris systems.
+<H3>
+<A NAME="Q83"></A>Q83: Are there any known security problems with the WN
+Server?</H3>
+The <A HREF="http://hopf.math.nwu.edu">WN server</A> is free of any known
+security holes. As explained in <A HREF="wwwsf1.html#Q6">Q6</A> it contains
+several features that lessen the chance that security will be breached
+by improper server configuration.
+<H2>
+Macintosh Servers</H2>
+
+<H3>
+<A NAME="Q84"></A>Q84: Are there any known security problems with WebStar?</H3>
+There is a gaping hole in WebSTAR's handling of log files. If you install
+WebSTAR using the default configuration, the server's log file will be
+located within the document tree. Anyone on the Internet can download the
+entire server log and review all remote accesses to the server simply by
+requesting the URL "http://your.site/WebSTAR%20LOG ". As discussed in <A HREF="wwwsf6.html">Server
+Logs and Privacy</A>, this is a violation of users' expectation to privacy.
+Use WebSTAR's administrative tool to change the location of the log file
+to some place outside the document tree.
+<P>As far as the security of the WebSTAR server itself goes, there is reason
+to think that WebSTAR is more secure than its Unix and Windows counterparts.
+Because the Macintosh does not have a command shell, and because it does
+not allow remote logins, it is reasonable to expect that the Mac is inherently
+more secure than the other platforms. In fact this expectation has been
+borne out so far: no specific security problems are known in either WebStar
+or its shareware ancestor MacHTTP.
+<P>In early 1996 a consortium of Macintosh Internet software development
+companies, including StarNine, the developer of WebStar, posted a $10,000
+reward to anyone who could read a password-protected Web page on a Macintosh
+running WebStar software. As described in an article about the challenge
+in <A HREF="http://www.dartmouth.edu/pages/TidBITS/TidBITS.html">Tidbits#317/04-Mar-96</A>,
+after 45 days no one had stepped forward to claim the prize.
+<P>Although one cannot easily "break in" to a Macintosh host in the conventional
+way, potential security holes do exist:
+<OL>
+<LI>
+Exploiting holes in the server to read files outside the official document
+tree.</LI>
+
+<LI>
+Finding a way to crash the server.</LI>
+
+<LI>
+Exploiting holes in CGI scripts to execute AppleScript commands. This particularly
+of concern for Perl scripts. All the caveats and warnings about <A HREF="wwwsf4.html">safe
+scripting</A> apply.</LI>
+</OL>
+In fact, a repeat "Crack-a-Mac" challenge in 1997, sponsored by a Swedish
+consulting company, was not so fortunate. In this case, a cracker was able
+to break into the server and steal the protected page by exploiting bugs
+in two server remote administration and editing add-ons. This emphasizes
+the risk that you runs whenever you add CGI scripts, server modules, and
+other extensions to Web servers. Details on the successful break-in, along
+with links to patched server extensions, can be found at <A HREF="http://hacke.infinit.se/">http://hacke.infinit.se/</A>
+<H3>
+<A NAME="Q85"></A>Q85: Are there any known security problems with MacHTTP?</H3>
+MacHTTP shares WebSTAR's problem with log files. See the discussion <A HREF="#Q84">above</A>.
+<H3>
+<A NAME="Q86"></A>Q86: Are there any known security problems with Quid
+Pro Quo?</H3>
+The Quid Pro Quo server saves its default log file inside the document
+root, at URL <TT>http://site.name/server%20logfile</TT>. A knowledgeable
+remote user can find out every access that anyone's made to your server!
+<P>(This information provided by Paul DuBois &lt;<A HREF="mailto:dubois@primate.wisc.edu">dubois@primate.wisc.edu</A>>).
+<H2>
+Other Servers</H2>
+
+<H3>
+<A NAME="Q87"></A>Q87: Are there any known security problems with Novell
+WebServer?</H3>
+If you are running Novell Webserver version 3.x and have the Web Server
+Examples Toolkit v.2 installed, you have a major security hole. Users can
+view any file on your system and download directory listings, possibly
+gaining information needed to break into your system. The hole is in the
+example CGI Perl script files.pl. Remove it from your /perl directory (typically
+located in SYS:INW_WEB\SHARED\DOCS\LCGI\PERL5. Better yet, remove
+<B>all</B>
+CGI scripts that are not essential for the operation of your site.
+<HR>
+<TABLE WIDTH="100%" >
+<TR>
+<TD></TD>
+
+<TD ALIGN=CENTER><A HREF="www-security-faq.html#contents"><IMG SRC="i/up.gif" ALT="^" BORDER=0 HEIGHT=22 WIDTH=20 ALIGN=CENTER></A><A HREF="www-security-faq.html#contents">Up
+to <I>Table of Contents</I></A></TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD ALIGN=LEFT><A HREF="wwwsf7.html"><IMG SRC="i/left.gif" ALT="<<" BORDER=0 HEIGHT=22 WIDTH=20 ALIGN=CENTER></A><A HREF="wwwsf7.html">Back
+to <I>Client Side Security</I></A></TD>
+
+<TD></TD>
+
+<TD ALIGN=RIGHT><A HREF="wwwsf9.html">Forward to <I>Denial of Service</I></A><A HREF="wwwsf9.html"><IMG SRC="i/right.gif" ALT=">>" BORDER=0 HEIGHT=22 WIDTH=20 ALIGN=CENTER></A></TD>
+</TR>
+</TABLE>
+
+<HR>
+<ADDRESS>
+<A HREF="http://www.genome.wi.mit.edu/~lstein/">Lincoln D. Stein</A> (<A HREF="mailto:lstein@cshl.org">lstein@cshl.org</A>)</ADDRESS>
+
+<BR>
+<P>
+<BR>
+<BR>
+<P><!-- hhmts start -->Last modified: Mon Sep 13 13:53:46 EDT 1999<!-- hhmts end -->?
+</BODY>
+</HTML>

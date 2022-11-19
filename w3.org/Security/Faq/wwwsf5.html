@@ -1,0 +1,706 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <title>WWW Security FAQ: Protecting Confidential Documents at Your Site</title>
+</head>
+<body bgcolor="#FFFFFF">
+
+<h1>
+<a href="https://www.w3.org/"><img SRC="i/w3c_home.gif" ALT="[W3C]" BORDER=0 height=48 width=72 align=CENTER></a>
+The World Wide Web Security FAQ</h1>
+
+<hr>
+<h2>
+DISCLAIMER</h2>
+This information is provided by Lincoln Stein (<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>)
+and John Stewart (<a href="mailto:jns@digitalisland.net">jns@digitalisland.net</a>).
+The World Wide Web Consortium (W3C) hosts this document as a service to
+the Web Community; however, it does not endorse its contents. For further
+information, please contact Lincoln Stein or John Stewart directly.
+<p>&nbsp;</p>
+<table WIDTH="100%" >
+<tr>
+<td></td>
+
+<td ALIGN=CENTER><a href="index.html#contents"><img SRC="i/up.gif" ALT="^" BORDER=0 height=22 width=20 align=CENTER></a><a href="www-security-faq.html#contents">Up
+to <i>Table of Contents</i></a></td>
+
+<td></td>
+</tr>
+
+<tr>
+<td ALIGN=LEFT><a href="wwwsf2.html"><img SRC="i/left.gif" ALT="Backward" BORDER=0 height=22 width=20 align=MIDDLE></a><a href="wwwsf4.html">Backward
+to <i>CGI Scripts</i></a></td>
+
+<td></td>
+
+<td ALIGN=RIGHT><a href="wwwsf6.html">Forward to <i>Denial of Service Attacks</i><img SRC="i/right.gif" ALT="Forward" BORDER=0 height=22 width=20 align=MIDDLE></a></td>
+</tr>
+</table>
+
+<hr>
+<h1>
+<a NAME="restrictions"></a>5. Protecting Confidential Documents at Your
+Site</h1>
+
+<h2>
+<a NAME="CON-Q1"></a>Q1: What types of access restrictions are available?</h2>
+There are three types of access restriction available:
+<ol>
+<li>
+Restriction by IP address, subnet, or domain</li>
+
+<br>Individual documents or whole directories are protected in such a way
+that only browsers connecting from certain IP (Internet) addresses, IP
+subnets, or domains can access them.
+<li>
+Restriction by user name and password</li>
+
+<br>Documents or directories are protected so that the remote user has
+to provide a name and password in order to get access.
+<li>
+Encryption using public key cryptography</li>
+
+<br>Both the request for the document and the document itself are encrypted
+in such a way that the text cannot be read by anyone but the intended recipient.
+Public key cryptography can also be used for reliable user verification.
+See below.</ol>
+
+<hr>
+<h2>
+<a NAME="CON-Q2"></a>Q2: How safe is restriction by IP address or domain
+name?</h2>
+Restriction by IP address is secure against casual nosiness but not against
+a determined hacker. There are several ways around IP address restrictions.
+With the proper equipment and software, a hacker can "spoof" his IP address,
+making it seem as if he's connecting from a location different from his
+real one. Nor is there any guarantee that the person contacting your server
+from an authorized host is in fact the person you think he is. The remote
+host may have been broken into and is being used as a front. To be safe,
+IP address restriction must be combined with something that checks the
+identity of the user, such as a check for user name and password.
+<p>IP address restriction can be made much safer by running your server
+behind a firewall machine that is capable of detecting and rejecting attempts
+at spoofing IP addresses. Such detection works best for intercepting packets
+from the outside world that claim to be from trusted machines on your internal
+network.
+<p>One thing to be aware of is that if a browser is set to use a proxy
+server to fetch documents, then your server will only know about the IP
+address of the proxy, not the real user's. This means that if the proxy
+is in a trusted domain, anyone can use that proxy to access your site.
+Unless you know that you can trust a particular proxy to do its own restriction,
+don't add the IP address of a proxy (or a domain containing a proxy server)
+to the list of authorized addresses.
+<p>Restriction by host or domain name has the same risks as restriction
+by IP address, but also suffers from the risk of "DNS spoofing", an attack
+in which your server is temporarily fooled into thinking that a trusted
+host name belongs to an alien IP address. To lessen that risk, some servers
+can be configured to do an extra DNS lookup for each client. After translating
+the IP address of the incoming request to a host name, the server uses
+the DNS to translate from the host name back to the IP address. If the
+two addresses don't match, the access is forbidden. <a href="#maximum_dns">See
+below</a> for instructions on enabling this feature in NCSA's httpd
+<hr>
+<h2>
+<a NAME="CON-Q3"></a>Q3: How safe is restriction by user name and password?</h2>
+Restriction by user name and password also has its problems. A password
+is only good if it's chosen carefully. Too often users choose obvious passwords
+like middle names, their birthday, their office phone number, or the name
+of a favorite pet goldfish. These passwords can be guessed at, and WWW
+servers, unlike Unix login programs, don't complain after repeated unsuccessful
+guesses. A determined hacker can employ a password guessing program to
+break in by brute force. You also should be alert to the possibility of
+remote users sharing their user names and passwords. It is more secure
+to use a combination of IP address restriction and password than to use
+either of them alone.
+<p>Another problem is that the password is vulnerable to interception as
+it is transmitted from browser to server. It is not encrypted in any meaningful
+way, so a hacker with the right hardware and software can pull it off the
+Internet as it passes through. Furthermore, unlike a login session, in
+which the password is passed over the Internet just once, a browser sends
+the password each and every time it fetches a protected document. This
+makes it easier for a hacker to intercept the transmitted data as it flows
+across the Internet. To avoid this, you have to encrypt the data. See below.
+<p>If you need to protect documents against _local_ users on the server's
+host system, you'll need to run the server as something other than "nobody"
+and to set the permissions of both the restricted documents and server
+scripts so that they're not world readable. See Q9.
+<hr>
+<h2>
+<a NAME="CON-Q4"></a>Q4: What is user authentication?</h2>
+User verification is any system that for determining, and verifying, the
+identity of a remote user. User name and password is a simple form of user
+authentication. Public key cryptographic systems, described below, provide
+a more sophisticated form authentication that uses an unforgeable electronic
+signature.
+<hr>
+<h2>
+<a NAME="CON-Q5"></a>Q5: How do I restrict access to documents by the IP
+address or domain name of the remote browser?</h2>
+The details are different for each server. See your server's documentation
+for details. For servers based on NCSA httpd, you'll need to add a directory
+control section to access.conf that looks something like this:
+<PRE>
+   &lt;Directory /full/path/to/directory&gt;
+
+
+     &lt;Limit GET POST&gt;
+       order mutual-failure
+       deny from all
+       allow from 192.198.2 .zoo.org
+       allow from 18.157.0.5 stoat.outback.au
+     &lt;/Limit&gt;
+
+   &lt;/Directory&gt;
+</PRE>
+
+This will deny access to everybody but the indicated hosts (18.157.0.5
+and stoat.outback.au), subnets (182.198.2) and domains (.zoo.org). Although
+you can use either numeric IP addresses or host names, it's safer to use
+the numeric form because this form of identification is less easily subverted
+(<a href="#CON-Q1">Q1</a>).
+<p>One way to increase the security of restriction by domain name is to
+make sure that your server double-checks the results of its DNS lookups. <a NAME="maximum_dns"></a>You
+can enable this feature in NCSA's httpd (and the related Apache server)
+by making sure that the
+<tt>-DMAXIMUM_DNS</tt> flag is set in the Makefile.
+<p>For the CERN server, you'll need to declare a protection scheme with
+the Protection directive, and associate it with a local URL using the Protect
+directive. An entry in httpd.conf that limits access to certain domains
+might look like this:
+
+<pre>
+   Protection LOCAL-USERS {
+
+     GetMask @(*.capricorn.com, *.zoo.org, 18.157.0.5)
+   }
+
+   Protect /relative/path/to/directory/* LOCAL-USERS
+</PRE>
+
+<hr>
+<h2>
+<a NAME="CON-Q6"></a>Q6: How do I add new users and passwords?</h2>
+Unix-based servers use password and group files similar to the like-named
+Unix files. Although the format of these files are similar enough to allow
+you to use the Unix versions for the Web server, this isn't a good idea.
+You don't want to give a hacker who's guessed a Web password carte blanche
+to log into the Unix host.
+<p>Check your server documentation for the precise details of how to add
+new users. For NCSA httpd, you can add a new user to the password file
+using the htpasswd program that comes with the server software:
+
+<pre>
+   htpasswd /path/to/password/file username
+
+</pre>
+
+htpasswd will then prompt you for the password to use. The first time you
+invoke htpasswd you must provide a -c flag to create the password file
+from scratch.
+<p>The CERN server comes with a slightly different program called htadm:
+<pre>
+   htadm -adduser /path/to/password/file username
+
+</pre>
+
+htadm will then prompt you for the new password.
+<p>After you add all the authorized users, you can attach password protection
+to the directories of your choice. In NCSA httpd and its derivatives, add
+something like this to access.conf:
+<PRE>
+   &lt;Directory /full/path/to/protected/directory&gt;
+
+     AuthName          name.of.your.server
+     AuthType          Basic
+     AuthUserFile      /usr/local/etc/httpd/conf/passwd
+     &lt;Limit GET POST&gt;
+       require valid-user
+     &lt;/Limit&gt;
+
+&lt;/Directory&gt;
+</PRE>
+
+You'll need to replace AuthUserFile with the full path to the password
+file. This type of protection can be combined with IP address restriction
+as described in the previous section. See NCSA's online documentation (http://hoohoo.ncsa.uiuc.edu/)
+or the author's book (<a href="http://www.genome.wi.mit.edu/WWW/">How to
+Set Up and Maintain a Web Site</a>) for more details.
+<p>For the CERN server, the corresponding entry in httpd.conf looks like
+this:
+<PRE>
+   Protection AUTHORIZED-USERS {
+     AuthType     Basic
+     ServerID     name.of.your.server
+     PasswordFile /usr/local/etc/httpd/conf/passwd
+     GetMask      All
+}
+Protect /relative/path/to/directory/* AUTHORIZED-USERS
+</PRE>
+Again, see the documentation or the author's book for details.
+<hr>
+<h2>
+<a NAME="CON-Q7"></a>Q7: Is there a CGI script to allow users to change their
+passwords online?</h2>
+There are several floating around. The one I use is a Perl script that
+I wrote myself, <i>user_manage</i>. It works with the password and group
+files used by the Apache, NCSA httpd, CERN and Netscape Unix servers, and
+probably other Unix-based servers. Users can use it to safely change their
+own passwords, and Web administrators can use it to add new users, manipulate
+groups, and edit the privileges of existing users. You can find this script
+at
+<blockquote><a href="http://stein.cshl.org/~lstein/user_manage/">http://stein.cshl.org/~lstein/user_manage/</a></blockquote>
+Bill Jones has written a multi-purpose script called
+<i>WebPass</i>. In
+addition to allowing users to change their Web passwords, they can also
+change their POP, log-in and news passwords, if they have them. It uses
+a combination of Perl and Expect to do its magic. You can find it at:
+<blockquote><a href="http://web.fccj.org/~wcjones/WebPass.html">http://web.fccj.org/~wcjones/WebPass.html</a></blockquote>
+Several vendors of commercial Web servers also offer remote user administration
+scripts. See your server documentation for details.
+<hr>
+<h2>
+<a NAME="CON-Q8"></a>Q8: Using per-directory access control files to control
+access to directories is so convenient, why should I use access.conf?</h2>
+Instead of placing directory access restrictions directives in centralized
+configuration files, most servers give you the ability to control access
+by putting a "hidden" file in the directory you want to restrict access
+to (this file is called ".htaccess" in NCSA-derived servers and ".www_acl"
+in the CERN server). It is very convenient to use these files since you
+can adjust the restrictions on a directory without having to edit the central
+access control file. There are several problems with relying on .htaccess
+files too heavily. One is that with access control files scattered all
+over the document hierarchy, there is no central place where the access
+policy for the site is clearly set out. Another problem is that it is easy
+for these files to get modified or overwritten inadvertently, opening up
+a section of the document tree to the public. Finally, there is a bug in
+many servers (including the NCSA server) that allows the access control
+files to be fetched just like any other file using a URL such as:
+<pre>   http://your.site.com/protected/directory/.htaccess</pre>
+This is clearly an undesirable feature since it gives out important information
+about your system, including the location of the server password file.
+<p>Another problem with the per-directory access files is that if you
+ever need to change the server software, it's a lot easier to update a
+single central access control file than to search and fix a hundred small
+files.
+<hr>
+<h2>
+<a NAME="CON-Q9"></a>Q9: How does encryption work?</h2>
+Encryption works by encoding the text of a message with a key. In traditional
+encryption systems, the same key was used for both encoding and decoding.
+In the new public key or asymmetric encryption systems, keys come in pairs:
+one key is used for encoding and another for decoding. In this system everyone
+owns a unique pair of keys. One of the keys, called the public key, is
+widely distributed and used for encoding messages. The other key, called
+the private key, is a closely held secret used to decrypt incoming message.
+Under this system, a person who needs to send a message to a second person
+can encrypt the message with that person's public key. The message can
+only be decrypted by the owner of the secret private key, making it safe
+from interception. This system can also be used to create unforgeable digital
+signatures.
+<p>Most practical implementations of secure Internet encryption actually
+combine the traditional symmetric and the new asymmetric schemes. Public
+key encryption is used to negotiate a secret symmetric key that is then
+used to encrypt the actual data.
+<p>Since commercial ventures have a critical need for secure transmission
+on the Web, there is very active interest in developing schemes for encrypting
+the data that passes between browser and server.
+<p>More information on public key cryptography can be found in the book
+"Applied Cryptography", by Bruce Schneier.
+<hr>
+<h2>
+<a NAME="CON-Q10"></a>Q10: What are: SSL, SHTTP, Shen?</h2>
+These are all proposed encryption and user authentication standards for
+the Web. Each requires the right combination of compatible browser and
+server to operate, so none is yet the universal solution to the secure
+data transmission problem.
+<p><i>SSL</i> (Secure Socket Layer) is the scheme proposed by Netscape
+Communications Corporation. It is a low level encryption scheme used to
+encrypt transactions in higher-level protocols such as HTTP, NNTP and FTP.
+The SSL protocol includes provisions for server authentication (verifying
+the server's identity to the client), encryption of data in transit, and
+optional client authentication (verifying the client's identity to the
+server). SSL is currently implemented commercially on several different
+browsers, including Netscape Navigator, Secure Mosaic, and Microsoft Internet
+Explorer, and many different servers, including ones from Netscape, Microsoft,
+IBM, Quarterdeck, OpenMarket and O'Reilly and Associates. Details on SSL
+can be found at:
+<p><a href="http://home.netscape.com/products/security/ssl/index.html">http://home.netscape.com/products/security/ssl/index.html</a>
+<p><i>SHTTP</i> (Secure HTTP) is the scheme proposed by CommerceNet, a
+coalition of businesses interested in developing the Internet for commercial
+uses. It is a higher level protocol that only works with the HTTP protocol,
+but is potentially more extensible than SSL. Currently SHTTP is implemented
+for the Open Marketplace Server marketed by Open Market, Inc on the server
+side, and Secure HTTP Mosaic by Enterprise Integration Technologies on
+the client side. See here for details:
+<p><a href="http://www.eit.com/creations/s-http/">http://www.eit.com/creations/s-http/</a>
+<p>Shen is scheme proposed by Phillip Hallam-Baker of CERN. Like SHTTP
+it is a high level replacement for the existing HTTP protocol. Although
+it has existed as a proposal for nearly two years, no browser or server
+vendor has implemented it. Further, the URL that described it is no longer
+available, so for all intents and purposes it can be considered moribund.
+<hr>
+<h2>
+<a NAME="CON-Q11"></a>Q11: Are there any "freeware" secure servers?</h2>
+There is a freeware implementation of SSL, known as
+<i>SSLeay</i>. This
+implementation comes as C source code that can be linked into such applications
+as Telnet and FTP. Among the supported applications are the freely redistributable
+Unix Web servers Apache and NCSA httpd, and several Unix-based Web browsers,
+including Mosaic. Outside United States borders this package can be used
+free of charge in both commercial and non-commercial applications. Within
+the United States, however, you will need to pay a licensing fee to <a href="http://www.rsa.com/">RSA
+Data Security</a> in order to use SSL for commercial applications (it might
+be easier to obtain one of the commercial versions of Apache-SSL, which
+provide the license as part of the purchase price).
+<p>There are several components to this software. You will need to obtain
+and install them all in order to have a working SSL-based Web server:
+<dl>
+<dt>
+The SSLeay FAQ</dt>
+
+<dd>
+<a href="http://www.psy.uq.oz.au/~ftp/Crypto/">http://www.psy.uq.oz.au/~ftp/Crypto/</a>.
+You'll need to read this carefully.</dd>
+
+<dt>
+SSLeay</dt>
+
+<dd>
+This is the SSL library itself. It can be obtained via FTP at <a href="ftp://ftp.psy.uq.oz.au/pub/Crypto/SSL">ftp://ftp.psy.uq.oz.au/pub/Crypto/SSL/</a></dd>
+
+<dt>
+Patches to various internet applications</dt>
+
+<dd>
+These are source code patches to telnet, ftp, Mosaic, and the like to take
+advantage of SSL. They can be found via FTP at <a href="ftp://ftp.psy.uq.oz.au/pub/Crypto/SSLapps/">ftp://ftp.psy.uq.oz.au/pub/Crypto/SSLapps/</a>.</dd>
+
+<dt>
+Patches for the Apache server</dt>
+
+<dd>
+Currently there are patches for the Apache 0.8.14h and 1.0.1a servers.
+The patches may work with other versions as well, but are not guaranteed.
+<a href="ftp://ftp.ox.ac.uk/pub/crypto/SSL/">ftp://ftp.ox.ac.uk/pub/crypto/SSL/</a></dd>
+
+<dt>
+The Apache server source code</dt>
+
+<dd>
+<a href="http://www.apache.org">http://www.apache.org</a></dd>
+</dl>
+You can obtain precompiled versions of Apache-SSL from two sources. Within
+the United States you can obtain <a href="http://www.c2.net/">Stronghold</a>
+from C2Net Software, Inc.. Outside the United States boundaries, you can
+obtain Stronghold from<a href="http://stronghold.ukweb.com/">http://stronghold.ukweb.com/</a>.
+This version of Apache is available at a discount for non-profit organizations
+and educational institutions.
+<p>After installing an SSL-enabled server you will need to obtain a
+<i>server
+certificate</i> from a certifying authority. Server certificates are available
+from a number of different companies, each with a slightly different application
+procedure and fee schedule. In the United States, the <a href="http://www.verisign.com">VeriSign
+Corporation</a> was the first and still most widely used certifying authority.
+Because of a recent fee increase ($495 for a commercial server certificate),
+however, VeriSign is currently one of the more expensive agencies. A good
+alternative to VeriSign is <a href="http://www.thawte.com/">Thawte Consulting</a>;
+its fees are significantly lower and its application procedure for non-American
+organization is far less of a hassle. Other certifying authorities include:
+<dl>
+<dt>
+Entrust</dt>
+
+<dd>
+<a href="http://www.entrust.com/">http://www.entrust.com/</a></dd>
+
+<dt>
+GTE CyberTrust</dt>
+
+<dd>
+<a href="http://www.cybertrust.gte.com/">http://www.cybertrust.gte.com/</a></dd>
+
+<dt>
+EuroSign</dt>
+
+<dd>
+<a href="http://eurosign.com/">http://eurosign.com</a></dd>
+
+<dt>
+COST</dt>
+
+<dd>
+<a href="http://www.cost.se/">http://www.cost.se</a></dd>
+
+<dt>
+BiNARY SuRGEONS</dt>
+
+<dd>
+<a href="http://www.surgeons.co.za/certificate.html">http://www.surgeons.co.za/certificate.html</a></dd>
+
+<dt>
+Keywitness</dt>
+
+<dd>
+<a href="http://www.keywitness.ca">http://www.keywitness.ca</a></dd>
+
+<dt>
+SoftForum</dt>
+
+<dd>
+<a href="http://www.softforum.co.kr/">http://www.softforum.co.kr/</a></dd>
+
+<dt>
+CompuSource</dt>
+
+<dd>
+<a href="http://www.compusource.co.za/">http://www.compusource.co.za/</a></dd>
+</dl>
+Before obtaining a server certificate from one of these CA's, be sure to
+confirm that the certificate will be recognized by the browsers you wish
+to support. VeriSign and Thawte and recognized by recent versions of both
+the Netscape and Microsoft browsers. Others are less likely to be recognized.
+To see a list of certificates honored by the browser, choose <i>Options-&lt;Security
+Preferences->Site Certificates</i> in Netscape Navigator, or
+<i>View->Options->Security->Sites</i>
+in Internet Explorer. The information is available in Netscape Communicator
+by pressing the <i>Security</i> button in the toolbar.
+<p>The process of obtaining a server certificate is slightly different
+from CA to CA, but follows the same basic outline. After choosing a certifying
+authority, connect to its Web site and find the server certificate application
+section. From here locate the appropriate application form for your server
+software, and fill it out. You'll be asked to provide your Web site's domain
+name, company name, and contact information. You'll also be asked to provide
+documentation, such as a Dun and Bradstreet number, articles of incorporation,
+or a notarized letter from the bursar of your college to prove the identity
+of your organization. You'll also be asked to provide payment information,
+such as a credit card number.
+<p>The application form is only half of the process. You'll also need to
+generate an electronic certificate request. After submitting the application
+form to the CA, you'll use a program provided with your server software
+to generate a public/private key pair. In the Apache-SSL distributions,
+the program is called<i>genkey</i>.
+<p>After generating the key pair, the key generation software will create
+a file containing the key request. In some cases it will automatically
+mail the file to the CA. In other cases, it will ask you to manually mail
+the file to the CA. In either case there will now be a wait of days to
+weeks while the CA confirms the validity of your request. Eventually you
+will receive a signed certificate by return e-mail. You then complete the
+process by installing the signed certificate on your server. The details
+again vary from server to server. For Apache-SSL you'll use a program called
+<i>getca</i>.
+<p>At this point users will be able to retrieve documents from your server
+and to submit forms without fear of interception. Your server's certificate
+provides remote users with proof of your server's identity.
+<hr>
+<h2>
+<a NAME="CON-Q12"></a>Q12: Can I use Personal Certificates to Control Server
+Access?</h2>
+SSL can also be used to verify the <i>users'</i> identity to the server,
+providing more reliable authentication than the common password-based authentication
+schemes. To take advantage of this system each user will have to obtain
+a "personal certificate" from a CA.
+<p>Users can obtain inexpensive personal certificates from <a href="http://www.verisign.com">VeriSign</a>.
+VeriSign offers two classes of certificate. Class 1 certificates cost a
+mere $9.95 yearly, but provide no assurance that the user is who he or
+she claims to be because VeriSign performs no validation of the information
+submitted by the user on the application form. At most, class 1 certificates
+certify that the user can receive e-mail at the address provided in the
+application. Class 2 certificates, available for $19.95 yearly, provide
+a greater level of assurance. In order to obtain such a certificate, the
+user must provide personal identifying information that is validated by
+a credit bureau.
+<p>If you are running an intranet, you may wish to issue personal certificates
+yourself, in order to provide fine-grained access control to employees
+of your organization. To do this, you will need to obtain and install a
+certificate server. Such systems are available from <a href="http://www.microsoft.com/">Microsoft</a>,
+<a href="http://www.netscape.com/">Netscape</a>,
+<a href="http://www.xcert.com/">XCert</a>,
+<a href="http://www.entrust.com/">Entrust</a>
+and <a href="http://www.cybertrust.gte.com/">GTE</a>.
+<p>To use personal certificates for access control, your server will need
+to be specially configured. The mechanics of setting this up are beyond
+the scope of this document, but detailed directions can be found in the
+author's book, <i>Web Security: A Step-by-Step Reference Guide</i>.
+<hr>
+<h2>
+<a NAME="CON-Q13"></a>Q13: How do I accept credit card orders over the Web?</h2>
+You can always instruct users to call your 800 number :-). Seriously, though,
+you _shouldn't_ ask remote users to submit their credit card number in
+a fill-out form field unless you are using an encrypting server/browser
+combination. Your alternate is to use one of the credit card proxy systems
+described in the <a href="#Q30">next section</a>.
+<p>Even with an encrypting server, you should be careful about what happens
+to the credit card number <b>after</b> it's received by the server. For
+example, if the number is received by a server script, make sure not to
+write it out to a world-readable log file or send it via e-mail to a remote
+site.
+<hr>
+<h2>
+<a NAME="CON-Q14"></a>Q14: What are: CyberCash, SET, OpenMarket?</h2>
+These are all schemes that have been developed to process commercial transactions
+over the Web without compromising credit card numbers or other confidential
+information.
+<h3>
+CyberCash</h3>
+<i>CyberCash</i>, a product of the CyberCash Corporation, uses specialized
+software on the merchant and customer's sides of the connections to provide
+for secure payments across the Internet. CyberCash supports both credit
+cards and electronic checks. The credit card service enables online stores
+and Internet billers to accept credit card payments for goods or services
+and the "PayNow" service enables Internet billers to accept electronic
+check payments for bills presented on the Internet.  For a consumer
+or business to make CyberCash payments, they submit credit card or checking
+account information via an SSL-enabled form provided by the merchant.
+Alternatively, the consumer may use an <a href="http://www.instabuy.com">InstaBuy</a>
+Wallet to simplify the purchasing process. InstaBuy saves user credit card
+information (electronic checks are not yet supported), in 128-bit encrypted
+form, on the InstaBuy servers.
+<p>When a user goes to purchase an item from a CyberCash enrolled merchant,
+the user fills out a traditional payment form to be submitted via SSL,
+or, if the merchant also supports InstaBuy, clicks on the InstaBuy icon
+to to set up or use a Wallet.  CyberCash merchants may choose whether
+or not to implement InstaBuy, which is a new service owned by CyberCash.
+Payment information is then sent to the merchant's web server which packages
+the transaction for forwarding to the CyberCash Gateway servers, which
+are linked to financial institutions. CyberCash, in contrast to the associations
+created by its name, is really a back-end payment system, transparent to
+the user, which merchants use for payment processing.
+<p>An advantage of CyberCash is its use of triple-DES encryption when transmitting
+payment information.  Also, because payments are processed entirely
+by CyberCash, there is really no need for merchants to record credit card
+or checking account information in a database or other static memory location.
+This lessens the merchant's risk that financial information can be stolen
+by individuals who have broken into the merchant's computer system.
+The onus is on CyberCash to handle all security concerns.
+<p>For merchants to accept CyberCash payments they must first establish
+a credit card merchant account with an acquiring financial institution.
+More than 95 percent of the acquiring financial institutions in the United
+States are CyberCash-enabled. Fees to open merchant accounts vary, as they
+are set by the regional banks themselves.  A typical scenario would
+include: a one-time fee of approximately $100 to create the account, a
+monthly fee of approximately $15 to keep the account open, and a transaction
+fee of 2-3% of the purchase price of each transaction.  In addition
+to fees charged by the acquiring financial institution, CyberCash says
+that merchants should expect to pay (to CyberCash) a one-time service setup
+fee ($500 to $1,000), and monthly service fees typically comprised of a
+service access fee (usually $40 - $80) and transaction charges based on
+volume (usually $0.20 to $0.60 per  transaction).
+<p>After setting up a merchant bank account, the merchant must install
+software called the "Merchant Connection Kit" (MCK) on their Web server.
+This software is launched when the user presses the "pay" button in a shopping
+cart script (or equivalent), and forwards the transaction to the "CashRegister"
+service running on the CyberCash servers. The MCK is downloadable free
+of charge and available for many platforms, including Windows NT and Unix.
+It requires only 100k of hard disk space, and consists of encryption and
+communication libraries, HTML templates, and CGI scripts for handling payments
+at your online store.
+<p>The MCK's job is to transmit all payment information to the CyberCash
+Gateway servers, which are responsible for executing the transaction.
+These are  payment servers which communicate with financial institutions
+in such a way that, to the financial institution, the transactions look
+like standard point of sale events, not internet transactions.
+<p>CyberCash also offers an "Administrative Interface", which is a web
+site that enables you to perform administrative tasks such as querying
+for transactions, getting daily transaction totals, or refunding money
+for returned items.
+<p>The main advantage of CyberCash is that it provides the merchant with
+a fully functional, externally managed payment processing system. The merchant
+need only set up a merchant account and configure the MCK to get started.
+Disadvantages include the risk of centralizing so much financial information
+on one server system (CyberCash), and the accompanying dependence on the
+CyberCash servers' performance and throughput characteristics. In addition,
+the fees charged to merchants for processing credit card transactions make
+CyberCash impractical for small purchases, such as "pay per play" on-line
+video games.
+<p>More information on CyberCash is available at: <a href="http://www.cybercash.com">http://www.cybercash.com</a>
+<h3>
+SET</h3>
+SET, or <i>Secure Electronic Transaction</i> protocol, is an open standard
+for processing of credit card transactions over the Internet created jointly
+by Netscape, Microsoft, Visa and Mastercard. The main justification for
+SET is interoperability. By adhering to the standard, one vendor's software
+will be interoperable with any other vendor's software.
+<p>To address the high potential for fraud on the Internet, the SET standard
+uses a complex system of certifying authorities to vouch for the identify
+of every party in the transaction: customer, merchant, card-issuer and
+merchant's bank are all identified by signed, unforgeable certificates.
+To address privacy concerns, the transaction is separated in such a way
+that the merchant has access to information about what is being purchased,
+how much it costs, and whether the payment is approved, but no information
+on what payment method the customer is using. Similarly, the card-issuer
+has access to the purchase price, but no information on the type of merchandise
+involved. Despite these precautions, however, SET does not provide complete
+anonymity to the consumer.
+<p>SET requires specialized software on both the customer's and merchant's
+side of the connection. Cardholders shopping on SET-compliant sites who
+want to take advantage of secure SET processing must have a SET compliant
+wallet, available from SET merchants or financial institutions. Some merchants
+may also require that the cardholder have a SET Certificate. The main advantages
+of SET to the consumer are security guaranteed by digital certificates,
+and the ability to utilize the same wallet, theoretically, on any SET-compliant
+site.
+<p>Merchant's who wish to become a SET online merchant site need to build
+or purchase a SET-compliant merchant server product.  The SET website
+provides a <a href="http://www.setco.org/cgi-bin/vsm.cgi">Vendor Status
+Matrix</a> with information about purchasing and installing merchant server
+applications. Merchants then need to contact their financial institution
+to obtain a digital certificate.
+<p>Microsoft offers Site Server Commerce Edition, a superset of the Microsoft
+Site Server server product, which is itself a superset of Internet Information
+Server. Site Server Commerce Edition supports real-time credit authorization
+with SET. It also includes all of Site Server's features for dynamically
+publishing content, searching content and the delivery of content in multiple
+formats. For more information on Site Server Commerce, go to <a href="http://www.microsoft.com/siteserver/commerce/default.htm">http://www.microsoft.com/siteserver/commerce/default.htm</a>.
+<p>For its part, the iPlanet.com collaboration of Netscape Corporation
+and Sun Microsystems, offers <a href="http://www.iplanet.com/products/ecommerce/merchantxpert/merchantxpert.html">MerchantXPert</a>
+which provides catalog management, order management, membership services,
+and payment services. While Netscape's earlier e-commerce merchant server
+product, LivePayment, was moving in the direction of full SET compliance,
+the new offering from the Alliance is not SET-compliant and does not appear
+to be headed in that direction.
+<p>For more information on SET, see the <a href="http://www.setco.org/">Secure
+Electronic Transaction LLC</a> website. They are responsible for the ongoing
+management of the SET specification.
+<h3>
+Open Market Web Commerce System</h3>
+Open Market, Inc., also offers an online commerce system. In the Open Market
+scheme, a back-end transaction system and a front-end catalog interface
+to create an end to end e-commerce solution. The back-end system, known
+as Transact, provides core business functions such as order fulfillment,
+billing and connections to payment services. LiveCommerce, the front-end
+system, provides the storage, manipulation and presentation of the product
+catalog. Open Market's prices reflect the fact that the products are geared
+mainly to large corporations, banks, and service providers who wish to
+present large catalogs or set up multiple independent e-commerce storefronts.
+More information is available from Open Market at <a href="http://www.openmarket.com">http://www.openmarket.com.</a>
+<hr>
+<table WIDTH="100%" >
+<tr>
+<td></td>
+
+<td ALIGN=CENTER><a href="index.html#contents"><img SRC="i/up.gif" ALT="^" BORDER=0 height=22 width=20 align=MIDDLE></a><a href="www-security-faq.html#contents">Up
+to <i>Table of Contents</i></a></td>
+
+<td></td>
+</tr>
+
+<tr>
+<td ALIGN=LEFT><a href="wwwsf2.html"><img SRC="i/left.gif" ALT="Backward" BORDER=0 height=22 width=20 align=MIDDLE></a><a href="wwwsf4.html">Backward
+to <i>CGI Scripts</i></a></td>
+
+<td></td>
+
+<td ALIGN=RIGHT><a href="wwwsf6.html">Forward to <i>Denial of Service Attacks</i><img SRC="i/right.gif" ALT="Forward" BORDER=0 height=22 width=20 align=MIDDLE></a></td>
+</tr>
+</table>
+
+<hr>
+<address>
+<a href="http://www.genome.wi.mit.edu/~lstein/">Lincoln D. Stein</a> (<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>)
+and <a href="mailto:jns@digitalisland.net">John N. Stewart (jns@digitalisland.net)</a></address>
+
+<br>
+<tt>$Id: wwwsf5.html,v 1.7 2001/11/18 19:55:53 lstein Exp $</tt>
+</body>
+</html>
