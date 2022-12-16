@@ -44,12 +44,10 @@ IndexIgnore info-aux.txt
 </FilesMatch>
 
 # Course Calibration
-<IfModule mod_rewrite.c>
-	RewriteEngine On
-	RewriteCond %{HTTPS} !=on [OR]
-	RewriteCond %{HTTP_HOST} !^mirrors\.meiert\.org$ [NC]
-	RewriteRule ^ https://mirrors.meiert.org%{REQUEST_URI} [R=301,L]
-</IfModule>
+RewriteEngine On
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} !^mirrors\.meiert\.org$ [NC]
+RewriteRule ^ https://mirrors.meiert.org%{REQUEST_URI} [R=301,L]
 
 # Course Alterations: P1
 RedirectMatch 301 /www-security-faq/(.*) https://mirrors.meiert.org/w3.org/Security/Faq/$1
