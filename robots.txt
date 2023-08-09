@@ -2,6 +2,7 @@ User-agent: *
 Disallow: /meiert.com/
 Disallow: /meiert.com-verbose/
 
+User-agent: CCBot
 User-agent: ChatGPT-User
 User-agent: GPTBot
 Disallow: /
