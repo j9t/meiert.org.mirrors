@@ -31,4 +31,4 @@
 <link rel=stylesheet href=setup/default.css>
 <meta name=viewport content="initial-scale=1,minimum-scale=1,width=device-width">
 <p><b>It’s not too late</b> to <a href=<?php echo $charityUrl; ?>>send $1 to<?php echo $charityText; ?></a>.</p>
-<small>A randomized reproduction of an <a href="https://books.google.com/books?id=hf7mBAAAQBAJ&pg=PT30&lpg=PT30&dq=%22it’s+not+too+late+to+send+$1%22">old newspaper ad</a> (<a href=./>reload</a>). Another playful project by <a href=https://meiert.com/en/>Jens</a>, who’s only affiliated with himself.</small>
+<small>A randomized reproduction of an <a href="https://books.google.com/books?id=hf7mBAAAQBAJ&pg=PT30&lpg=PT30&dq=%22it’s+not+too+late+to+send+$1%22">old newspaper ad</a> (<a href=./>reload to change cause</a>). Another playful project by <a href=https://meiert.com/en/>Jens</a>, who’s only affiliated with himself.</small>
