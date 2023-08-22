@@ -121,23 +121,14 @@ button:active {
 }
 
 .info,
-#intro,
 #error {
 	border-radius: 5px;
 	padding: 5px;
 }
 
-.info,
-#intro {
-	background: #fff3ca;
-}
-
 .info {
+	background: #fff3ca;
 	margin: 1em -5px;
-}
-
-#intro {
-	margin: calc(1em - 5px) -5px 1.5em;
 }
 
 #error {
@@ -170,8 +161,7 @@ button:active {
 	h1 + p,
 	form,
 	form + h1,
-	.info + p,
-	#intro {
+	.info + p {
 		display: none;
 	}
 

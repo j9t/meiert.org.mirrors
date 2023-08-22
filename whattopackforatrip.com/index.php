@@ -68,7 +68,6 @@
 <?php if ($error == "true") { ?>
 <p id=error>Yo, geek. <?php echo $errorMessageNights; ?> <?php echo $errorMessageClimate; ?> <?php echo $errorMessageStyle; ?>
 <?php } ?>
-<p id=intro>Have a suggestion? <a href=mailto:ideas&#64;whattopackforatrip.com>ideas&#64;whattopackforatrip.com</a>
 <h1>What to Pack for a Trip 🏖</h1>
 <p>Tired of calculating what clothes to pack when you travel somewhere? No more!
 <form action=. method=post>
