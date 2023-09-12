@@ -40,9 +40,9 @@
 		$errorMessageStyle = "What style is this.";
 	}
 
-	$url = "https://" . $_SERVER["HTTP_HOST"] . "/whattopackforatrip.com/?nights=" . $nights . "&climate=" . $climate . "&style=" . $style . "&bookmark";
+	$url = "https://" . $_SERVER["HTTP_HOST"] . "/whattopackforatrip.com/?nights=" . $nights . "&climate=" . $climate . "&style=" . $style . "&bookmark#checklist";
 
-	$urlmax = "https://" . $_SERVER["HTTP_HOST"] . "/whattopackforatrip.com/?nights=" . $nightsmax . "&climate=" . $climate . "&style=" . $style . "&bookmark";
+	$urlmax = "https://" . $_SERVER["HTTP_HOST"] . "/whattopackforatrip.com/?nights=" . $nightsmax . "&climate=" . $climate . "&style=" . $style . "&bookmark#checklist";
 
 	// Crunches
 
@@ -68,9 +68,9 @@
 <?php if ($error == "true") { ?>
 <p id=error>Yo, geek. <?php echo $errorMessageNights; ?> <?php echo $errorMessageClimate; ?> <?php echo $errorMessageStyle; ?>
 <?php } ?>
-<h1>What to Pack for a Trip 🏖</h1>
+<h1><?php if ((isset($_POST["bookmark"])) || (isset($_GET["bookmark"]))) { ?><a href="./"><?php } ?>What to Pack for a Trip 🏖<?php if ((isset($_POST["bookmark"])) || (isset($_GET["bookmark"]))) { ?></a><?php } ?></h1>
 <p>Tired of calculating what clothes to pack when you travel somewhere? No more!
-<form action=. method=post>
+<form action=./#checklist method=post>
 	<input type=hidden name=bookmark>
 	<label for=nights>How many nights are you going to be out?</label>
 	<input type=number value=<?php echo $nights; ?> name=nights id=nights required>
@@ -91,11 +91,11 @@
 	<div><button>🤔 What do I pack?</button> <a href=./>Clear</a></div>
 </form>
 <?php if (($nights > $nightsmax) && ($error != "true")) { ?>
-<h1>Yay! You’re Going on a Looong Trip! 😍😍</h1>
+<h1 id=checklist>Yay! You’re Going on a Looong Trip! 😍😍</h1>
 <p>Alas, it’s so long (<?php echo $nights; ?> nights! sweet jesus) you should better <a href=https://meiert.com/en/blog/the-law-of-travel/>pack light</a>. This isn’t something we can help with ✨
 <p>(I don’t care. Give me <a href="<?php echo $urlmax; ?>">recommendations for <?php echo $nightsmax; ?> nights</a> then.)
 <?php } else if (($nights != "") && ($climate != "") && ($style != "") && ($error != "true")) { ?>
-<h1>Yay! You’re Going on a Trip! 😍</h1>
+<h1 id=checklist>Yay! You’re Going on a Trip! 😍</h1>
 <p><?php if ($nights == 1) { ?>Oh, that’s short. <?php } ?>Here’s what we think you should bring for <?php echo $nights; ?> nights. (Checkbox values aren’t saved.)
 <ul>
 <?php if (($nights > 5) && (($style == "feminine-elegant") || ($style == "masculine-elegant"))) { ?>
