@@ -4,5 +4,7 @@ Disallow: /meiert.com-verbose/
 
 User-agent: CCBot
 User-agent: ChatGPT-User
+User-agent: Google-Extended
 User-agent: GPTBot
+User-agent: Omgilibot
 Disallow: /
