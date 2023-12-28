@@ -1,11 +1,3 @@
 User-agent: *
 Disallow: /meiert.com/
 Disallow: /meiert.com-verbose/
-
-User-agent: CCBot
-User-agent: ChatGPT-User
-User-agent: FacebookBot
-User-agent: Google-Extended
-User-agent: GPTBot
-User-agent: Omgilibot
-Disallow: /
