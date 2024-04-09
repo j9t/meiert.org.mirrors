@@ -28,7 +28,7 @@ p {
 	margin: 1em 0;
 }
 
-p:last-child {
+p:has(img) {
 	color: #bbb;
 }
 
