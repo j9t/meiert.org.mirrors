@@ -64,7 +64,7 @@
 <meta name=twitter:card content=summary>
 <meta property=og:title content="What to Pack for a Trip · Prepare Your Luggage in 3 Quick Steps">
 <meta property="og:description" name="description" content="Tired of calculating what clothes to pack when you travel somewhere? No more! Use What to Pack for a Trip to prepare, swiftly.">
-<script src=setup/quarantine/jquery-3.2.1.slim.min.js></script>
+<script src=setup/quarantine/jquery-3.7.1.slim.min.js></script>
 <?php if ($error == "true") { ?>
 <p id=error>Yo, geek. <?php echo $errorMessageNights; ?> <?php echo $errorMessageClimate; ?> <?php echo $errorMessageStyle; ?>
 <?php } ?>
