@@ -59,7 +59,7 @@
 <title>What to Pack for a Trip · Prepare Your Luggage in 3 Quick Steps</title>
 <link rel=icon href=favicon.ico>
 <link rel=stylesheet href=setup/default.min.css>
-<meta name=viewport content="initial-scale=1,minimum-scale=1,width=device-width">
+<meta name=viewport content="initial-scale=1,width=device-width">
 <meta name=theme-color content=#fff>
 <meta name=twitter:card content=summary>
 <meta property=og:title content="What to Pack for a Trip · Prepare Your Luggage in 3 Quick Steps">
