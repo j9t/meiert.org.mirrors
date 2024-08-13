@@ -12,7 +12,7 @@ html {
 	background: #fff;
 	color: #309ef3;
 	font: 281.25%/.9 roboto, helvetica, sans-serif;
-	margin: 0 .88em;
+	margin-inline: .88em;
 	text-align: center;
 }
 
