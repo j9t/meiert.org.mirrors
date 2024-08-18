@@ -87,7 +87,7 @@ form + h1 {
 }
 
 label {
-	margin: 1.1em 0 0; /* @@ Test in Brave (if not working, revert to `1em 0 0`) */
+	margin: 1.1em 0 0;
 }
 
 label.optional {
