@@ -1,3 +1,2 @@
 User-agent: *
-Disallow: /meiert.com/
-Disallow: /meiert.com-verbose/
+Disallow:

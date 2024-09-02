@@ -1,13 +1,14 @@
 # Startup Routine
 AddCharset utf-8 .css .html .js .php .txt .xml
 AddDefaultCharset utf-8
-AddOutputFilterByType DEFLATE application/javascript application/pdf application/rss+xml application/xml font/eot font/otf font/ttf image/svg+xml image/vnd.microsoft.icon image/x-icon text/css text/html text/javascript text/plain text/xml
+AddOutputFilterByType BROTLI_COMPRESS application/javascript application/pdf application/rss+xml application/xml font/eot font/otf font/ttf image/svg+xml image/vnd.microsoft.icon image/x-icon text/css text/html text/javascript text/plain text/xml
 AddType application/rss+xml .xml
 AddType font/eot .eot
 AddType font/otf .otf
 AddType font/ttf .ttf
 AddType font/woff .woff
 AddType font/woff2 .woff2
+CheckSpelling On
 ContentDigest On
 DefaultLanguage en
 ExpiresActive On
@@ -32,7 +33,7 @@ ExpiresByType text/plain A60
 ExpiresByType text/xml A60
 FileETag All
 Header always edit Set-Cookie (.*) "$1; SameSite=Lax; Secure"
-Header always set Strict-Transport-Security "max-age=15768000; includeSubDomains; preload" env=HTTPS
+# Header always set Strict-Transport-Security "max-age=15768000; includeSubDomains; preload" env=HTTPS # Monitor if needed on ALL-INKL sites
 Header always set X-Content-Type-Options nosniff
 IndexIgnore info-aux.txt
 
@@ -55,9 +56,6 @@ RedirectMatch 301 /www-security-faq/(.*) https://mirrors.meiert.org/w3.org/Secur
 Redirect 301 /mindviewinc/ https://mirrors.meiert.org/mindviewinc.com/Books/downloads.html
 Redirect 301 /mindviewinc/index.html https://mirrors.meiert.org/mindviewinc.com/Books/downloads.html
 RedirectMatch 301 /mindviewinc/downloads/(.*) https://mirrors.meiert.org/mindviewinc.com/downloads/$1
-
-# Course Alterations: P2
-Redirect 302 /meiert.com/en/contact.1 https://mirrors.meiert.org/meiert.com/en/contact/index.html
 
 # Emergency
 SetEnvIf Host ^ suppress-error-charset
