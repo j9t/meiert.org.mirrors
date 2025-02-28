@@ -58,7 +58,7 @@ RedirectMatch 301 /mindviewinc/downloads/(.*) https://mirrors.meiert.org/mindvie
 
 # Emergency
 SetEnvIf Host ^ suppress-error-charset
-ErrorDocument 401 '<!DOCTYPE html><title>Error</title><link rel=stylesheet href=https://d3rdtowr0c5lpf.cloudfront.net/setup/auxiliary.min.css><meta charset=utf-8><meta name=viewport content="initial-scale=1,width=device-width"><p>Unauthorized.<p><a href=https://meiert.com/en/>🅜</a>'
-ErrorDocument 403 '<!DOCTYPE html><title>Error</title><link rel=stylesheet href=https://d3rdtowr0c5lpf.cloudfront.net/setup/auxiliary.min.css><meta charset=utf-8><meta name=viewport content="initial-scale=1,width=device-width"><p>Forbidden.<p><a href=https://meiert.com/en/>🅜</a>'
-ErrorDocument 404 '<!DOCTYPE html><title>Error</title><link rel=stylesheet href=https://d3rdtowr0c5lpf.cloudfront.net/setup/auxiliary.min.css><meta charset=utf-8><meta name=viewport content="initial-scale=1,width=device-width"><p>Not found.<p><a href=https://meiert.com/en/>🅜</a>'
-ErrorDocument 500 '<!DOCTYPE html><title>Error</title><link rel=stylesheet href=https://d3rdtowr0c5lpf.cloudfront.net/setup/auxiliary.min.css><meta charset=utf-8><meta name=viewport content="initial-scale=1,width=device-width"><p>Internal server error.<p><a href=https://meiert.com/en/>🅜</a>'
+ErrorDocument 401 '<!DOCTYPE html><title>Unauthorized</title><meta charset=utf-8><meta name=viewport content="initial-scale=1,width=device-width"><meta name=color-scheme content="light dark"><h1>Unauthorized</h1><p><a href=/>Home</a>'
+ErrorDocument 403 '<!DOCTYPE html><title>Forbidden</title><meta charset=utf-8><meta name=viewport content="initial-scale=1,width=device-width"><meta name=color-scheme content="light dark"><h1>Forbidden</h1><p><a href=/>Home</a>'
+ErrorDocument 404 '<!DOCTYPE html><title>Not Found</title><meta charset=utf-8><meta name=viewport content="initial-scale=1,width=device-width"><meta name=color-scheme content="light dark"><h1>Not Found</h1><p><a href=/>Home</a>'
+ErrorDocument 500 '<!DOCTYPE html><title>Internal Server Error</title><meta charset=utf-8><meta name=viewport content="initial-scale=1,width=device-width"><meta name=color-scheme content="light dark"><h1>Internal Server Error</h1><p><a href=/>Home</a>'
