@@ -153,7 +153,7 @@
 <p><?php if ((isset($_POST["bookmark"])) || (isset($_GET["bookmark"]))) { ?><a href="<?php echo htmlentities($url); ?>">Direct link to this wardrobe</a> · <?php } ?><a href="./">Start over</a>
 <?php } ?>
 <footer>
-	<p><small>Contact: <a href="https://meiert.com/en/">Jens Oliver Meiert</a> (<a href="https://meiert.com/en/contact/">Pontevedra, Spain</a>) · <a href=mailto:jens&#64;meiert.org>jens&#64;meiert.org</a> · <a href=tel:+34-610859489>+34-610859489</a></small>
+	<p><small>Contact: <a href="https://meiert.com/en/">Jens Oliver Meiert</a> (<a href="https://meiert.com/en/contact/">Pontevedra, Spain</a>) · <a href=mailto:info&#64;meiert.com>info&#64;meiert.com</a> · <a href=tel:+34-610859489>+34-610859489</a></small>
 </footer>
 <?php if (($climate != "") && ($style != "")) { ?>
 <script>
