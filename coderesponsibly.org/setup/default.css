@@ -94,6 +94,7 @@ a:is(:focus, :hover, :active) {
 
 footer + img {
 	height: 1px;
+	opacity: 0;
 	position: absolute;
 	width: 1px;
 }
