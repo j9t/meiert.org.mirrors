@@ -92,7 +92,7 @@
 </form>
 <?php if (($nights > $nightsmax) && ($error != "true")) { ?>
 <h1 id=checklist>Yay! You’re Going on a Looong Trip! 😍😍</h1>
-<p>Alas, it’s so long (<?php echo $nights; ?> nights! sweet jesus) you should better <a href=https://meiert.com/en/blog/the-law-of-travel/>pack light</a>. This isn’t something we can help with ✨
+<p>Alas, it’s so long (<?php echo $nights; ?> nights! sweet jesus) you should better <a href=https://meiert.com/blog/the-law-of-travel/>pack light</a>. This isn’t something we can help with ✨
 <p>(I don’t care. Give me <a href="<?php echo $urlmax; ?>">recommendations for <?php echo $nightsmax; ?> nights</a> then.)
 <?php } else if (($nights != "") && ($climate != "") && ($style != "") && ($error != "true")) { ?>
 <h1 id=checklist>Yay! You’re Going on a Trip! 😍</h1>
