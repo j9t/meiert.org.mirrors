@@ -87,9 +87,8 @@ label {
 	margin: 1.1em 0 0;
 }
 
-label.optional {
-	/* @@ */
-}
+/* label.optional {
+} */
 
 input,
 button,
