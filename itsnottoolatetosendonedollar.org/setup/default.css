@@ -13,7 +13,6 @@
 	}
 
 	body {
-		/* @@ Review centering, as in https://www.amitmerchant.com/centering-content-vertically-without-flex-or-grid-in-css/ */
 		left: 50%;
 		margin-right: -50%;
 		position: absolute;
