@@ -2,11 +2,11 @@
 	$charity1Text = " World Vision";
 	$charity1Url = "https://donate.worldvision.org/gift-catalog/education";
 	$charity2Text = " UNESCO";
-	$charity2Url = "http://www.unesco.org/donate/";
+	$charity2Url = "https://www.unesco.org/donate";
 	$charity3Text = " charity: water";
 	$charity3Url = "https://www.charitywater.org/donate";
 	$charity4Text = " the International Campaign to Ban Landmines";
-	$charity4Url = "http://www.icbl.org/en-gb/about-us/donate.aspx";
+	$charity4Url = "https://www.icblcmc.org/get-involved";
 	$charity5Text = " the Electronic Frontier Foundation";
 	$charity5Url = "https://supporters.eff.org/donate";
 	$charity6Text = " the International Committee of the Red Cross";
@@ -14,7 +14,7 @@
 	$charity7Text = " the Sea Shepherd Conservation Society";
 	$charity7Url = "https://seashepherd.org/donate/";
 	$charity8Text = " Parliamentarians for Nuclear Non-Proliferation and Disarmament";
-	$charity8Url = "http://www.pnnd.org/donate";
+	$charity8Url = "https://www.pnnd.org/donate";
 	$charity9Text = " Public Citizen";
 	$charity9Url = "https://publiccitizen.salsalabs.org/donate/";
 	// Bonus
