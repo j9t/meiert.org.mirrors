@@ -56,6 +56,9 @@ Redirect 301 /mindviewinc/ https://mirrors.meiert.org/mindviewinc.com/Books/down
 Redirect 301 /mindviewinc/index.html https://mirrors.meiert.org/mindviewinc.com/Books/downloads.html
 RedirectMatch 301 /mindviewinc/downloads/(.*) https://mirrors.meiert.org/mindviewinc.com/downloads/$1
 
+# Course Alterations: User Input
+RedirectMatch 301 /meiert.com(.*) https://meiert.com$1
+
 # Emergency
 SetEnvIf Host ^ suppress-error-charset
 ErrorDocument 401 '<!DOCTYPE html><title>Unauthorized</title><meta charset=utf-8><meta name=viewport content="initial-scale=1,width=device-width"><meta name=color-scheme content="light dark"><h1>Unauthorized</h1><p><a href=/>Home</a>'
