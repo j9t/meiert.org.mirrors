@@ -13,6 +13,7 @@ ContentDigest On
 DefaultLanguage en
 ExpiresActive On
 ExpiresByType application/javascript A604800
+ExpiresByType application/json A60
 ExpiresByType application/rss+xml A60
 ExpiresByType application/xml A60
 ExpiresByType font/eot A2419200
