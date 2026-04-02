@@ -68,7 +68,7 @@ ErrorDocument 404 '<!DOCTYPE html><title>Not Found</title><meta charset=utf-8><m
 ErrorDocument 500 '<!DOCTYPE html><title>Internal Server Error</title><meta charset=utf-8><meta name=viewport content="initial-scale=1,width=device-width"><meta name=color-scheme content="light dark"><h1>Internal Server Error</h1><p><a href=/>Home</a>'
 
 # Country IP Blocks
-# Generated: 2026-02-15 11:28:44 CET
+# Generated: 2026-04-02 11:51:47 CEST
 # Source: IPDeny.com
 # Exceptions
 <FilesMatch "^(error403\.html)$">
@@ -236,6 +236,7 @@ ErrorDocument 500 '<!DOCTYPE html><title>Internal Server Error</title><meta char
 	Require not ip 62.56.216.0/21
 	Require not ip 62.182.192.0/21
 	Require not ip 63.250.56.0/21
+	Require not ip 72.4.64.0/21
 	Require not ip 79.108.160.0/21
 	Require not ip 81.199.16.0/21
 	Require not ip 81.199.40.0/21
@@ -271,6 +272,7 @@ ErrorDocument 500 '<!DOCTYPE html><title>Internal Server Error</title><meta char
 	Require not ip 147.236.144.0/21
 	Require not ip 147.236.168.0/21
 	Require not ip 147.236.216.0/21
+	Require not ip 167.254.208.0/21
 	Require not ip 176.241.112.0/21
 	Require not ip 185.187.32.0/21
 	Require not ip 188.64.200.0/21
@@ -403,7 +405,6 @@ ErrorDocument 500 '<!DOCTYPE html><title>Internal Server Error</title><meta char
 	Require not ip 185.60.168.0/22
 	Require not ip 185.62.120.0/22
 	Require not ip 185.64.8.0/22
-	Require not ip 185.65.144.0/22
 	Require not ip 185.68.120.0/22
 	Require not ip 185.70.248.0/22
 	Require not ip 185.80.108.0/22
