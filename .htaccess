@@ -68,7 +68,7 @@ ErrorDocument 404 '<!DOCTYPE html><title>Not Found</title><meta charset=utf-8><m
 ErrorDocument 500 '<!DOCTYPE html><title>Internal Server Error</title><meta charset=utf-8><meta name=viewport content="initial-scale=1,width=device-width"><meta name=color-scheme content="light dark"><h1>Internal Server Error</h1><p><a href=/>Home</a>'
 
 # Country IP Blocks
-# Generated: 2026-04-02 11:51:47 CEST
+# Generated: 2026-07-02 10:01:31 CEST
 # Source: IPDeny.com
 # Exceptions
 <FilesMatch "^(error403\.html)$">
@@ -137,7 +137,6 @@ ErrorDocument 500 '<!DOCTYPE html><title>Internal Server Error</title><meta char
 	Require not ip 94.159.128.0/17
 	Require not ip 94.188.128.0/17
 	Require not ip 109.160.128.0/17
-	Require not ip 131.125.128.0/17
 	Require not ip 176.12.128.0/17
 	Require not ip 192.114.128.0/17
 	Require not ip 212.235.0.0/17
@@ -268,10 +267,10 @@ ErrorDocument 500 '<!DOCTYPE html><title>Internal Server Error</title><meta char
 	Require not ip 147.234.80.0/21
 	Require not ip 147.234.96.0/21
 	Require not ip 147.234.176.0/21
-	Require not ip 147.236.104.0/21
 	Require not ip 147.236.144.0/21
 	Require not ip 147.236.168.0/21
 	Require not ip 147.236.216.0/21
+	Require not ip 150.251.232.0/21
 	Require not ip 167.254.208.0/21
 	Require not ip 176.241.112.0/21
 	Require not ip 185.187.32.0/21
@@ -364,6 +363,7 @@ ErrorDocument 500 '<!DOCTYPE html><title>Internal Server Error</title><meta char
 	Require not ip 103.240.144.0/22
 	Require not ip 103.241.64.0/22
 	Require not ip 109.207.76.0/22
+	Require not ip 136.148.136.0/22
 	Require not ip 141.226.48.0/22
 	Require not ip 141.226.64.0/22
 	Require not ip 141.226.128.0/22
@@ -379,8 +379,10 @@ ErrorDocument 500 '<!DOCTYPE html><title>Internal Server Error</title><meta char
 	Require not ip 147.234.108.0/22
 	Require not ip 147.234.164.0/22
 	Require not ip 147.234.188.0/22
+	Require not ip 147.236.108.0/22
 	Require not ip 147.236.156.0/22
 	Require not ip 147.236.212.0/22
+	Require not ip 150.251.72.0/22
 	Require not ip 176.106.224.0/22
 	Require not ip 185.3.144.0/22
 	Require not ip 185.6.64.0/22
