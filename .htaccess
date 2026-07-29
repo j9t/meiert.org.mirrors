@@ -52,13 +52,13 @@ RewriteCond %{HTTP_HOST} !^mirrors\.meiert\.org$ [NC]
 RewriteRule ^ https://mirrors.meiert.org%{REQUEST_URI} [R=301,L]
 
 # Course Alterations: P1
-RedirectMatch 301 /www-security-faq/(.*) https://mirrors.meiert.org/w3.org/Security/Faq/$1
+RedirectMatch 301 ^/www-security-faq/(.*) https://mirrors.meiert.org/w3.org/Security/Faq/$1
 Redirect 301 /mindviewinc/ https://mirrors.meiert.org/mindviewinc.com/Books/downloads.html
 Redirect 301 /mindviewinc/index.html https://mirrors.meiert.org/mindviewinc.com/Books/downloads.html
-RedirectMatch 301 /mindviewinc/downloads/(.*) https://mirrors.meiert.org/mindviewinc.com/downloads/$1
+RedirectMatch 301 ^/mindviewinc/downloads/(.*) https://mirrors.meiert.org/mindviewinc.com/downloads/$1
 
 # Course Alterations: User Input
-RedirectMatch 301 /meiert.com(.*) https://meiert.com$1
+RedirectMatch 301 ^/meiert.com(.*) https://meiert.com$1
 
 # Emergency
 SetEnvIf Host ^ suppress-error-charset
