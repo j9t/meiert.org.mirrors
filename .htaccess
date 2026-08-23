@@ -68,7 +68,7 @@ ErrorDocument 404 '<!DOCTYPE html><title>Not Found</title><meta charset=utf-8><m
 ErrorDocument 500 '<!DOCTYPE html><title>Internal Server Error</title><meta charset=utf-8><meta name=viewport content="initial-scale=1,width=device-width"><meta name=color-scheme content="light dark"><h1>Internal Server Error</h1><p><a href=/>Home</a>'
 
 # Country IP Blocks
-# Generated: 2026-07-02 10:01:31 CEST
+# Generated: 2026-08-23 11:58:12 CEST
 # Source: IPDeny.com
 # Exceptions
 <FilesMatch "^(error403\.html)$">
@@ -162,6 +162,7 @@ ErrorDocument 500 '<!DOCTYPE html><title>Internal Server Error</title><meta char
 	Require not ip 81.199.160.0/19
 	Require not ip 93.175.32.0/19
 	Require not ip 95.175.32.0/19
+	Require not ip 136.148.0.0/19
 	Require not ip 141.226.0.0/19
 	Require not ip 141.226.160.0/19
 	Require not ip 141.226.192.0/19
@@ -230,6 +231,7 @@ ErrorDocument 500 '<!DOCTYPE html><title>Internal Server Error</title><meta char
 	Require not ip 37.25.32.0/21
 	Require not ip 37.26.144.0/21
 	Require not ip 37.60.40.0/21
+	Require not ip 46.16.136.0/21
 	Require not ip 46.19.80.0/21
 	Require not ip 46.31.96.0/21
 	Require not ip 62.56.216.0/21
@@ -258,6 +260,8 @@ ErrorDocument 500 '<!DOCTYPE html><title>Internal Server Error</title><meta char
 	Require not ip 141.226.88.0/21
 	Require not ip 141.226.120.0/21
 	Require not ip 141.226.240.0/21
+	Require not ip 143.246.168.0/21
+	Require not ip 143.246.248.0/21
 	Require not ip 146.185.56.0/21
 	Require not ip 147.161.8.0/21
 	Require not ip 147.189.144.0/21
@@ -352,8 +356,8 @@ ErrorDocument 500 '<!DOCTYPE html><title>Internal Server Error</title><meta char
 	Require not ip 91.197.60.0/22
 	Require not ip 91.197.100.0/22
 	Require not ip 91.202.168.0/22
-	Require not ip 91.203.120.0/22
 	Require not ip 91.205.152.0/22
+	Require not ip 91.211.204.0/22
 	Require not ip 91.214.100.0/22
 	Require not ip 91.231.192.0/22
 	Require not ip 95.129.32.0/22
