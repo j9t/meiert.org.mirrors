@@ -45,10 +45,6 @@ IndexIgnore info-aux.txt
 	Header always set X-XSS-Protection "1; mode=block"
 </FilesMatch>
 
-<FilesMatch "favicon.ico">
-	Header always set Content-Type: image/svg+xml
-</FilesMatch>
-
 # Course Calibration
 RewriteEngine On
 RewriteCond %{HTTPS} !=on [OR]
